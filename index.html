@@ -8,22 +8,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #58A6FF;
-            --primary-dark: #1f6feb;
-            --secondary: #F85149;
+            --primary: #D4AF37;
+            --primary-dark: #B8941F;
+            --secondary: #8B4513;
+            --accent: #CD853F;
             --success: #3FB950;
             --warning: #D29922;
-            --dark: #0D1117;
-            --dark-card: #161B22;
-            --dark-text: #C9D1D9;
-            --dark-light: #8B949E;
-            --light: #FAFBFC;
-            --light-card: #FFFFFF;
-            --light-text: #1C1C1C;
-            --light-light: #666666;
-            --border: #30363D;
+            --dark: #0D0806;
+            --dark-card: #1A1310;
+            --dark-text: #E8D5B7;
+            --dark-light: #A89080;
+            --border: #3D2817;
+            --aztec-red: #C1440E;
+            --aztec-turquoise: #40E0D0;
             --youtube: #FF0000;
             --facebook: #1877F2;
+            --instagram: #E1306C;
+            --gradient-gold: linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #B8941F 100%);
         }
         
         * {
@@ -38,6 +39,26 @@
             color: var(--dark-text);
             line-height: 1.6;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(212, 175, 55, 0.03) 2px, rgba(212, 175, 55, 0.03) 4px),
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(212, 175, 55, 0.03) 2px, rgba(212, 175, 55, 0.03) 4px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 2;
         }
         
         .container {
@@ -45,21 +66,81 @@
             margin: 0 auto;
             padding: 0 20px;
         }
+
+        /* Aztec Pattern Background */
+        .aztec-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            pointer-events: none;
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 35px, var(--primary) 35px, var(--primary) 37px),
+                repeating-linear-gradient(-45deg, transparent, transparent 35px, var(--primary) 35px, var(--primary) 37px);
+            z-index: 0;
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            gap: 10px;
+            background: var(--dark-card);
+            padding: 8px;
+            border-radius: 50px;
+            border: 2px solid var(--primary);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .lang-btn {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            color: var(--dark-light);
+            cursor: pointer;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .lang-btn:hover {
+            color: var(--primary);
+        }
+
+        .lang-btn.active {
+            background: var(--gradient-gold);
+            color: var(--dark);
+        }
+
+        .lang-flag {
+            font-size: 1.2rem;
+        }
         
         /* Header Styles */
         .header {
-            background: linear-gradient(135deg, var(--dark) 0%, #0a0d14 100%);
-            border-bottom: 1px solid var(--border);
+            background: linear-gradient(135deg, var(--dark) 0%, #1a0f0a 100%);
+            border-bottom: 2px solid var(--primary);
             position: sticky;
             top: 0;
             z-index: 1000;
             padding: 20px 0;
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.2);
         }
         
         .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 20px;
         }
         
         .logo {
@@ -70,22 +151,35 @@
         
         .logo-icon {
             font-size: 2.5rem;
-            color: var(--primary);
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+
+        .logo-icon::after {
+            content: '◆';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 1rem;
+            color: var(--aztec-turquoise);
         }
         
         .logo-text h1 {
             font-size: 1.8rem;
             font-weight: 900;
-            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            background: var(--gradient-gold);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
         }
         
         .logo-text span {
             font-size: 0.9rem;
             color: var(--dark-light);
             font-weight: 600;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
         }
         
         .badges {
@@ -95,40 +189,71 @@
         }
         
         .badge {
-            background: var(--primary);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
+            background: var(--gradient-gold);
+            color: var(--dark);
+            padding: 8px 16px;
+            border-radius: 25px;
             font-size: 0.8rem;
-            font-weight: 600;
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 5px;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            border: 1px solid var(--primary-dark);
         }
         
         .badge.ai {
             background: linear-gradient(90deg, #8B5CF6, #7C3AED);
+            color: white;
         }
         
         .badge.secure {
             background: linear-gradient(90deg, var(--success), #16A34A);
+            color: white;
         }
-        
+
         .badge.fast {
             background: linear-gradient(90deg, var(--warning), #EA580C);
+            color: white;
         }
         
         /* Hero Section */
         .hero {
-            padding: 80px 0 60px;
-            background: radial-gradient(circle at 20% 50%, rgba(31, 111, 235, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 20%, rgba(88, 166, 255, 0.05) 0%, transparent 50%);
+            padding: 100px 0 80px;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(193, 68, 14, 0.1) 0%, transparent 50%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '▲';
+            position: absolute;
+            top: 10%;
+            left: 5%;
+            font-size: 15rem;
+            color: var(--primary);
+            opacity: 0.03;
+            transform: rotate(15deg);
+        }
+
+        .hero::after {
+            content: '◆';
+            position: absolute;
+            bottom: 10%;
+            right: 5%;
+            font-size: 12rem;
+            color: var(--aztec-red);
+            opacity: 0.03;
+            transform: rotate(-15deg);
         }
         
         .hero-content {
             text-align: center;
             max-width: 900px;
             margin: 0 auto;
+            position: relative;
         }
         
         .tagline {
@@ -136,9 +261,21 @@
             font-weight: 900;
             line-height: 1.1;
             margin-bottom: 20px;
-            background: linear-gradient(90deg, var(--primary), var(--dark-text));
+            background: var(--gradient-gold);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 50px rgba(212, 175, 55, 0.3);
+            position: relative;
+        }
+
+        .tagline::before,
+        .tagline::after {
+            content: '◆◆◆';
+            display: block;
+            font-size: 1rem;
+            color: var(--primary);
+            margin: 15px 0;
+            letter-spacing: 10px;
         }
         
         .subtitle {
@@ -146,6 +283,7 @@
             color: var(--dark-light);
             max-width: 700px;
             margin: 0 auto 40px;
+            line-height: 1.8;
         }
         
         .cta-buttons {
@@ -157,8 +295,8 @@
         }
         
         .btn {
-            padding: 15px 30px;
-            border-radius: 8px;
+            padding: 18px 35px;
+            border-radius: 50px;
             font-weight: 700;
             font-size: 1rem;
             display: inline-flex;
@@ -168,51 +306,88 @@
             transition: all 0.3s ease;
             border: none;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
         }
         
         .btn-primary {
-            background: var(--primary);
-            color: white;
+            background: var(--gradient-gold);
+            color: var(--dark);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+            border: 2px solid var(--primary-dark);
         }
         
         .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(31, 111, 235, 0.2);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.6);
         }
         
         .btn-secondary {
             background: transparent;
-            color: var(--dark-text);
-            border: 2px solid var(--border);
+            color: var(--primary);
+            border: 2px solid var(--primary);
         }
         
         .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(212, 175, 55, 0.1);
             transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.2);
         }
         
         /* Section Styles */
         section {
             padding: 80px 0;
+            position: relative;
         }
         
         .section-title {
             text-align: center;
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             font-weight: 800;
             margin-bottom: 60px;
             position: relative;
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         
-        .section-title:after {
+        .section-title::before {
+            content: '◆';
+            position: absolute;
+            left: 50%;
+            top: -40px;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .section-title::after {
             content: '';
             display: block;
-            width: 80px;
+            width: 100px;
             height: 4px;
-            background: var(--primary);
-            margin: 15px auto;
+            background: var(--gradient-gold);
+            margin: 20px auto;
             border-radius: 2px;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
         }
         
         /* Comparison Table */
@@ -220,158 +395,234 @@
             width: 100%;
             border-collapse: collapse;
             margin: 40px 0;
-            border-radius: 10px;
+            border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--primary);
         }
         
         .comparison-table th {
-            background: var(--dark-card);
-            padding: 20px;
+            background: var(--gradient-gold);
+            color: var(--dark);
+            padding: 25px;
             text-align: left;
-            font-weight: 700;
+            font-weight: 800;
             font-size: 1.1rem;
-            border-bottom: 2px solid var(--border);
+            border-bottom: 3px solid var(--primary-dark);
         }
         
         .comparison-table td {
-            padding: 20px;
+            padding: 20px 25px;
             border-bottom: 1px solid var(--border);
+            background: var(--dark-card);
         }
         
-        .comparison-table tr:nth-child(even) {
-            background: rgba(255, 255, 255, 0.02);
+        .comparison-table tr:hover {
+            background: rgba(212, 175, 55, 0.05);
         }
         
         .problem-col {
-            color: var(--secondary);
-            font-weight: 600;
+            color: var(--aztec-red);
+            font-weight: 700;
+            font-size: 1.1rem;
         }
         
         .solution-col {
             color: var(--success);
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 1.05rem;
         }
         
         /* Features Grid */
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 30px;
             margin-top: 40px;
         }
         
         .feature-card {
             background: var(--dark-card);
-            border-radius: 12px;
-            padding: 30px;
-            border: 1px solid var(--border);
-            transition: all 0.3s ease;
+            border-radius: 20px;
+            padding: 35px;
+            border: 2px solid var(--border);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
         }
         
         .feature-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-15px) scale(1.02);
             border-color: var(--primary);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 40px rgba(212, 175, 55, 0.3);
         }
         
         .feature-icon {
-            font-size: 2.5rem;
+            font-size: 3rem;
             margin-bottom: 20px;
-            color: var(--primary);
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
         }
         
         .feature-title {
             font-size: 1.4rem;
             font-weight: 700;
             margin-bottom: 15px;
+            color: var(--primary);
         }
         
         .feature-desc {
             color: var(--dark-light);
+            line-height: 1.8;
         }
         
         /* Platform Cards */
         .platforms {
             display: flex;
             justify-content: center;
-            gap: 30px;
+            gap: 40px;
             flex-wrap: wrap;
             margin-top: 40px;
         }
         
         .platform-card {
             background: var(--dark-card);
-            border-radius: 12px;
-            padding: 30px;
-            width: 250px;
+            border-radius: 25px;
+            padding: 40px;
+            width: 280px;
             text-align: center;
-            border: 1px solid var(--border);
-            transition: all 0.3s ease;
+            border: 2px solid var(--border);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
         }
-        
+
+        .platform-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient-gold);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .platform-card:hover::before {
+            transform: scaleX(1);
+        }
+
         .platform-card.youtube:hover {
             border-color: var(--youtube);
-            box-shadow: 0 10px 20px rgba(255, 0, 0, 0.1);
+            box-shadow: 0 20px 50px rgba(255, 0, 0, 0.2);
         }
-        
+
         .platform-card.facebook:hover {
             border-color: var(--facebook);
-            box-shadow: 0 10px 20px rgba(24, 119, 242, 0.1);
+            box-shadow: 0 20px 50px rgba(24, 119, 242, 0.2);
+        }
+
+        .platform-card.instagram:hover {
+            border-color: var(--instagram);
+            box-shadow: 0 20px 50px rgba(225, 48, 108, 0.2);
+        }
+        
+        .platform-card:hover {
+            transform: translateY(-15px);
         }
         
         .platform-icon {
-            font-size: 3rem;
-            margin-bottom: 20px;
+            font-size: 4rem;
+            margin-bottom: 25px;
         }
-        
+
         .platform-card.youtube .platform-icon {
             color: var(--youtube);
         }
-        
+
         .platform-card.facebook .platform-icon {
             color: var(--facebook);
         }
+
+        .platform-card.instagram .platform-icon {
+            color: var(--instagram);
+        }
         
         .platform-name {
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            color: var(--primary);
         }
         
         /* Steps */
         .steps-container {
             display: flex;
             justify-content: center;
-            gap: 40px;
+            gap: 50px;
             margin-top: 60px;
             flex-wrap: wrap;
         }
         
         .step {
             text-align: center;
-            max-width: 300px;
+            max-width: 280px;
             position: relative;
         }
         
         .step-number {
-            width: 60px;
-            height: 60px;
-            background: var(--primary);
-            color: white;
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-gold);
+            color: var(--dark);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
-            font-weight: 800;
-            margin: 0 auto 20px;
+            font-size: 2rem;
+            font-weight: 900;
+            margin: 0 auto 25px;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+            border: 3px solid var(--primary-dark);
+            position: relative;
+        }
+
+        .step-number::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 20px;
+            height: 20px;
+            background: var(--aztec-turquoise);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--aztec-turquoise);
         }
         
         .step-title {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 15px;
+            color: var(--primary);
         }
         
         /* Testimonials */
@@ -384,15 +635,22 @@
         
         .testimonial-card {
             background: var(--dark-card);
-            border-radius: 12px;
-            padding: 30px;
-            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 35px;
+            border: 2px solid var(--border);
             position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .testimonial-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.2);
         }
         
-        .testimonial-card:before {
+        .testimonial-card::before {
             content: '"';
-            font-size: 5rem;
+            font-size: 6rem;
             color: var(--primary);
             opacity: 0.2;
             position: absolute;
@@ -406,11 +664,13 @@
             margin-bottom: 20px;
             position: relative;
             z-index: 1;
+            line-height: 1.8;
         }
         
         .testimonial-author {
             font-weight: 700;
             color: var(--primary);
+            font-size: 1.1rem;
         }
         
         .testimonial-role {
@@ -428,30 +688,64 @@
         
         .metric-card {
             text-align: center;
-            padding: 30px;
+            padding: 40px;
             background: var(--dark-card);
-            border-radius: 12px;
-            border: 1px solid var(--border);
+            border-radius: 20px;
+            border: 2px solid var(--border);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '◆';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 3rem;
+            color: var(--primary);
+            opacity: 0.1;
+        }
+
+        .metric-card:hover {
+            border-color: var(--primary);
+            transform: scale(1.05);
+            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.3);
         }
         
         .metric-value {
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: 900;
-            color: var(--primary);
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
         }
         
         .metric-label {
             font-size: 1.1rem;
             color: var(--dark-light);
+            font-weight: 600;
         }
         
         /* Footer */
         .footer {
-            background: #080C14;
+            background: linear-gradient(135deg, #080604 0%, #0a0806 100%);
             padding: 60px 0 30px;
-            border-top: 1px solid var(--border);
+            border-top: 2px solid var(--primary);
             margin-top: 80px;
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-gold);
+            box-shadow: 0 0 20px var(--primary);
         }
         
         .footer-content {
@@ -462,9 +756,15 @@
         }
         
         .footer-section h3 {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             margin-bottom: 20px;
-            color: var(--primary);
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .footer-section p {
+            line-height: 1.8;
         }
         
         .footer-links {
@@ -472,17 +772,19 @@
         }
         
         .footer-links li {
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
         
         .footer-links a {
             color: var(--dark-light);
             text-decoration: none;
-            transition: color 0.3s ease;
+            transition: all 0.3s ease;
+            display: inline-block;
         }
         
         .footer-links a:hover {
             color: var(--primary);
+            transform: translateX(5px);
         }
         
         .copyright {
@@ -492,11 +794,16 @@
             color: var(--dark-light);
             font-size: 0.9rem;
         }
+
+        .copyright p:first-child {
+            color: var(--primary);
+            font-weight: 600;
+        }
         
         /* Responsive Design */
         @media (max-width: 768px) {
             .tagline {
-                font-size: 2.5rem;
+                font-size: 2.2rem;
             }
             
             .section-title {
@@ -507,10 +814,32 @@
                 flex-direction: column;
                 gap: 20px;
             }
+
+            .language-switcher {
+                top: 10px;
+                right: 10px;
+                scale: 0.9;
+            }
+
+            .lang-btn {
+                padding: 8px 15px;
+                font-size: 0.8rem;
+            }
             
             .comparison-table {
                 display: block;
                 overflow-x: auto;
+            }
+
+            .features-grid,
+            .platforms,
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+
+            .btn {
+                padding: 15px 25px;
+                font-size: 0.9rem;
             }
         }
         
@@ -518,357 +847,101 @@
         @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(40px);
             }
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-        
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
         .animate {
             animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .float {
+            animation: float 3s ease-in-out infinite;
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <div class="logo-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <div class="logo-text">
-                        <h1>A2K Guard</h1>
-                        <span>v3.8 ULTIMATE EDITION</span>
-                    </div>
-                </div>
-                <div class="badges">
-                    <div class="badge ai">
-                        <i class="fas fa-robot"></i> AI-Powered
-                    </div>
-                    <div class="badge secure">
-                        <i class="fas fa-lock"></i> Secure
-                    </div>
-                    <div class="badge fast">
-                        <i class="fas fa-bolt"></i> Fast
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content animate">
-                <h1 class="tagline">AI-Powered Contest Fraud Detection & Smart Winner Selection</h1>
-                <p class="subtitle">Revolutionary fraud detection platform combining cutting-edge AI analysis with military-grade security to ensure fair competitions on YouTube, Facebook, and Instagram Reels/Shorts.</p>
-                
-                <div class="cta-buttons">
-                    <a href="#download" class="btn btn-primary">
-                        <i class="fas fa-download"></i> Download Now
-                    </a>
-                    <a href="#features" class="btn btn-secondary">
-                        <i class="fas fa-play-circle"></i> Watch Demo
-                    </a>
-                    <a href="#documentation" class="btn btn-secondary">
-                        <i class="fas fa-book"></i> Documentation
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Why A2K Guard Section -->
-    <section id="why" class="container">
-        <h2 class="section-title animate">Why A2K Guard?</h2>
+    <div class="aztec-pattern"></div>
+    <div class="content-wrapper">
         
-        <table class="comparison-table animate">
-            <thead>
-                <tr>
-                    <th>Problem</th>
-                    <th>Traditional Methods</th>
-                    <th>A2K Guard Solution</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="problem-col">🤖 Bot Farms</td>
-                    <td>Manual review (hours)</td>
-                    <td class="solution-col">AI Behavioral Analysis (seconds)</td>
-                </tr>
-                <tr>
-                    <td class="problem-col">🎭 Duplicate Entries</td>
-                    <td>Basic keyword search</td>
-                    <td class="solution-col">Fuzzy Matching & Pattern Learning</td>
-                </tr>
-                <tr>
-                    <td class="problem-col">🏆 Selecting Winners</td>
-                    <td>Random or likes-based</td>
-                    <td class="solution-col">Smart Credibility Scoring</td>
-                </tr>
-                <tr>
-                    <td class="problem-col">📊 Fraud Detection</td>
-                    <td>Guesswork & intuition</td>
-                    <td class="solution-col">Real-time Risk Scoring</td>
-                </tr>
-                <tr>
-                    <td class="problem-col">⏱️ Time Investment</td>
-                    <td>Hours per contest</td>
-                    <td class="solution-col">Automated Analysis</td>
-                </tr>
-            </tbody>
-        </table>
-    </section>
-
-    <!-- Features Section -->
-    <section id="features">
-        <div class="container">
-            <h2 class="section-title animate">Features That Revolutionize Contest Management</h2>
-            
-            <div class="features-grid">
-                <div class="feature-card animate">
-                    <div class="feature-icon">
-                        <i class="fas fa-brain"></i>
-                    </div>
-                    <h3 class="feature-title">AI-Powered Intelligence</h3>
-                    <p class="feature-desc">Smart winner selection with AI credibility scoring, behavioral pattern recognition, and fuzzy duplicate detection across multiple languages.</p>
-                </div>
-                
-                <div class="feature-card animate">
-                    <div class="feature-icon">
-                        <i class="fas fa-film"></i>
-                    </div>
-                    <h3 class="feature-title">Platform-Specific Optimization</h3>
-                    <p class="feature-desc">Optimized for YouTube, Facebook, and Instagram Reels/Shorts with cross-platform comparison and batch processing.</p>
-                </div>
-                
-                <div class="feature-card animate">
-                    <div class="feature-icon">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                    <h3 class="feature-title">Professional-Grade Tools</h3>
-                    <p class="feature-desc">Real-time risk scoring, custom fraud rules, batch processing, scheduled scans, and export results in multiple formats.</p>
-                </div>
-                
-                <div class="feature-card animate">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3 class="feature-title">Enterprise Security</h3>
-                    <p class="feature-desc">Military-grade encryption, OAuth 2.0 authentication, auto-token refresh, and granular permission management.</p>
-                </div>
-            </div>
+        <!-- Language Switcher -->
+        <div class="language-switcher">
+            <button class="lang-btn active" data-lang="en">
+                <span class="lang-flag">🇺🇸</span>
+                <span class="lang-text">EN</span>
+            </button>
+            <button class="lang-btn" data-lang="es">
+                <span class="lang-flag">🇲🇽</span>
+                <span class="lang-text">ES</span>
+            </button>
         </div>
-    </section>
 
-    <!-- Platforms Section -->
-    <section id="platforms">
-        <div class="container">
-            <h2 class="section-title animate">Platform Support</h2>
-            
-            <div class="platforms">
-                <div class="platform-card youtube animate">
-                    <div class="platform-icon">
-                        <i class="fab fa-youtube"></i>
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <div class="logo-icon float">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="logo-text">
+                            <h1>A2K Guard</h1>
+                            <span>v3.8 ULTIMATE EDITION</span>
+                        </div>
                     </div>
-                    <h3 class="platform-name">YouTube</h3>
-                    <p class="feature-desc">Videos, Shorts, and Live streams with full comment analysis and engagement tracking.</p>
-                </div>
-                
-                <div class="platform-card facebook animate">
-                    <div class="platform-icon">
-                        <i class="fab fa-facebook"></i>
-                    </div>
-                    <h3 class="platform-name">Facebook</h3>
-                    <p class="feature-desc">Posts, Reels, Groups, and Pages with comprehensive fraud detection across all comment types.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Get Started Section -->
-    <section id="get-started">
-        <div class="container">
-            <h2 class="section-title animate">Get Started in 3 Steps</h2>
-            
-            <div class="steps-container">
-                <div class="step animate">
-                    <div class="step-number">1</div>
-                    <h3 class="step-title">🔗 Paste URL</h3>
-                    <p class="feature-desc">Any YouTube or Facebook post, video, or reel URL</p>
-                </div>
-                
-                <div class="step animate">
-                    <div class="step-number">2</div>
-                    <h3 class="step-title">🤖 AI Analysis</h3>
-                    <p class="feature-desc">Our algorithms scan for fraud, bots, and suspicious patterns</p>
-                </div>
-                
-                <div class="step animate">
-                    <div class="step-number">3</div>
-                    <h3 class="step-title">🏆 Pick Winners</h3>
-                    <p class="feature-desc">Select from verified, credible candidates with confidence</p>
-                </div>
-            </div>
-            
-            <div class="cta-buttons" style="margin-top: 60px;">
-                <a href="#download" class="btn btn-primary" style="font-size: 1.2rem; padding: 18px 40px;">
-                    <i class="fas fa-rocket"></i> Start Free Trial
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Metrics Section -->
-    <section id="metrics">
-        <div class="container">
-            <h2 class="section-title animate">The Numbers Speak</h2>
-            
-            <div class="metrics">
-                <div class="metric-card animate">
-                    <div class="metric-value">1,500+</div>
-                    <div class="metric-label">Comments Analyzed Per Scan</div>
-                </div>
-                
-                <div class="metric-card animate">
-                    <div class="metric-value">2-3 min</div>
-                    <div class="metric-label">Average Analysis Speed</div>
-                </div>
-                
-                <div class="metric-card animate">
-                    <div class="metric-value">94%+</div>
-                    <div class="metric-label">Detection Accuracy</div>
-                </div>
-                
-                <div class="metric-card animate">
-                    <div class="metric-value">2+</div>
-                    <div class="metric-label">Platforms Supported</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonials Section -->
-    <section id="testimonials">
-        <div class="container">
-            <h2 class="section-title animate">What Users Say</h2>
-            
-            <div class="testimonials">
-                <div class="testimonial-card animate">
-                    <p class="testimonial-text">"A2K Guard saved our $10,000 giveaway from being dominated by bots. The winner credibility scoring is genius!"</p>
-                    <div class="testimonial-author">Marketing Director</div>
-                    <div class="testimonial-role">Tech Startup</div>
-                </div>
-                
-                <div class="testimonial-card animate">
-                    <p class="testimonial-text">"We run 50+ contests monthly. This tool cut our verification time from hours to minutes."</p>
-                    <div class="testimonial-author">Social Media Agency Owner</div>
-                    <div class="testimonial-role">Digital Marketing Agency</div>
-                </div>
-                
-                <div class="testimonial-card animate">
-                    <p class="testimonial-text">"The fuzzy duplicate detection caught entries we would have never found manually. Game changer!"</p>
-                    <div class="testimonial-author">YouTube Creator</div>
-                    <div class="testimonial-role">2M Subscribers</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>A2K Guard</h3>
-                    <p>AI-powered contest fraud detection platform ensuring fair competitions and legitimate winners.</p>
-                    <div class="badges" style="margin-top: 20px;">
-                        <div class="badge ai">MIT Licensed</div>
+                    <div class="badges">
+                        <div class="badge ai">
+                            <i class="fas fa-robot"></i> 
+                            <span data-en="AI-Powered" data-es="Impulsado por IA">AI-Powered</span>
+                        </div>
+                        <div class="badge secure">
+                            <i class="fas fa-lock"></i> 
+                            <span data-en="Secure" data-es="Seguro">Secure</span>
+                        </div>
+                        <div class="badge fast">
+                            <i class="fas fa-bolt"></i> 
+                            <span data-en="Fast" data-es="Rápido">Fast</span>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="footer-section">
-                    <h3>Quick Links</h3>
-                    <ul class="footer-links">
-                        <li><a href="#download">Download</a></li>
-                        <li><a href="#documentation">Documentation</a></li>
-                        <li><a href="#pricing">Pricing</a></li>
-                        <li><a href="#support">Support</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-section">
-                    <h3>Resources</h3>
-                    <ul class="footer-links">
-                        <li><a href="#blog">Blog</a></li>
-                        <li><a href="#community">Community</a></li>
-                        <li><a href="#api">API</a></li>
-                        <li><a href="#github">GitHub</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-section">
-                    <h3>Contact</h3>
-                    <ul class="footer-links">
-                        <li><a href="mailto:support@a2kguard.com">support@a2kguard.com</a></li>
-                        <li><a href="#twitter">Twitter</a></li>
-                        <li><a href="#discord">Discord</a></li>
-                    </ul>
-                </div>
             </div>
-            
-            <div class="copyright">
-                <p>&copy; 2024 A2K Guard v3.8 ULTIMATE EDITION. All rights reserved.</p>
-                <p style="margin-top: 10px; font-size: 0.8rem; opacity: 0.7;">Because in a world of bots, authenticity deserves protection.</p>
-            </div>
-        </div>
-    </footer>
+        </header>
 
-    <script>
-        // Simple animation on scroll
-        document.addEventListener('DOMContentLoaded', function() {
-            const animatedElements = document.querySelectorAll('.animate');
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }
-                });
-            }, {
-                threshold: 0.1
-            });
-            
-            animatedElements.forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(30px)';
-                el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-                observer.observe(el);
-            });
-            
-            // Smooth scrolling for anchor links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content animate">
+                    <h1 class="tagline">
+                        <span data-en="AI-Powered Contest Fraud Detection & Smart Winner Selection" 
+                              data-es="Detección de Fraude en Concursos con IA y Selección Inteligente de Ganadores">
+                            AI-Powered Contest Fraud Detection & Smart Winner Selection
+                        </span>
+                    </h1>
+                    <p class="subtitle">
+                        <span data-en="Revolutionary fraud detection platform combining cutting-edge AI analysis with military-grade security to ensure fair competitions on YouTube, Facebook, and Instagram Reels/Shorts." 
+                              data-es="Plataforma revolucionaria de detección de fraude que combina análisis de IA de vanguardia con seguridad de grado militar para garantizar competencias justas en YouTube, Facebook e Instagram Reels/Shorts.">
+                            Revolutionary fraud detection platform combining cutting-edge AI analysis with military-grade security to ensure fair competitions on YouTube, Facebook, and Instagram Reels/Shorts.
+                        </span>
+                    </p>
                     
-                    const targetId = this.getAttribute('href');
-                    if (targetId === '#') return;
-                    
-                    const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        window.scrollTo({
-                            top: targetElement.offsetTop - 80,
-                            behavior: 'smooth'
-                        });
-                    }
-                });
-            });
-        });
-    </script>
-</body>
-</html>
+                    <div class="cta-buttons">
+                        <a href="#download" class="btn btn-primary">
+                            <i class="fas fa-download"></i> 
+                            <span data-en="Download Now" data-es="Descargar Ahora">Download Now</span>
+                        </a>
+                        <a href="#features" class="btn btn-secondary">
+                            <i class="fas fa-play-circle"></i> 
+                            <span data-en="Watch Demo" data-es="Ver Demo">Watch Demo</span>
+                        </a>
+                        <a href="#documentation" class="btn btn-secondary">
+                            <i class="fas fa-book"></i> 
+                            <span data-en="Documentation" data-es="Documentación">Documentation
