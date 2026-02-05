@@ -1,11 +1,12 @@
 #Requires -RunAsAdministrator
 
 # ============================================================================
-# CONFIGURATION - Update these with your RAW GitHub links
+# CONFIGURATION - Fixed for a2k-lat-site Repo
 # ============================================================================
-$Wall1Url = "https://a2k.lat/wall1.jpg"
-$Wall2Url = "https://a2k.lat/wall2.jpg"
-$Wall3Url = "https://a2k.lat/wall3.jpg"
+$BaseUrl = "https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main"
+$Wall1Url = "$BaseUrl/wall1.jpg"
+$Wall2Url = "$BaseUrl/wall2.jpg"
+$Wall3Url = "$BaseUrl/wall3.jpg"
 
 # ============================================================================
 # MENU SYSTEM
@@ -35,9 +36,10 @@ function Set-A2KWallpapers {
     $Path = "$env:USERPROFILE\Pictures"
     
     try {
-        Invoke-WebRequest -Uri $Wall1Url -OutFile "$Path\wall1.jpg" -ErrorAction SilentlyContinue
-        Invoke-WebRequest -Uri $Wall2Url -OutFile "$Path\wall2.jpg" -ErrorAction SilentlyContinue
-        Invoke-WebRequest -Uri $Wall3Url -OutFile "$Path\wall3.jpg" -ErrorAction SilentlyContinue
+        # Force download using the confirmed Raw URLs
+        Invoke-WebRequest -Uri $Wall1Url -OutFile "$Path\wall1.jpg" -ErrorAction Stop
+        Invoke-WebRequest -Uri $Wall2Url -OutFile "$Path\wall2.jpg" -ErrorAction Stop
+        Invoke-WebRequest -Uri $Wall3Url -OutFile "$Path\wall3.jpg" -ErrorAction Stop
 
         $Definition = @'
         using System;
@@ -52,7 +54,7 @@ function Set-A2KWallpapers {
             [ComImport, Guid("C2CF3110-460E-4fc1-B9D0-8A1C0C9CC434")] public class DesktopWallpaperClass {}
         }
 '@
-        Add-Type -TypeDefinition $Definition
+        Add-Type -TypeDefinition $Definition -ErrorAction SilentlyContinue
         $DesktopWallpaper = New-Object Wallpaper.DesktopWallpaperClass
         $Wallpapers = @("$Path\wall1.jpg", "$Path\wall2.jpg", "$Path\wall3.jpg")
         
@@ -64,14 +66,14 @@ function Set-A2KWallpapers {
                 $DesktopWallpaper.SetWallpaper($MonitorID, $Wallpapers[$WallIndex])
             }
         }
-        Write-Host "✓ Triple Wallpapers Applied!" -ForegroundColor Green
+        Write-Host "✓ Triple Wallpapers Applied Successfully!" -ForegroundColor Green
     } catch {
-        Write-Host "✗ Error setting wallpapers. Check your image URLs." -ForegroundColor Red
+        Write-Host "✗ Error: Could not download wallpapers. Ensure files are in 'a2k-lat-site' repo." -ForegroundColor Red
     }
 }
 
 function Install-Software {
-    Write-Host "`n[!] Installing Software Suite via Winget..." -ForegroundColor Yellow
+    Write-Host "`n[!] Initializing Winget..." -ForegroundColor Yellow
     winget source update --source winget
 
     $programs = @(
@@ -94,7 +96,6 @@ function Install-Software {
         winget install --id $program.ID --source winget --silent --accept-package-agreements --accept-source-agreements
     }
 
-    # Pin Chrome to Taskbar
     $chromePath = "C:\Program Files\Google\Chrome\Application\chrome.exe"
     if (Test-Path $chromePath) {
         $shell = New-Object -ComObject Shell.Application
@@ -105,16 +106,15 @@ function Install-Software {
 }
 
 function Remove-Bloatware {
-    Write-Host "`n[!] Stripping Windows Bloatware..." -ForegroundColor Yellow
+    Write-Host "`n[!] Removing Bloatware..." -ForegroundColor Yellow
     $bloat = @("Microsoft.GamingApp", "Microsoft.XboxApp", "Microsoft.Xbox.TCUI", "Microsoft.XboxGameOverlay", "Microsoft.MicrosoftSolitaireCollection", "MicrosoftTeams", "Microsoft.Teams", "Microsoft.MicrosoftOfficeHub")
     foreach ($app in $bloat) {
         Get-AppxPackage -Name $app -AllUsers | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue
-        Get-AppxProvisionedPackage -Online | Where-Object DisplayName -eq $app | Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue
     }
 }
 
 function Apply-Tweaks {
-    Write-Host "`n[!] Applying UI & Explorer Customization..." -ForegroundColor Yellow
+    Write-Host "`n[!] Applying UI Tweaks..." -ForegroundColor Yellow
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Value 0 -Force
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "SystemUsesLightTheme" -Value 0 -Force
     $RegPath = "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32"
@@ -129,28 +129,20 @@ function Apply-Tweaks {
     Set-ItemProperty -Path "HKCU:\AppEvents\Schemes" -Name "(Default)" -Value ".None" -Force
 }
 
-function Apply-Performance {
-    Write-Host "`n[!] Optimizing Performance..." -ForegroundColor Yellow
-    powercfg /setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
-    powercfg /x -timeout-ac-sleep 0
-    Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "AllowTelemetry" -Value 0 -Force
-}
-
 # ============================================================================
-# EXECUTION LOOP
+# EXECUTION
 # ============================================================================
 do {
     Show-Menu
     $choice = Read-Host "`nSelect an option (1-8)"
     switch ($choice) {
-        '1' { Install-Software; Remove-Bloatware; Apply-Tweaks; Set-A2KWallpapers; Apply-Performance; Write-Host "`nFULL SETUP COMPLETE!" -ForegroundColor Cyan; pause }
+        '1' { Install-Software; Remove-Bloatware; Apply-Tweaks; Set-A2KWallpapers; pause }
         '2' { Install-Software; pause }
         '3' { Remove-Bloatware; pause }
         '4' { Apply-Tweaks; pause }
         '5' { Set-A2KWallpapers; pause }
-        '6' { Apply-Performance; pause }
+        '6' { powercfg /setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c; pause }
         '7' { winget upgrade --all; pause }
         '8' { break }
-        default { Write-Host "Invalid Selection." -ForegroundColor Red; Start-Sleep -Seconds 1 }
     }
 } while ($choice -ne '8')
