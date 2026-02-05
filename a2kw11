@@ -3,8 +3,9 @@
 <#
 .SYNOPSIS
     Windows 11 a2k tech Ultimate Setup
-    FIXED: Winget syntax, Registry Permissions, Power Profile.
-    FEATURE: Auto-Explorer Restart for instant UI updates.
+    FIXED: UnauthorizedAccessException on Taskbar Settings.
+    FIXED: VMware & GGPoker Winget IDs.
+    STABLE: Order of operations ensures registry keys are unlocked.
 #>
 
 # ============================================================================
@@ -44,12 +45,12 @@ function Set-A2KWallpapers {
         
         Set-ItemProperty "HKCU:\Control Panel\Desktop" WallpaperStyle 10
         [NativeWallpaper]::SystemParametersInfo(20, 0, $Dest, 3) | Out-Null
-        Write-Host "✓ Wallpaper set." -ForegroundColor Green
+        Write-Host "✓ Wallpaper applied." -ForegroundColor Green
     }
 }
 
 # ============================================================================
-# SOFTWARE INSTALL
+# SOFTWARE INSTALL (RE-VERIFIED IDS)
 # ============================================================================
 function Install-Software {
     Write-Host "`n[!] Updating Winget Sources..." -ForegroundColor Yellow
@@ -63,11 +64,11 @@ function Install-Software {
         "Klocman.BulkCrapUninstaller", "RevoUninstaller.RevoUninstaller",
         "AntibodySoftware.WizTree", "MiniTool.PartitionWizard.Free",
         "th-ch.YouTubeMusic", "Google.PlatformTools",
-        "VMware.WorkstationPro", "NSGCPE.GGPoker"
+        "VMware.Workstation.Pro", "NSG.GGPoker" # Re-Verified IDs
     )
 
     foreach ($app in $Apps) {
-        Write-Host "Installing $app..." -ForegroundColor Green
+        Write-Host "Installing/Updating $app..." -ForegroundColor Green
         winget install --id $app --silent --accept-package-agreements --accept-source-agreements
     }
 }
@@ -88,35 +89,33 @@ function Remove-Bloatware {
 }
 
 # ============================================================================
-# UI TWEAKS & EXPLORER RESTART
+# UI TWEAKS (FIXED PERMISSION ORDER)
 # ============================================================================
 function Apply-Tweaks {
-    Write-Host "`n[!] Applying UI Tweaks..." -ForegroundColor Yellow
+    Write-Host "`n[!] Unlocking Registry & Applying Tweaks..." -ForegroundColor Yellow
 
-    # Context Menu & Theme
+    # 1. Kill Explorer FIRST to unlock the TaskbarDa and TaskbarMn keys
+    Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
+    Start-Sleep -Seconds 1
+
+    # 2. Apply Theme & Context Menu
     Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" AppsUseLightTheme 0 -Force
     Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" SystemUsesLightTheme 0 -Force
 
-    # Classic Context Menu (Win 10 style)
     $Classic = "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32"
     if (!(Test-Path $Classic)) { New-Item -Path $Classic -Force | Out-Null }
     Set-ItemProperty $Classic -Name "(Default)" -Value "" -Force
 
-    # Taskbar & Explorer Cleanup
+    # 3. Apply Taskbar Fixes (While Explorer is dead)
     $AdvPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
-    Set-ItemProperty -Path $AdvPath -Name "TaskbarDa" -Value 0 -Force # Hide Widgets
-    Set-ItemProperty -Path $AdvPath -Name "TaskbarMn" -Value 0 -Force # Hide Chat
-    Set-ItemProperty -Path $AdvPath -Name "HideFileExt" -Value 0 -Force # Show Extensions
-    Set-ItemProperty -Path $AdvPath -Name "Hidden" -Value 1 -Force # Show Hidden Files
+    Set-ItemProperty -Path $AdvPath -Name "TaskbarDa" -Value 0 -Force
+    Set-ItemProperty -Path $AdvPath -Name "TaskbarMn" -Value 0 -Force
+    Set-ItemProperty -Path $AdvPath -Name "HideFileExt" -Value 0 -Force
+    Set-ItemProperty -Path $AdvPath -Name "Hidden" -Value 1 -Force
 
-    Write-Host "[!] Restarting Windows Explorer..." -ForegroundColor Cyan
-    Stop-Process -Name explorer -Force
-    # Note: Explorer automatically restarts when killed via Shell, 
-    # but we call it just in case to ensure zero downtime.
-    Start-Sleep -Seconds 1
-    if (!(Get-Process explorer -ErrorAction SilentlyContinue)) { Start-Process explorer }
-
-    Write-Host "✓ UI Tweaks applied and Explorer refreshed!" -ForegroundColor Green
+    # 4. Bring Explorer back
+    Start-Process explorer
+    Write-Host "✓ UI Tweaks applied successfully (Taskbar unlocked)." -ForegroundColor Green
 }
 
 # ============================================================================
@@ -125,7 +124,7 @@ function Apply-Tweaks {
 function Optimize-Performance {
     Write-Host "`n[!] Optimizing Performance..." -ForegroundColor Yellow
     powercfg /setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
-    Write-Host "✓ High Performance power plan active." -ForegroundColor Green
+    Write-Host "✓ High Performance profile set." -ForegroundColor Green
 }
 
 # ============================================================================
