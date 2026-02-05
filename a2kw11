@@ -3,7 +3,8 @@
 <#
 .SYNOPSIS
     Windows 11 a2k tech Ultimate Setup
-    FIXED: Winget syntax, Registry Permissions, and Power Profile.
+    FIXED: Winget syntax, Registry Permissions, Power Profile.
+    FEATURE: Auto-Explorer Restart for instant UI updates.
 #>
 
 # ============================================================================
@@ -48,11 +49,10 @@ function Set-A2KWallpapers {
 }
 
 # ============================================================================
-# SOFTWARE INSTALL (FIXED IDS)
+# SOFTWARE INSTALL
 # ============================================================================
 function Install-Software {
     Write-Host "`n[!] Updating Winget Sources..." -ForegroundColor Yellow
-    # Fixed syntax: Removed the extra '--source' flag that caused your error
     winget source update
 
     $Apps = @(
@@ -63,7 +63,7 @@ function Install-Software {
         "Klocman.BulkCrapUninstaller", "RevoUninstaller.RevoUninstaller",
         "AntibodySoftware.WizTree", "MiniTool.PartitionWizard.Free",
         "th-ch.YouTubeMusic", "Google.PlatformTools",
-        "VMware.WorkstationPro", "NSGCPE.GGPoker" # Updated IDs
+        "VMware.WorkstationPro", "NSGCPE.GGPoker"
     )
 
     foreach ($app in $Apps) {
@@ -88,7 +88,7 @@ function Remove-Bloatware {
 }
 
 # ============================================================================
-# UI TWEAKS (FIXED PERMISSIONS)
+# UI TWEAKS & EXPLORER RESTART
 # ============================================================================
 function Apply-Tweaks {
     Write-Host "`n[!] Applying UI Tweaks..." -ForegroundColor Yellow
@@ -97,25 +97,33 @@ function Apply-Tweaks {
     Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" AppsUseLightTheme 0 -Force
     Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" SystemUsesLightTheme 0 -Force
 
-    # Classic Context Menu
+    # Classic Context Menu (Win 10 style)
     $Classic = "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32"
     if (!(Test-Path $Classic)) { New-Item -Path $Classic -Force | Out-Null }
     Set-ItemProperty $Classic -Name "(Default)" -Value "" -Force
 
-    # Fix for UnauthorizedAccessException: Ensure key exists before writing
+    # Taskbar & Explorer Cleanup
     $AdvPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
-    Set-ItemProperty -Path $AdvPath -Name "TaskbarDa" -Value 0 -Force # Widgets
-    Set-ItemProperty -Path $AdvPath -Name "TaskbarMn" -Value 0 -Force # Chat
-    
-    Write-Host "✓ UI Tweaks applied. Restart Explorer for changes." -ForegroundColor Green
+    Set-ItemProperty -Path $AdvPath -Name "TaskbarDa" -Value 0 -Force # Hide Widgets
+    Set-ItemProperty -Path $AdvPath -Name "TaskbarMn" -Value 0 -Force # Hide Chat
+    Set-ItemProperty -Path $AdvPath -Name "HideFileExt" -Value 0 -Force # Show Extensions
+    Set-ItemProperty -Path $AdvPath -Name "Hidden" -Value 1 -Force # Show Hidden Files
+
+    Write-Host "[!] Restarting Windows Explorer..." -ForegroundColor Cyan
+    Stop-Process -Name explorer -Force
+    # Note: Explorer automatically restarts when killed via Shell, 
+    # but we call it just in case to ensure zero downtime.
+    Start-Sleep -Seconds 1
+    if (!(Get-Process explorer -ErrorAction SilentlyContinue)) { Start-Process explorer }
+
+    Write-Host "✓ UI Tweaks applied and Explorer refreshed!" -ForegroundColor Green
 }
 
 # ============================================================================
-# PERFORMANCE (FIXED POWERCFG)
+# PERFORMANCE
 # ============================================================================
 function Optimize-Performance {
     Write-Host "`n[!] Optimizing Performance..." -ForegroundColor Yellow
-    # Set to High Performance
     powercfg /setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
     Write-Host "✓ High Performance power plan active." -ForegroundColor Green
 }
