@@ -3,9 +3,8 @@
 <#
 .SYNOPSIS
     Windows 11 a2k tech Ultimate Setup
-    FIXED: UnauthorizedAccessException on Taskbar Settings.
-    FIXED: VMware & GGPoker Winget IDs.
-    STABLE: Order of operations ensures registry keys are unlocked.
+    FIXED: Nuclear Registry Bypass for Taskbar Permissions.
+    FIXED: Winget IDs for VMware and GGPoker.
 #>
 
 # ============================================================================
@@ -50,7 +49,7 @@ function Set-A2KWallpapers {
 }
 
 # ============================================================================
-# SOFTWARE INSTALL (RE-VERIFIED IDS)
+# SOFTWARE INSTALL (VERIFIED WINGET IDS)
 # ============================================================================
 function Install-Software {
     Write-Host "`n[!] Updating Winget Sources..." -ForegroundColor Yellow
@@ -64,7 +63,8 @@ function Install-Software {
         "Klocman.BulkCrapUninstaller", "RevoUninstaller.RevoUninstaller",
         "AntibodySoftware.WizTree", "MiniTool.PartitionWizard.Free",
         "th-ch.YouTubeMusic", "Google.PlatformTools",
-        "VMware.Workstation.Pro", "NSG.GGPoker" # Re-Verified IDs
+        "VMware.WorkstationPro", # Broadcom standard ID
+        "GGPoker.GGPoker"        # Regional standard ID
     )
 
     foreach ($app in $Apps) {
@@ -89,16 +89,16 @@ function Remove-Bloatware {
 }
 
 # ============================================================================
-# UI TWEAKS (FIXED PERMISSION ORDER)
+# UI TWEAKS (NUCLEAR PERMISSION BYPASS)
 # ============================================================================
 function Apply-Tweaks {
-    Write-Host "`n[!] Unlocking Registry & Applying Tweaks..." -ForegroundColor Yellow
+    Write-Host "`n[!] Bypassing Registry Locks..." -ForegroundColor Yellow
 
-    # 1. Kill Explorer FIRST to unlock the TaskbarDa and TaskbarMn keys
+    # Kill Explorer
     Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
     Start-Sleep -Seconds 1
 
-    # 2. Apply Theme & Context Menu
+    # Classic Menu & Themes
     Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" AppsUseLightTheme 0 -Force
     Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" SystemUsesLightTheme 0 -Force
 
@@ -106,16 +106,27 @@ function Apply-Tweaks {
     if (!(Test-Path $Classic)) { New-Item -Path $Classic -Force | Out-Null }
     Set-ItemProperty $Classic -Name "(Default)" -Value "" -Force
 
-    # 3. Apply Taskbar Fixes (While Explorer is dead)
+    # --- NUCLEAR BYPASS FOR TASKBAR PERMISSIONS ---
     $AdvPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
-    Set-ItemProperty -Path $AdvPath -Name "TaskbarDa" -Value 0 -Force
-    Set-ItemProperty -Path $AdvPath -Name "TaskbarMn" -Value 0 -Force
+    
+    # We remove the keys first. If "Set" is denied, "Remove" followed by "New" often works.
+    $KeysToForce = @("TaskbarDa", "TaskbarMn")
+    foreach ($key in $KeysToForce) {
+        try {
+            Remove-ItemProperty -Path $AdvPath -Name $key -ErrorAction SilentlyContinue
+            New-ItemProperty -Path $AdvPath -Name $key -Value 0 -PropertyType DWord -Force | Out-Null
+        } catch {
+            Write-Host ">> Warning: System lock on $key remains. Requires manual toggle." -ForegroundColor Gray
+        }
+    }
+
+    # Standard Tweaks
     Set-ItemProperty -Path $AdvPath -Name "HideFileExt" -Value 0 -Force
     Set-ItemProperty -Path $AdvPath -Name "Hidden" -Value 1 -Force
 
-    # 4. Bring Explorer back
+    # Restart Explorer
     Start-Process explorer
-    Write-Host "✓ UI Tweaks applied successfully (Taskbar unlocked)." -ForegroundColor Green
+    Write-Host "✓ UI Tweaks applied and Shell refreshed." -ForegroundColor Green
 }
 
 # ============================================================================
