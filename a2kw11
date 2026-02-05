@@ -3,8 +3,8 @@
 <#
 .SYNOPSIS
     Windows 11 a2k tech Ultimate Setup
+    TARGETED BLOATWARE: Bing, News, Teams, Todo, Phone Link.
     FIXED: Nuclear Registry Bypass for Taskbar Permissions.
-    FIXED: Winget IDs for VMware and GGPoker.
 #>
 
 # ============================================================================
@@ -17,7 +17,7 @@ function Show-Menu {
     Write-Host "========================================" -ForegroundColor Cyan
     Write-Host " 1) FULL AUTO-SETUP (The Works)"
     Write-Host " 2) Install Software Suite"
-    Write-Host " 3) Remove Bloatware"
+    Write-Host " 3) Remove Bloatware (News, Bing, Teams, etc.)"
     Write-Host " 4) UI Tweaks & Classic Menus"
     Write-Host " 5) Set Wallpaper (Win32)"
     Write-Host " 6) Optimize Power & Performance"
@@ -49,7 +49,7 @@ function Set-A2KWallpapers {
 }
 
 # ============================================================================
-# SOFTWARE INSTALL (VERIFIED WINGET IDS)
+# SOFTWARE INSTALL
 # ============================================================================
 function Install-Software {
     Write-Host "`n[!] Updating Winget Sources..." -ForegroundColor Yellow
@@ -63,8 +63,7 @@ function Install-Software {
         "Klocman.BulkCrapUninstaller", "RevoUninstaller.RevoUninstaller",
         "AntibodySoftware.WizTree", "MiniTool.PartitionWizard.Free",
         "th-ch.YouTubeMusic", "Google.PlatformTools",
-        "VMware.WorkstationPro", # Broadcom standard ID
-        "GGPoker.GGPoker"        # Regional standard ID
+        "VMware.WorkstationPro", "GGPoker.GGPoker"
     )
 
     foreach ($app in $Apps) {
@@ -74,25 +73,39 @@ function Install-Software {
 }
 
 # ============================================================================
-# BLOATWARE REMOVAL
+# BLOATWARE REMOVAL (NEW TARGETS)
 # ============================================================================
 function Remove-Bloatware {
-    Write-Host "`n[!] Stripping Windows Bloatware..." -ForegroundColor Yellow
+    Write-Host "`n[!] Stripping Targeted Bloatware..." -ForegroundColor Yellow
+    
     $Bloat = @(
-        "Microsoft.GamingApp", "Microsoft.XboxApp", "Microsoft.Xbox.TCUI",
-        "Microsoft.XboxGameOverlay", "Microsoft.MicrosoftSolitaireCollection",
-        "MicrosoftTeams", "Microsoft.Teams", "Microsoft.MicrosoftOfficeHub"
+        "Microsoft.BingNews",              # Microsoft News
+        "Microsoft.BingWeather",           # Bing Weather
+        "Microsoft.BingSearch",            # Bing Search App
+        "MicrosoftTeams",                  # Teams (Consumer)
+        "Microsoft.Teams",                 # Teams (Work)
+        "Microsoft.Todos",                 # Microsoft To Do
+        "Microsoft.YourPhone",             # Phone Link
+        "Microsoft.GamingApp",             # Xbox App
+        "Microsoft.XboxApp",
+        "Microsoft.MicrosoftSolitaireCollection",
+        "Microsoft.MicrosoftOfficeHub"     # Office App
     )
+
     foreach ($pkg in $Bloat) {
+        Write-Host "Removing $pkg..." -ForegroundColor Gray
         Get-AppxPackage -Name $pkg -AllUsers | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue
     }
+
+    # Specifically targeting the "WebSearch" (Bing in Start Menu)
+    Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Name "DisableSearchBoxSuggestions" -Value 1 -ErrorAction SilentlyContinue
 }
 
 # ============================================================================
 # UI TWEAKS (NUCLEAR PERMISSION BYPASS)
 # ============================================================================
 function Apply-Tweaks {
-    Write-Host "`n[!] Bypassing Registry Locks..." -ForegroundColor Yellow
+    Write-Host "`n[!] Refreshing Shell & Bypassing Registry Locks..." -ForegroundColor Yellow
 
     # Kill Explorer
     Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
@@ -106,21 +119,21 @@ function Apply-Tweaks {
     if (!(Test-Path $Classic)) { New-Item -Path $Classic -Force | Out-Null }
     Set-ItemProperty $Classic -Name "(Default)" -Value "" -Force
 
-    # --- NUCLEAR BYPASS FOR TASKBAR PERMISSIONS ---
+    # --- TASKBAR PERMISSION BYPASS ---
     $AdvPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+    $KeysToForce = @("TaskbarDa", "TaskbarMn") # Widgets and Chat
     
-    # We remove the keys first. If "Set" is denied, "Remove" followed by "New" often works.
-    $KeysToForce = @("TaskbarDa", "TaskbarMn")
     foreach ($key in $KeysToForce) {
         try {
+            # Try to force delete the property before recreating it
             Remove-ItemProperty -Path $AdvPath -Name $key -ErrorAction SilentlyContinue
             New-ItemProperty -Path $AdvPath -Name $key -Value 0 -PropertyType DWord -Force | Out-Null
         } catch {
-            Write-Host ">> Warning: System lock on $key remains. Requires manual toggle." -ForegroundColor Gray
+            # If still fails, try setting directly one last time
+            Set-ItemProperty -Path $AdvPath -Name $key -Value 0 -Force -ErrorAction SilentlyContinue
         }
     }
 
-    # Standard Tweaks
     Set-ItemProperty -Path $AdvPath -Name "HideFileExt" -Value 0 -Force
     Set-ItemProperty -Path $AdvPath -Name "Hidden" -Value 1 -Force
 
