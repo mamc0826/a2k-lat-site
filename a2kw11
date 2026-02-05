@@ -3,8 +3,8 @@
 <#
 .SYNOPSIS
     Windows 11 a2k tech Ultimate Setup
-    COM-FREE / Win32-only / Fresh-install safe
-    SINGLE WALLPAPER EDITION: Applies wall1.jpg to all monitors.
+    FIXED: Single Wallpaper Edition (No Canvas Math)
+    Uses pure Win32 to set wall1.jpg across all screens.
 #>
 
 # ============================================================================
@@ -19,47 +19,22 @@ function Show-Menu {
     Write-Host " 2) Install Software Suite"
     Write-Host " 3) Remove Bloatware"
     Write-Host " 4) UI Tweaks & Classic Menus"
-    Write-Host " 5) Set Single Wallpaper (Win32)"
+    Write-Host " 5) Set Single Wallpaper (Win32 Fix)"
     Write-Host " 6) Optimize Power & Performance"
     Write-Host " 7) Update All Apps & Drivers"
     Write-Host " 8) Exit"
-    Write-Host "----------------------------------------"
-    Write-Host " [!] Hidden: Type '9t' to Test Monitor Math" -ForegroundColor DarkGray
     Write-Host "========================================" -ForegroundColor Cyan
 }
 
 # ============================================================================
-# OPTION 9t – TEST THE MONITOR COORDINATES
-# ============================================================================
-function Test-9t {
-    Write-Host "`n[9t] DIAGNOSING MONITOR TOPOLOGY..." -ForegroundColor Magenta
-    Add-Type -AssemblyName System.Windows.Forms
-    $screens = [System.Windows.Forms.Screen]::AllScreens
-    
-    $minX = ($screens | ForEach-Object { $_.Bounds.X } | Measure-Object -Minimum).Minimum
-    $minY = ($screens | ForEach-Object { $_.Bounds.Y } | Measure-Object -Minimum).Minimum
-    $maxX = ($screens | ForEach-Object { $_.Bounds.X + $_.Bounds.Width } | Measure-Object -Maximum).Maximum
-    $maxY = ($screens | ForEach-Object { $_.Bounds.Y + $_.Bounds.Height } | Measure-Object -Maximum).Maximum
-
-    Write-Host "Virtual Desktop Size: $($maxX - $minX) x $($maxY - $minY)" -ForegroundColor Cyan
-    Write-Host "Virtual Origin: X=$minX, Y=$minY" -ForegroundColor Gray
-    
-    foreach ($s in $screens) {
-        Write-Host " >> $($s.DeviceName) | Bounds: $($s.Bounds.Width)x$($s.Bounds.Height) | Start: $($s.Bounds.X),$($s.Bounds.Y)"
-    }
-    Write-Host "`n✓ Math check complete." -ForegroundColor Green
-}
-
-# ============================================================================
-# OPTION 5 – SINGLE WALLPAPER ENGINE (WIN32 STITCHED)
+# OPTION 5 – SIMPLE WIN32 WALLPAPER (NO MATH, NO CRASH)
 # ============================================================================
 function Set-A2KWallpapers {
-    Write-Host "`n[!] Initializing Win32 Wallpaper Engine (Single Image)..." -ForegroundColor Yellow
+    Write-Host "`n[!] Setting Wallpaper..." -ForegroundColor Yellow
 
     $WallDir = "$env:USERPROFILE\Pictures\a2k_walls"
     if (!(Test-Path $WallDir)) { New-Item -ItemType Directory -Path $WallDir -Force | Out-Null }
 
-    # ---- Only Download wall1 ----
     $Url = "https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main/wall1.jpg"
     $Dest = "$WallDir\wall1.jpg"
     
@@ -67,44 +42,13 @@ function Set-A2KWallpapers {
     curl.exe -L -s -o $Dest $Url
 
     if (!(Test-Path $Dest)) { 
-        Write-Host "✗ Download failed. Check your GitHub link." -ForegroundColor Red
+        Write-Host "✗ Download failed. Check internet/link." -ForegroundColor Red
         return 
     }
 
-    # ---- Load assemblies ----
-    Add-Type -AssemblyName System.Windows.Forms, System.Drawing
-    $screens = [System.Windows.Forms.Screen]::AllScreens
-
-    # ---- Calculate virtual desktop bounds ----
-    $minX = ($screens | ForEach-Object { $_.Bounds.X } | Measure-Object -Minimum).Minimum
-    $minY = ($screens | ForEach-Object { $_.Bounds.Y } | Measure-Object -Minimum).Minimum
-    $maxX = ($screens | ForEach-Object { $_.Bounds.X + $_.Bounds.Width } | Measure-Object -Maximum).Maximum
-    $maxY = ($screens | ForEach-Object { $_.Bounds.Y + $_.Bounds.Height } | Measure-Object -Maximum).Maximum
-
-    $totalWidth  = $maxX - $minX
-    $totalHeight = $maxY - $minY
-
-    # ---- Create canvas ----
-    $canvas = New-Object System.Drawing.Bitmap $totalWidth, $totalHeight
-    $gfx = [System.Drawing.Graphics]::FromImage($canvas)
-    $gfx.Clear([System.Drawing.Color]::Black)
-
-    # ---- Draw wall1 on EVERY monitor ----
-    $img = [System.Drawing.Image]::FromFile($Dest)
-    for ($i = 0; $i -lt $screens.Count; $i++) {
-        Write-Host "Applying wall1 to monitor $($i+1)..." -ForegroundColor Gray
-        $x = $screens[$i].Bounds.X - $minX
-        $y = $screens[$i].Bounds.Y - $minY
-        $gfx.DrawImage($img, $x, $y, $screens[$i].Bounds.Width, $screens[$i].Bounds.Height)
-    }
-    $img.Dispose()
-
-    # ---- Save and Apply ----
-    $final = "$WallDir\spanned_wallpaper.bmp"
-    $canvas.Save($final, [System.Drawing.Imaging.ImageFormat]::Bmp)
-    $gfx.Dispose(); $canvas.Dispose()
-
+    # ---- Win32 Native Application ----
     $Signature = @"
+    using System;
     using System.Runtime.InteropServices;
     public class NativeWallpaper {
         [DllImport("user32.dll", SetLastError=true)]
@@ -113,18 +57,22 @@ function Set-A2KWallpapers {
 "@
     if (-not ([System.Management.Automation.PSTypeName]"NativeWallpaper").Type) { Add-Type $Signature }
 
+    # Set Wallpaper Style to 'Fill' (Style 10, Tile 0) 
+    # Windows will automatically repeat this on all monitors.
     Set-ItemProperty "HKCU:\Control Panel\Desktop" WallpaperStyle 10
     Set-ItemProperty "HKCU:\Control Panel\Desktop" TileWallpaper 0
-    [NativeWallpaper]::SystemParametersInfo(20, 0, $final, 3) | Out-Null
 
-    Write-Host "✓ Wall1 applied to all monitors successfully." -ForegroundColor Green
+    # Apply via SystemParametersInfo (Action 20 = Set Desktop Wallpaper)
+    [NativeWallpaper]::SystemParametersInfo(20, 0, $Dest, 3) | Out-Null
+
+    Write-Host "✓ wall1.jpg applied successfully to all monitors." -ForegroundColor Green
 }
 
 # ============================================================================
-# SYSTEM FUNCTIONS
+# UTILITY FUNCTIONS
 # ============================================================================
 function Install-Software {
-    Write-Host "`n[!] Installing Software Suite..." -ForegroundColor Yellow
+    Write-Host "`n[!] Installing Apps..." -ForegroundColor Yellow
     winget source update --source winget
     $Apps = @("Google.Chrome","Mozilla.Firefox","Brave.Brave","7zip.7zip","Notepad++.Notepad++","VideoLAN.VLC","SumatraPDF.SumatraPDF","Python.Python.3.13","Rufus.Rufus","VMware.WorkstationPro")
     foreach ($app in $Apps) { winget install --id $app --silent --accept-package-agreements --accept-source-agreements }
@@ -140,8 +88,9 @@ function Apply-Tweaks {
     Write-Host "`n[!] Applying UI Tweaks..." -ForegroundColor Yellow
     Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" AppsUseLightTheme 0 -Force
     Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" SystemUsesLightTheme 0 -Force
+    
     $ClassicMenu = "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32"
-    if (!(Test-Path $ClassicMenu)) { New-Item -Path $ClassicMenu -Force | Out-Null }
+    if (!(Test-Path $ClassicMenu)) { New-Null -Path $ClassicMenu -Force | Out-Null }
     Set-ItemProperty $ClassicMenu -Name "(Default)" -Value "" -Force
 }
 
@@ -159,7 +108,6 @@ do {
         '5' { Set-A2KWallpapers; pause }
         '6' { powercfg /setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c; pause }
         '7' { winget upgrade --all; pause }
-        '9t' { Test-9t; pause }
         '8' { break }
     }
 } while ($choice -ne '8')
