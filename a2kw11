@@ -1,7 +1,7 @@
 #Requires -RunAsAdministrator
 
 # ============================================================================
-# CONFIGURATION - Fixed for a2k-lat-site Repo
+# CONFIGURATION - Verified for a2k-lat-site
 # ============================================================================
 $BaseUrl = "https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main"
 $Wall1Url = "$BaseUrl/wall1.jpg"
@@ -32,17 +32,15 @@ function Show-Menu {
 # ============================================================================
 
 function Set-A2KWallpapers {
-    Write-Host "`n[!] Downloading & Setting 3 Monitor Wallpapers..." -ForegroundColor Yellow
+    Write-Host "`n[!] Downloading Wallpapers from a2k-lat-site..." -ForegroundColor Yellow
     $Path = "$env:USERPROFILE\Pictures"
-    
-    # Check if pictures folder exists
     if (!(Test-Path $Path)) { New-Item -ItemType Directory -Path $Path -Force | Out-Null }
 
     try {
-        # Using -UseBasicParsing to avoid IE initialization issues
-        Invoke-WebRequest -Uri $Wall1Url -OutFile "$Path\wall1.jpg" -UseBasicParsing -ErrorAction Stop
-        Invoke-WebRequest -Uri $Wall2Url -OutFile "$Path\wall2.jpg" -UseBasicParsing -ErrorAction Stop
-        Invoke-WebRequest -Uri $Wall3Url -OutFile "$Path\wall3.jpg" -UseBasicParsing -ErrorAction Stop
+        # Using curl for maximum reliability on fresh installs
+        curl.exe -L -s -o "$Path\wall1.jpg" $Wall1Url
+        curl.exe -L -s -o "$Path\wall2.jpg" $Wall2Url
+        curl.exe -L -s -o "$Path\wall3.jpg" $Wall3Url
 
         $Definition = @'
         using System;
@@ -57,7 +55,6 @@ function Set-A2KWallpapers {
             [ComImport, Guid("C2CF3110-460E-4fc1-B9D0-8A1C0C9CC434")] public class DesktopWallpaperClass {}
         }
 '@
-        # Only add the type if it hasn't been added in this session
         if (-not ([System.Management.Automation.PSTypeName]"Wallpaper.DesktopWallpaperClass").Type) {
             Add-Type -TypeDefinition $Definition -ErrorAction SilentlyContinue
         }
@@ -66,6 +63,8 @@ function Set-A2KWallpapers {
         $Wallpapers = @("$Path\wall1.jpg", "$Path\wall2.jpg", "$Path\wall3.jpg")
         
         $Count = $DesktopWallpaper.GetMonitorDevicePathCount()
+        Write-Host "Detected $Count monitors." -ForegroundColor Cyan
+
         for ($i = 0; $i -lt $Count; $i++) {
             $MonitorID = $DesktopWallpaper.GetMonitorDevicePathAt($i)
             $WallIndex = $i % 3
@@ -75,8 +74,7 @@ function Set-A2KWallpapers {
         }
         Write-Host "✓ Triple Wallpapers Applied!" -ForegroundColor Green
     } catch {
-        Write-Host "✗ Error: Could not download wallpapers." -ForegroundColor Red
-        Write-Host "Check: https://github.com/mamc0826/a2k-lat-site/main/wall1.jpg" -ForegroundColor Gray
+        Write-Host "✗ Error: Still could not apply wallpapers." -ForegroundColor Red
     }
 }
 
@@ -97,7 +95,7 @@ function Remove-Bloatware {
 }
 
 function Apply-Tweaks {
-    Write-Host "`n[!] Applying Tweaks..." -ForegroundColor Yellow
+    Write-Host "`n[!] Applying UI Tweaks..." -ForegroundColor Yellow
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Value 0 -Force
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "SystemUsesLightTheme" -Value 0 -Force
     $RegPath = "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32"
