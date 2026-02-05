@@ -35,11 +35,14 @@ function Set-A2KWallpapers {
     Write-Host "`n[!] Downloading & Setting 3 Monitor Wallpapers..." -ForegroundColor Yellow
     $Path = "$env:USERPROFILE\Pictures"
     
+    # Check if pictures folder exists
+    if (!(Test-Path $Path)) { New-Item -ItemType Directory -Path $Path -Force | Out-Null }
+
     try {
-        # Force download using the confirmed Raw URLs
-        Invoke-WebRequest -Uri $Wall1Url -OutFile "$Path\wall1.jpg" -ErrorAction Stop
-        Invoke-WebRequest -Uri $Wall2Url -OutFile "$Path\wall2.jpg" -ErrorAction Stop
-        Invoke-WebRequest -Uri $Wall3Url -OutFile "$Path\wall3.jpg" -ErrorAction Stop
+        # Using -UseBasicParsing to avoid IE initialization issues
+        Invoke-WebRequest -Uri $Wall1Url -OutFile "$Path\wall1.jpg" -UseBasicParsing -ErrorAction Stop
+        Invoke-WebRequest -Uri $Wall2Url -OutFile "$Path\wall2.jpg" -UseBasicParsing -ErrorAction Stop
+        Invoke-WebRequest -Uri $Wall3Url -OutFile "$Path\wall3.jpg" -UseBasicParsing -ErrorAction Stop
 
         $Definition = @'
         using System;
@@ -54,7 +57,11 @@ function Set-A2KWallpapers {
             [ComImport, Guid("C2CF3110-460E-4fc1-B9D0-8A1C0C9CC434")] public class DesktopWallpaperClass {}
         }
 '@
-        Add-Type -TypeDefinition $Definition -ErrorAction SilentlyContinue
+        # Only add the type if it hasn't been added in this session
+        if (-not ([System.Management.Automation.PSTypeName]"Wallpaper.DesktopWallpaperClass").Type) {
+            Add-Type -TypeDefinition $Definition -ErrorAction SilentlyContinue
+        }
+
         $DesktopWallpaper = New-Object Wallpaper.DesktopWallpaperClass
         $Wallpapers = @("$Path\wall1.jpg", "$Path\wall2.jpg", "$Path\wall3.jpg")
         
@@ -66,67 +73,36 @@ function Set-A2KWallpapers {
                 $DesktopWallpaper.SetWallpaper($MonitorID, $Wallpapers[$WallIndex])
             }
         }
-        Write-Host "✓ Triple Wallpapers Applied Successfully!" -ForegroundColor Green
+        Write-Host "✓ Triple Wallpapers Applied!" -ForegroundColor Green
     } catch {
-        Write-Host "✗ Error: Could not download wallpapers. Ensure files are in 'a2k-lat-site' repo." -ForegroundColor Red
+        Write-Host "✗ Error: Could not download wallpapers." -ForegroundColor Red
+        Write-Host "Check: https://github.com/mamc0826/a2k-lat-site/main/wall1.jpg" -ForegroundColor Gray
     }
 }
 
 function Install-Software {
     Write-Host "`n[!] Initializing Winget..." -ForegroundColor Yellow
     winget source update --source winget
-
-    $programs = @(
-        @{Name="Google Chrome"; ID="Google.Chrome"}, @{Name="Mozilla Firefox"; ID="Mozilla.Firefox"},
-        @{Name="Brave Browser"; ID="Brave.Brave"}, @{Name="7-Zip"; ID="7zip.7zip"},
-        @{Name="BCUninstaller"; ID="Klocman.BulkCrapUninstaller"}, @{Name="Revo Uninstaller"; ID="RevoUninstaller.RevoUninstaller"},
-        @{Name="EarTrumpet"; ID="File-New-Project.EarTrumpet"}, @{Name="HandBrake"; ID="HandBrake.HandBrake"},
-        @{Name="MicMute"; ID="CADbloke.MicMute"}, @{Name="MiniTool Partition Wizard"; ID="MiniTool.PartitionWizard.Free"},
-        @{Name="Notepad++"; ID="Notepad++.Notepad++"}, @{Name="PotPlayer"; ID="Daum.PotPlayer"},
-        @{Name="Python 3.13"; ID="Python.Python.3.13"}, @{Name="Rufus"; ID="Rufus.Rufus"},
-        @{Name="WizTree"; ID="AntibodySoftware.WizTree"}, @{Name="Chrome Remote Desktop"; ID="Google.ChromeRemoteDesktop"},
-        @{Name="GGPoker"; ID="GGPoker.GGPoker"}, @{Name="Scrcpy"; ID="Genymobile.scrcpy"},
-        @{Name="Grub2Win"; ID="Grub2Win.Grub2Win"}, @{Name="VLC Media Player"; ID="VideoLAN.VLC"},
-        @{Name="YouTube Music Desktop"; ID="th-ch.YouTubeMusic"}, @{Name="VMware Workstation Pro"; ID="VMware.WorkstationPro"},
-        @{Name="Sumatra PDF"; ID="SumatraPDF.SumatraPDF"}, @{Name="Android SDK Tools"; ID="Google.PlatformTools"}
-    )
-
-    foreach ($program in $programs) {
-        Write-Host "Installing $($program.Name)..." -ForegroundColor Green
-        winget install --id $program.ID --source winget --silent --accept-package-agreements --accept-source-agreements
-    }
-
-    $chromePath = "C:\Program Files\Google\Chrome\Application\chrome.exe"
-    if (Test-Path $chromePath) {
-        $shell = New-Object -ComObject Shell.Application
-        $folder = $shell.NameSpace((Split-Path $chromePath))
-        $item = $folder.ParseName((Split-Path $chromePath -Leaf))
-        $item.Verbs() | Where-Object {$_.Name.Replace('&','') -match 'Pin to taskbar'} | ForEach-Object {$_.DoIt()}
+    $progs = @("Google.Chrome", "Mozilla.Firefox", "Brave.Brave", "7zip.7zip", "Klocman.BulkCrapUninstaller", "RevoUninstaller.RevoUninstaller", "File-New-Project.EarTrumpet", "HandBrake.HandBrake", "CADbloke.MicMute", "MiniTool.PartitionWizard.Free", "Notepad++.Notepad++", "Daum.PotPlayer", "Python.Python.3.13", "Rufus.Rufus", "AntibodySoftware.WizTree", "Google.ChromeRemoteDesktop", "GGPoker.GGPoker", "Genymobile.scrcpy", "Grub2Win.Grub2Win", "VideoLAN.VLC", "th-ch.YouTubeMusic", "VMware.WorkstationPro", "SumatraPDF.SumatraPDF", "Google.PlatformTools")
+    foreach ($p in $progs) { 
+        Write-Host "Installing $p..." -ForegroundColor Green
+        winget install --id $p --source winget --silent --accept-package-agreements --accept-source-agreements 
     }
 }
 
 function Remove-Bloatware {
     Write-Host "`n[!] Removing Bloatware..." -ForegroundColor Yellow
-    $bloat = @("Microsoft.GamingApp", "Microsoft.XboxApp", "Microsoft.Xbox.TCUI", "Microsoft.XboxGameOverlay", "Microsoft.MicrosoftSolitaireCollection", "MicrosoftTeams", "Microsoft.Teams", "Microsoft.MicrosoftOfficeHub")
-    foreach ($app in $bloat) {
-        Get-AppxPackage -Name $app -AllUsers | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue
-    }
+    $bloat = @("Microsoft.GamingApp", "Microsoft.XboxApp", "MicrosoftTeams", "Microsoft.Teams", "Microsoft.MicrosoftOfficeHub")
+    foreach ($a in $bloat) { Get-AppxPackage -Name $a -AllUsers | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue }
 }
 
 function Apply-Tweaks {
-    Write-Host "`n[!] Applying UI Tweaks..." -ForegroundColor Yellow
+    Write-Host "`n[!] Applying Tweaks..." -ForegroundColor Yellow
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Value 0 -Force
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "SystemUsesLightTheme" -Value 0 -Force
     $RegPath = "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32"
     if (!(Test-Path $RegPath)) { New-Item -Path $RegPath -Force | Out-Null }
     Set-ItemProperty -Path $RegPath -Name "(Default)" -Value "" -Force
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Value 0 -Force
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Hidden" -Value 1 -Force
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LaunchTo" -Value 1 -Force
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarDa" -Value 0 -Force
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarMn" -Value 0 -Force
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -Value 0 -Force
-    Set-ItemProperty -Path "HKCU:\AppEvents\Schemes" -Name "(Default)" -Value ".None" -Force
 }
 
 # ============================================================================
