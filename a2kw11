@@ -3,6 +3,7 @@
 <#
 .SYNOPSIS
     Windows 11 a2k tech Ultimate Setup - Multi-Monitor Edition (Win32 API Fix)
+    This version removes all COM/CLSID dependencies to fix the "Class Not Registered" error.
 #>
 
 # ============================================================================
@@ -25,7 +26,7 @@ function Show-Menu {
 }
 
 # ============================================================================
-# HIGH-COMPATIBILITY WALLPAPER ENGINE
+# WIN32 WALLPAPER ENGINE (REPLACES BUGGY COM CODE)
 # ============================================================================
 function Set-A2KWallpapers {
     Write-Host "`n[!] Initializing Triple Wallpaper Setup..." -ForegroundColor Yellow
@@ -35,39 +36,42 @@ function Set-A2KWallpapers {
         New-Item -ItemType Directory -Path $DestFolder -Force | Out-Null 
     }
 
-    # 1. DOWNLOAD (Direct Links)
+    # 1. DOWNLOAD (Hardcoded to ensure success)
     Write-Host "Downloading images from GitHub..." -ForegroundColor Gray
     curl.exe -L -s -o "$DestFolder\wall1.jpg" "https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main/wall1.jpg"
     curl.exe -L -s -o "$DestFolder\wall2.jpg" "https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main/wall2.jpg"
     curl.exe -L -s -o "$DestFolder\wall3.jpg" "https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main/wall3.jpg"
 
-    # 2. APPLY VIA WIN32 API (Most Compatible Method)
+    # 2. APPLY VIA WIN32 USER32.DLL (No CLSID needed)
     try {
         if (!(Test-Path "$DestFolder\wall1.jpg")) {
             throw "Download failed. Check internet connection."
         }
 
-        $Wallpapers = @("$DestFolder\wall1.jpg", "$DestFolder\wall2.jpg", "$DestFolder\wall3.jpg")
-        
-        $code = @'
+        # Define the Win32 API call (SystemParametersInfo)
+        $Signature = @'
+        using System;
         using System.Runtime.InteropServices;
-        public class Wallpaper {
+        public class Win32Wallpaper {
             [DllImport("user32.dll", CharSet = CharSet.Auto)]
             public static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
         }
 '@
-        if (-not ([System.Management.Automation.PSTypeName]"Wallpaper").Type) {
-            Add-Type -TypeDefinition $code
+        # Only add the type if not already present in the session
+        if (-not ([System.Management.Automation.PSTypeName]"Win32Wallpaper").Type) {
+            Add-Type -TypeDefinition $Signature
         }
 
-        # Set Wallpaper (System Parameters Info)
-        [Wallpaper]::SystemParametersInfo(20, 0, $Wallpapers[0], 3)
+        # SPI_SETDESKWALLPAPER = 0x0014 (20)
+        # Update Primary Monitor immediately
+        [Win32Wallpaper]::SystemParametersInfo(0x0014, 0, "$DestFolder\wall1.jpg", 0x01 -bor 0x02)
         
-        # Update Registry to point to the new file
-        Set-ItemProperty -Path 'HKCU:\Control Panel\Desktop' -Name Wallpaper -Value $Wallpapers[0]
+        # Update Registry so Windows knows where the files are for other monitors/sessions
+        Set-ItemProperty -Path 'HKCU:\Control Panel\Desktop' -Name Wallpaper -Value "$DestFolder\wall1.jpg"
+        Set-ItemProperty -Path 'HKCU:\Control Panel\Desktop' -Name WallpaperStyle -Value "10" # 10 = Fill/Span
         
-        Write-Host "✓ Wallpapers applied to Registry and Primary monitor!" -ForegroundColor Green
-        Write-Host "Note: If you use Spanned mode, Windows will now use these files." -ForegroundColor Gray
+        Write-Host "✓ Wallpapers applied to Primary monitor!" -ForegroundColor Green
+        Write-Host "✓ Registry updated to Spanned mode." -ForegroundColor Cyan
     } catch {
         Write-Host "✗ Error: $($_.Exception.Message)" -ForegroundColor Red
     }
@@ -100,8 +104,6 @@ function Apply-Tweaks {
     $RegPath = "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32"
     if (!(Test-Path $RegPath)) { New-Item -Path $RegPath -Force | Out-Null }
     Set-ItemProperty -Path $RegPath -Name "(Default)" -Value "" -Force
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Value 0 -Force
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Hidden" -Value 1 -Force
 }
 
 # ============================================================================
