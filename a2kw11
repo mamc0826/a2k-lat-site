@@ -4,7 +4,7 @@
 .SYNOPSIS
     Windows 11 a2k tech Ultimate Setup
     COM-FREE / Win32-only / Fresh-install safe
-    STITCHED CANVAS: Handles complex monitor layouts via virtual coordinate math.
+    SINGLE WALLPAPER EDITION: Applies wall1.jpg to all monitors.
 #>
 
 # ============================================================================
@@ -19,7 +19,7 @@ function Show-Menu {
     Write-Host " 2) Install Software Suite"
     Write-Host " 3) Remove Bloatware"
     Write-Host " 4) UI Tweaks & Classic Menus"
-    Write-Host " 5) Set Adaptive Multi-Monitor Wallpaper (Win32)"
+    Write-Host " 5) Set Single Wallpaper (Win32)"
     Write-Host " 6) Optimize Power & Performance"
     Write-Host " 7) Update All Apps & Drivers"
     Write-Host " 8) Exit"
@@ -47,36 +47,35 @@ function Test-9t {
     foreach ($s in $screens) {
         Write-Host " >> $($s.DeviceName) | Bounds: $($s.Bounds.Width)x$($s.Bounds.Height) | Start: $($s.Bounds.X),$($s.Bounds.Y)"
     }
-    Write-Host "`n✓ Math check complete. If these numbers look right, Option 5 will work." -ForegroundColor Green
+    Write-Host "`n✓ Math check complete." -ForegroundColor Green
 }
 
 # ============================================================================
-# OPTION 5 – PURE WIN32 MULTI-MONITOR WALLPAPER
+# OPTION 5 – SINGLE WALLPAPER ENGINE (WIN32 STITCHED)
 # ============================================================================
 function Set-A2KWallpapers {
-    Write-Host "`n[!] Initializing Win32 Wallpaper Engine..." -ForegroundColor Yellow
+    Write-Host "`n[!] Initializing Win32 Wallpaper Engine (Single Image)..." -ForegroundColor Yellow
 
     $WallDir = "$env:USERPROFILE\Pictures\a2k_walls"
     if (!(Test-Path $WallDir)) { New-Item -ItemType Directory -Path $WallDir -Force | Out-Null }
 
-    $Urls = @(
-        "https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main/wall1.jpg",
-        "https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main/wall2.jpg",
-        "https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main/wall3.jpg"
-    )
+    # ---- Only Download wall1 ----
+    $Url = "https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main/wall1.jpg"
+    $Dest = "$WallDir\wall1.jpg"
+    
+    Write-Host "Downloading wall1.jpg..." -ForegroundColor Gray
+    curl.exe -L -s -o $Dest $Url
 
-    $Images = @()
-    for ($i = 0; $i -lt $Urls.Count; $i++) {
-        $dest = "$WallDir\wall$($i+1).jpg"
-        curl.exe -L -s -o $dest $Urls[$i]
-        if (Test-Path $dest) { $Images += $dest }
+    if (!(Test-Path $Dest)) { 
+        Write-Host "✗ Download failed. Check your GitHub link." -ForegroundColor Red
+        return 
     }
 
-    if ($Images.Count -eq 0) { Write-Host "✗ Wallpaper download failed." -ForegroundColor Red; return }
-
+    # ---- Load assemblies ----
     Add-Type -AssemblyName System.Windows.Forms, System.Drawing
     $screens = [System.Windows.Forms.Screen]::AllScreens
 
+    # ---- Calculate virtual desktop bounds ----
     $minX = ($screens | ForEach-Object { $_.Bounds.X } | Measure-Object -Minimum).Minimum
     $minY = ($screens | ForEach-Object { $_.Bounds.Y } | Measure-Object -Minimum).Minimum
     $maxX = ($screens | ForEach-Object { $_.Bounds.X + $_.Bounds.Width } | Measure-Object -Maximum).Maximum
@@ -85,19 +84,22 @@ function Set-A2KWallpapers {
     $totalWidth  = $maxX - $minX
     $totalHeight = $maxY - $minY
 
+    # ---- Create canvas ----
     $canvas = New-Object System.Drawing.Bitmap $totalWidth, $totalHeight
     $gfx = [System.Drawing.Graphics]::FromImage($canvas)
     $gfx.Clear([System.Drawing.Color]::Black)
 
+    # ---- Draw wall1 on EVERY monitor ----
+    $img = [System.Drawing.Image]::FromFile($Dest)
     for ($i = 0; $i -lt $screens.Count; $i++) {
-        Write-Host "Stitching image $($i+1) for monitor $($i+1)..." -ForegroundColor Gray
-        $img = [System.Drawing.Image]::FromFile($Images[$i % $Images.Count])
+        Write-Host "Applying wall1 to monitor $($i+1)..." -ForegroundColor Gray
         $x = $screens[$i].Bounds.X - $minX
         $y = $screens[$i].Bounds.Y - $minY
         $gfx.DrawImage($img, $x, $y, $screens[$i].Bounds.Width, $screens[$i].Bounds.Height)
-        $img.Dispose()
     }
+    $img.Dispose()
 
+    # ---- Save and Apply ----
     $final = "$WallDir\spanned_wallpaper.bmp"
     $canvas.Save($final, [System.Drawing.Imaging.ImageFormat]::Bmp)
     $gfx.Dispose(); $canvas.Dispose()
@@ -115,14 +117,14 @@ function Set-A2KWallpapers {
     Set-ItemProperty "HKCU:\Control Panel\Desktop" TileWallpaper 0
     [NativeWallpaper]::SystemParametersInfo(20, 0, $final, 3) | Out-Null
 
-    Write-Host "✓ Win32 spanned wallpaper applied successfully." -ForegroundColor Green
+    Write-Host "✓ Wall1 applied to all monitors successfully." -ForegroundColor Green
 }
 
 # ============================================================================
-# REMAINING FUNCTIONS (SOFTWARE, BLOATWARE, TWEAKS)
+# SYSTEM FUNCTIONS
 # ============================================================================
 function Install-Software {
-    Write-Host "`n[!] Installing Apps..." -ForegroundColor Yellow
+    Write-Host "`n[!] Installing Software Suite..." -ForegroundColor Yellow
     winget source update --source winget
     $Apps = @("Google.Chrome","Mozilla.Firefox","Brave.Brave","7zip.7zip","Notepad++.Notepad++","VideoLAN.VLC","SumatraPDF.SumatraPDF","Python.Python.3.13","Rufus.Rufus","VMware.WorkstationPro")
     foreach ($app in $Apps) { winget install --id $app --silent --accept-package-agreements --accept-source-agreements }
