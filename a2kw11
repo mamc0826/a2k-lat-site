@@ -1,66 +1,12 @@
 #Requires -RunAsAdministrator
 
-# ============================================================================
-# CONFIGURATION
-# ============================================================================
-$BaseUrl = "https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main"
-$Wall1Url = "$BaseUrl/wall1.jpg"
-$Wall2Url = "$BaseUrl/wall2.jpg"
-$Wall3Url = "$BaseUrl/wall3.jpg"
+<#
+.SYNOPSIS
+    Windows 11 a2k tech Ultimate Setup - Multi-Monitor Edition
+#>
 
 # ============================================================================
-# SPECIALIZED WALLPAPER ENGINE (Multi-Monitor Fix)
-# ============================================================================
-function Set-A2KWallpapers {
-    Write-Host "`n[!] Checking Wallpapers..." -ForegroundColor Yellow
-    $DestFolder = "$env:USERPROFILE\Pictures\a2k_walls"
-    if (!(Test-Path $DestFolder)) { New-Item -ItemType Directory -Path $DestFolder -Force | Out-Null }
-
-    # 1. DOWNLOAD USING CURL (More reliable than IWR)
-    Write-Host "Downloading images..." -ForegroundColor Gray
-    curl.exe -L -s -o "$DestFolder\wall1.jpg" $Wall1Url
-    curl.exe -L -s -o "$DestFolder\wall2.jpg" $Wall2Url
-    curl.exe -L -s -o "$DestFolder\wall3.jpg" $Wall3Url
-
-    if (!(Test-Path "$DestFolder\wall1.jpg")) {
-        Write-Host "✗ ERROR: Download failed. Check your GitHub file names!" -ForegroundColor Red
-        return
-    }
-
-    # 2. APPLY WALLPAPER VIA COM OBJECT
-    try {
-        $Definition = @'
-        using System;
-        using System.Runtime.InteropServices;
-        namespace a2k {
-            [ComImport, Guid("B2191783-0512-4219-B123-D59E7693125A"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-            public interface IDesktopWallpaper {
-                void SetWallpaper([MarshalAs(UnmanagedType.LPWStr)] string monitorID, [MarshalAs(UnmanagedType.LPWStr)] string wallpaper);
-                [return: MarshalAs(UnmanagedType.LPWStr)] string GetMonitorDevicePathAt(uint monitorIndex);
-                uint GetMonitorDevicePathCount();
-            }
-            [ComImport, Guid("C2CF3110-460E-4fc1-B9D0-8A1C0C9CC434")] public class DesktopWallpaperClass {}
-        }
-'@
-        # Load C# logic
-        Add-Type -TypeDefinition $Definition -ErrorAction SilentlyContinue
-        
-        $WpManager = New-Object a2k.DesktopWallpaperClass
-        $MonCount = $WpManager.GetMonitorDevicePathCount()
-        $WallList = @("$DestFolder\wall1.jpg", "$DestFolder\wall2.jpg", "$DestFolder\wall3.jpg")
-
-        for ($i = 0; $i -lt $MonCount; $i++) {
-            $Id = $WpManager.GetMonitorDevicePathAt($i)
-            $WpManager.SetWallpaper($Id, $WallList[$i % 3])
-        }
-        Write-Host "✓ Successfully set wallpapers on $MonCount monitors!" -ForegroundColor Green
-    } catch {
-        Write-Host "✗ Wallpaper Engine Error: $($_.Exception.Message)" -ForegroundColor Red
-    }
-}
-
-# ============================================================================
-# MENU & OTHER FUNCTIONS
+# MENU SYSTEM
 # ============================================================================
 function Show-Menu {
     Clear-Host
@@ -78,21 +24,111 @@ function Show-Menu {
     Write-Host "========================================" -ForegroundColor Cyan
 }
 
-function Install-Software {
-    Write-Host "`n[!] Installing Software..." -ForegroundColor Yellow
-    winget source update --source winget
-    $progs = @("Google.Chrome", "Mozilla.Firefox", "Brave.Brave", "7zip.7zip", "Klocman.BulkCrapUninstaller", "RevoUninstaller.RevoUninstaller", "File-New-Project.EarTrumpet", "HandBrake.HandBrake", "CADbloke.MicMute", "MiniTool.PartitionWizard.Free", "Notepad++.Notepad++", "Daum.PotPlayer", "Python.Python.3.13", "Rufus.Rufus", "AntibodySoftware.WizTree", "Google.ChromeRemoteDesktop", "GGPoker.GGPoker", "Genymobile.scrcpy", "Grub2Win.Grub2Win", "VideoLAN.VLC", "th-ch.YouTubeMusic", "VMware.WorkstationPro", "SumatraPDF.SumatraPDF", "Google.PlatformTools")
-    foreach ($p in $progs) { winget install --id $p --silent --accept-package-agreements --accept-source-agreements }
+# ============================================================================
+# SPECIALIZED WALLPAPER ENGINE
+# ============================================================================
+function Set-A2KWallpapers {
+    Write-Host "`n[!] Initializing Triple Wallpaper Setup..." -ForegroundColor Yellow
+    $DestFolder = "$env:USERPROFILE\Pictures\a2k_walls"
+    
+    if (!(Test-Path $DestFolder)) { 
+        New-Item -ItemType Directory -Path $DestFolder -Force | Out-Null 
+    }
+
+    # 1. DOWNLOAD (Hardcoded Direct Links)
+    Write-Host "Downloading images from GitHub..." -ForegroundColor Gray
+    curl.exe -L -o "$DestFolder\wall1.jpg" "https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main/wall1.jpg"
+    curl.exe -L -o "$DestFolder\wall2.jpg" "https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main/wall2.jpg"
+    curl.exe -L -o "$DestFolder\wall3.jpg" "https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main/wall3.jpg"
+
+    # VERIFY DOWNLOADS
+    if (!(Test-Path "$DestFolder\wall1.jpg")) {
+        Write-Host "✗ ERROR: wall1.jpg failed to download. Check GitHub filenames!" -ForegroundColor Red
+        return
+    }
+
+    # 2. APPLY TO MONITORS VIA COM
+    try {
+        $Definition = @'
+        using System;
+        using System.Runtime.InteropServices;
+        namespace a2kTech {
+            [ComImport, Guid("B2191783-0512-4219-B123-D59E7693125A"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+            public interface IDesktopWallpaper {
+                void SetWallpaper([MarshalAs(UnmanagedType.LPWStr)] string monitorID, [MarshalAs(UnmanagedType.LPWStr)] string wallpaper);
+                [return: MarshalAs(UnmanagedType.LPWStr)] string GetMonitorDevicePathAt(uint monitorIndex);
+                uint GetMonitorDevicePathCount();
+            }
+            [ComImport, Guid("C2CF3110-460E-4fc1-B9D0-8A1C0C9CC434")] public class DesktopWallpaperClass {}
+        }
+'@
+        if (-not ([System.Management.Automation.PSTypeName]"a2kTech.DesktopWallpaperClass").Type) {
+            Add-Type -TypeDefinition $Definition -ErrorAction SilentlyContinue
+        }
+        
+        $WpManager = New-Object a2kTech.DesktopWallpaperClass
+        $MonCount = $WpManager.GetMonitorDevicePathCount()
+        $WallList = @("$DestFolder\wall1.jpg", "$DestFolder\wall2.jpg", "$DestFolder\wall3.jpg")
+
+        for ($i = 0; $i -lt $MonCount; $i++) {
+            $Id = $WpManager.GetMonitorDevicePathAt($i)
+            # Use modulo to cycle through the 3 walls if there are more/less monitors
+            $WpManager.SetWallpaper($Id, $WallList[$i % 3])
+        }
+        Write-Host "✓ Successfully set wallpapers on $MonCount monitors!" -ForegroundColor Green
+    } catch {
+        Write-Host "✗ Wallpaper Engine Error: $($_.Exception.Message)" -ForegroundColor Red
+    }
 }
 
+# ============================================================================
+# SYSTEM FUNCTIONS
+# ============================================================================
+
+function Install-Software {
+    Write-Host "`n[!] Installing Software Suite..." -ForegroundColor Yellow
+    winget source update --source winget
+    $progs = @("Google.Chrome", "Mozilla.Firefox", "Brave.Brave", "7zip.7zip", "Klocman.BulkCrapUninstaller", "RevoUninstaller.RevoUninstaller", "File-New-Project.EarTrumpet", "HandBrake.HandBrake", "CADbloke.MicMute", "MiniTool.PartitionWizard.Free", "Notepad++.Notepad++", "Daum.PotPlayer", "Python.Python.3.13", "Rufus.Rufus", "AntibodySoftware.WizTree", "Google.ChromeRemoteDesktop", "GGPoker.GGPoker", "Genymobile.scrcpy", "Grub2Win.Grub2Win", "VideoLAN.VLC", "th-ch.YouTubeMusic", "VMware.WorkstationPro", "SumatraPDF.SumatraPDF", "Google.PlatformTools")
+    foreach ($p in $progs) { 
+        Write-Host "Processing $p..." -ForegroundColor Green
+        winget install --id $p --silent --accept-package-agreements --accept-source-agreements 
+    }
+}
+
+function Remove-Bloatware {
+    Write-Host "`n[!] Stripping Bloatware..." -ForegroundColor Yellow
+    $bloat = @("Microsoft.GamingApp", "Microsoft.XboxApp", "MicrosoftTeams", "Microsoft.Teams", "Microsoft.MicrosoftOfficeHub")
+    foreach ($a in $bloat) { Get-AppxPackage -Name $a -AllUsers | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue }
+}
+
+function Apply-Tweaks {
+    Write-Host "`n[!] Applying UI & Explorer Fixes..." -ForegroundColor Yellow
+    # Dark Mode
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Value 0 -Force
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "SystemUsesLightTheme" -Value 0 -Force
+    # Classic Context Menu
+    $RegPath = "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32"
+    if (!(Test-Path $RegPath)) { New-Item -Path $RegPath -Force | Out-Null }
+    Set-ItemProperty -Path $RegPath -Name "(Default)" -Value "" -Force
+    # Show Extensions & Hidden Files
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Value 0 -Force
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Hidden" -Value 1 -Force
+}
+
+# ============================================================================
+# MAIN LOOP
+# ============================================================================
 do {
     Show-Menu
     $choice = Read-Host "`nSelect an option (1-8)"
     switch ($choice) {
-        '1' { Install-Software; Set-A2KWallpapers; pause }
+        '1' { Install-Software; Remove-Bloatware; Apply-Tweaks; Set-A2KWallpapers; pause }
         '2' { Install-Software; pause }
+        '3' { Remove-Bloatware; pause }
+        '4' { Apply-Tweaks; pause }
         '5' { Set-A2KWallpapers; pause }
+        '6' { powercfg /setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c; pause }
+        '7' { winget upgrade --all; pause }
         '8' { break }
-        default { Write-Host "Option processed."; pause }
     }
 } while ($choice -ne '8')
