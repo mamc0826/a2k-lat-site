@@ -94,6 +94,18 @@ UI.Vision XModule - Visit Site
 Universal ADB Driver - Visit Site
 
 🔐 Security & Privacy
+## 🔐 Security & Privacy
+
+<img src="certified.png" align="right" width="150">
+
+This script:
+- ✅ Uses official Microsoft winget package manager
+- ✅ Only installs from verified sources
+- ✅ Only modifies user settings (no system files)
+- ✅ Fully visible source code (inspect before running)
+- ✅ Disables telemetry and tracking
+- ✅ All changes reversible
+
 ✅ Uses official Microsoft Winget package manager.
 
 ✅ No system files modified (Settings only).
