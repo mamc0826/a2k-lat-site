@@ -1,296 +1,104 @@
-# Windows 11 Auto-Setup Scripts
+# ⚡ AZTEK (a2k) Windows 11 Suite
 
-Two versions available: **Automatic** and **Interactive Menu**
+The ultimate collection of deployment and maintenance scripts for Windows 11. Designed for speed, aesthetics, and total system control.
 
 ---
 
-## 🚀 Quick Start Commands
+## 🚀 Quick Launch Commands
 
-### Interactive Menu Version (Recommended)
+### 🛡️ [NEW] AZTEK Sentinel (Maintenance & Activation)
+The technician's "Swiss Army Knife" for activation, DNS optimization, and emergency recovery.
 ```powershell
+powershell -ExecutionPolicy Bypass -Command "irm a2k.lat/sentinel.ps1 | iex"
+🛠️ Interactive Auto-Setup (Recommended)
+PowerShell
 irm a2k.lat/i.html | iex
-```
-
-### Automatic Version (No prompts, runs everything)
-```powershell
+🤖 Automatic Version (No prompts)
+PowerShell
 irm a2k.lat/a.html | iex
-```
+📖 AZTEK Sentinel: Feature Guide
+This suite is designed for post-installation maintenance and specialized system tweaks.
 
----
+🛡️ ER Mode (Emergency Restore)
+Safety first. Before applying deep tweaks, Sentinel creates a system-native restore point.
 
-## 📋 What's the Difference?
+How to use: Select [0] in the menu.
 
-### **Interactive Menu Version** 
-- 3 options at startup:
-  1. **RUN EVERYTHING** - Install all programs, remove bloatware, configure settings (one confirmation)
-  2. **Quick Start with Confirmation** - See summary, then confirm or cancel
-  3. **Custom Installation** - Choose exactly what to install/configure
-- Perfect for when you want control
+Why: If a tweak doesn't fit your hardware, this rolls back your registry and system settings to the exact state they were in before you ran the script.
 
-### **Automatic Version**
-- No menus or prompts
-- Runs everything automatically
-- Perfect for completely fresh installs when you want it all
+👑 God Mode (Master Control)
+Unlock the hidden administrative power of Windows.
 
----
+How to use: Select [2] in the menu.
 
-## 🎯 Features
+Why: Windows hides 70% of its settings. God Mode places a shortcut on your desktop containing all 200+ administrative tools in one searchable folder.
 
-### What Gets Installed (27+ Programs)
+🔑 MAS Activation
+Sentinel uses the latest get.activated.win protocols.
 
-#### **Browsers**
-- Google Chrome
-- Mozilla Firefox
-- Brave Browser
+How to use: Select [7] in the menu.
 
-#### **Utilities & Tools**
-- 7-Zip
-- BCUninstaller
-- Revo Uninstaller
-- EarTrumpet
-- MicMute
-- Notepad++
-- Rufus
-- WizTree
-- Sumatra PDF
-- Grub2Win
-- MiniTool Partition Wizard Free
+Why: Instantly and permanently licenses Windows and Office without third-party "crack" files.
 
-#### **Media Players**
-- PotPlayer
-- VLC Media Player
-- YouTube Music Desktop App
-- HandBrake
+📋 Auto-Setup Versions
+Interactive Menu Version - RUN EVERYTHING - Install all programs, remove bloatware, configure settings.
+Quick Start - See summary, then confirm.
 
-#### **Development & Android Tools**
-- Python 3.14
-- Scrcpy (Android screen mirroring)
-- Android SDK Platform Tools (ADB, fastboot)
+Custom Installation - Choose exactly what to install/configure.
 
-#### **Remote Access & Virtualization**
-- Chrome Remote Desktop
-- VMware Workstation Pro (free version)
+Automatic Version
+No menus or prompts. Perfect for "deploy and walk away" scenarios on fresh installs.
 
-#### **Gaming**
-- GGPoker
+🎯 Auto-Setup Features (27+ Programs)
+Browsers & Media
+Google Chrome, Firefox, Brave.
 
-### Manual Installation Required
-- **Office Tool Plus** - https://otp.landian.vip/
-- **UI.Vision XModule** - https://ui.vision/
-- **Simp Music** - https://github.com/Simp-Music/Simp-Music
-- **SFWTool** - https://github.com/SFW-FreeDevelopment/SFWTool
-- **Universal ADB Driver** - https://adb.clockworkmod.com/
+PotPlayer, VLC, YouTube Music Desktop.
 
----
+Utilities & Tools
+7-Zip, BCUninstaller, Revo Uninstaller.
 
-## 🗑️ Bloatware Removed
+Notepad++, Rufus, WizTree, Sumatra PDF.
 
-- **Xbox Apps** - Gaming App, Xbox App, Xbox overlays
-- **Games** - Solitaire Collection, Sticky Notes
-- **Microsoft 365** - OneNote, Office Hub
-- **Teams** - All Teams components
+Python 3.14, Scrcpy, Android SDK.
 
----
+Remote & Virtualization
+Chrome Remote Desktop, VMware Workstation Pro.
 
-## ⚙️ Windows Settings Configured
+⚙️ System Optimizations
+Theme: Dark Mode Enabled.
 
-| Setting | Change |
-|---------|--------|
-| Theme | Dark Mode enabled |
-| Transparency | Disabled |
-| Audio Scheme | Set to "No Sounds" |
-| File Extensions | Shown |
-| Hidden Files | Shown |
-| Telemetry | Disabled |
-| Cortana | Disabled |
-| Taskbar Search | Icon only (not search box) |
-| Taskbar People | Hidden |
-| Default Browser | Chrome (requires manual confirmation) |
+Transparency: Disabled for performance.
 
----
+Privacy: Telemetry and Cortana disabled.
 
-## 📖 Usage Instructions
+Bloatware: Xbox, Teams, and Microsoft 365 Hub removed.
 
-### Option 1: One-Line Command (Recommended)
+🔧 Customization & Troubleshooting
+Script Won't Run?
+Ensure you are running PowerShell as Administrator and run this command:
 
-**Interactive Menu:**
-```powershell
-irm a2k.lat/i.html | iex
-```
-
-**Automatic (No Prompts):**
-```powershell
-irm a2k.lat/a.html | iex
-```
-
-### Option 2: Download and Run
-
-1. Download the `.ps1` file
-2. Right-click → "Run with PowerShell"
-3. Click "Yes" for Administrator privileges
-
-### Option 3: PowerShell Manual
-
-```powershell
-# Open PowerShell as Administrator
+PowerShell
 Set-ExecutionPolicy Bypass -Scope Process -Force
-.\w11a2kint.ps1
-```
+Manual Installation Required for:
+Office Tool Plus - Visit Site
 
----
+UI.Vision XModule - Visit Site
 
-## 🎨 Interactive Menu Example
+Universal ADB Driver - Visit Site
 
-When you run the interactive version, you'll see:
+🔐 Security & Privacy
+✅ Uses official Microsoft Winget package manager.
 
-```
-========================================
-Windows 11 Auto-Setup Script
-Interactive Menu Edition
-========================================
+✅ No system files modified (Settings only).
 
-Please choose an option:
+✅ Disables telemetry and tracking.
 
-  1. RUN EVERYTHING (Recommended - Install all, remove bloatware, configure settings)
-  2. Quick Start with Confirmation (Review summary before proceeding)
-  3. Custom Installation (Choose what to install/configure)
-  4. Exit
+✅ Fully visible source code.
 
-Enter your choice (1-4):
-```
+🌐 Links
+Official Site: a2k.lat
 
-### Menu Options Explained:
+Repo Root: github.com/mamc0826/a2k-lat-site
 
-**Option 1: RUN EVERYTHING**
-- Shows what will happen
-- One Y/N confirmation
-- Then runs everything automatically
-- Fastest option if you want it all
-
-**Option 2: Quick Start with Confirmation**
-- Shows detailed summary of everything that will happen
-- One Y/N to proceed or cancel
-- Good balance of control and speed
-
-**Option 3: Custom Installation**
-- Choose to install software (Y/N)
-- If yes, choose which categories:
-  - Browsers
-  - Utilities
-  - Media
-  - Development
-  - Remote/Virtualization
-  - Gaming
-- Choose to remove bloatware (Y/N)
-- Choose to configure settings (Y/N)
-- Shows final summary
-- One Y/N to proceed
-- Maximum control
-
----
-
-## ⏱️ Estimated Time
-
-- **Full installation**: 20-40 minutes (depending on internet speed)
-- **Custom installation**: 5-30 minutes (depending on selections)
-
----
-
-## 🔧 Customization
-
-### Adding More Programs
-
-1. Find the winget ID:
-   ```powershell
-   winget search "program name"
-   ```
-
-2. Edit the script and add to appropriate category:
-   ```powershell
-   Browsers = @(
-       @{Name="Opera"; ID="Opera.Opera"}
-   )
-   ```
-
-### Adding More Bloatware to Remove
-
-1. Find package name:
-   ```powershell
-   Get-AppxPackage | Select Name, PackageFullName
-   ```
-
-2. Add to `$bloatware` array in script
-
----
-
-## 🐛 Troubleshooting
-
-### Script Won't Run
-```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force
-```
-
-### Some Programs Failed to Install
-- Check internet connection
-- Manually install: `winget install --id ProgramID`
-
-### Settings Didn't Apply
-- Restart your computer
-- Some require sign out/sign in
-
-### Chrome Not Default Browser
-- Windows 11 requires manual confirmation
-- Settings > Apps > Default apps > Chrome
-
----
-
-## 📝 Post-Installation Checklist
-
-- [ ] Restart computer
-- [ ] Manually install remaining programs (Office Tool Plus, etc.)
-- [ ] Set default browser in Windows Settings
-- [ ] Verify all programs installed
-- [ ] Check Windows settings applied correctly
-
----
-
-## 🔐 Security & Privacy
-
-This script:
-- ✅ Uses official Microsoft winget package manager
-- ✅ Only installs from verified sources
-- ✅ Only modifies user settings (no system files)
-- ✅ Fully visible source code (inspect before running)
-- ✅ Disables telemetry and tracking
-- ✅ All changes reversible
-
----
-
-## 📦 Version History
-
-- **v2.0** (2026-02-05) - Added interactive menu system
-- **v1.0** (2026-02-05) - Initial automatic version
-
----
-
-## 🌐 Links
-
-- **GitHub Repository**: https://github.com/mamc0826/a2k-lat-site
-- **Domain**: https://a2k.lat
-
----
-
-## 💡 Pro Tips
-
-1. **Run on fresh Windows install** for best results
-2. **Use USB drive** if you don't have internet during setup
-3. **Create multiple versions** for different use cases (gaming, dev, office)
-4. **Keep a backup** of your customized script
-
----
-
-## 📞 Support
-
-Issues? Check the troubleshooting section or review the script source code.
-
-**Made with ❤️ for faster Windows setups**
+Made with ❤️ by AZTEK tech
