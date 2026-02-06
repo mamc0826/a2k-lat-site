@@ -99,7 +99,7 @@ Universal ADB Driver - Visit Site
 
 ## 🔐 Security & Privacy
 
-<img src="./certified.png" align="right" width="150" alt="A2K Certified Badge">
+<img src="https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main/certified.png" align="right" width="150" alt="A2K Certified Badge">
 
 This script:
 * ✅ Uses official Microsoft winget package manager
