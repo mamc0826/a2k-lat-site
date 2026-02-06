@@ -2,9 +2,10 @@
 
 <#
 .SYNOPSIS
-    AZTEK (a2k) tech - SENTINEL FINAL BUILD
+    AZTEK (a2k) tech - SENTINEL MASTER RELEASE
+    - NEW: Option [H] Internal Help Manual
+    - FIXED: MAS URL & UI Stability
     - WEBSITE: https://www.a2k.lat/
-    - REPO: Root Deployment Version
 #>
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -31,7 +32,7 @@ $Text = @{
         Opt4 = "WIFI PASS RECOVERY"; Opt5 = "APP KILLER (Force Close)"
         Opt6 = "WINDOWS SANDBOX"; Opt7 = "MAS ACTIVATION (Win/Office)"
         Opt8 = "INSTALL ESSENTIAL APPS"; Opt9 = "SET AZTEK WALLPAPER"
-        Opt10 = "VISIT A2K.LAT"; OptX = "EXIT"
+        Opt10 = "VISIT A2K.LAT"; OptH = "MANUAL / HELP"; OptX = "EXIT"
         GodDone = "[✓] God Mode Folder created on Desktop!"
     }
     ES = @{
@@ -42,7 +43,7 @@ $Text = @{
         Opt4 = "RECUPERAR CLAVES WIFI"; Opt5 = "APP KILLER (Cerrar Apps)"
         Opt6 = "WINDOWS SANDBOX"; Opt7 = "ACTIVACIÓN MAS (Win/Office)"
         Opt8 = "INSTALAR APPS ESENCIALES"; Opt9 = "PONER FONDO AZTEK"
-        Opt10 = "VISITAR A2K.LAT"; OptX = "SALIR"
+        Opt10 = "VISITAR A2K.LAT"; OptH = "MANUAL / AYUDA"; OptX = "SALIR"
         GodDone = "[✓] ¡Carpeta Modo Dios creada en el Escritorio!"
     }
 }
@@ -77,8 +78,28 @@ function Show-Menu {
     Write-Host "$P$Gy ║ $G [9]$W $($L.Opt9.PadRight(37)) $Gy ║"
     Write-Host "$P$Gy ║ $G [10]$W $($L.Opt10.PadRight(36)) $Gy ║"
     Write-Host "$P$Gy ╠════════════════════════════════════════════╣"
+    Write-Host "$P$Gy ║ $W [H]$W $($L.OptH.PadRight(37)) $Gy ║"
     Write-Host "$P$Gy ║ $R [X]$W $($L.OptX.PadRight(37)) $Gy ║"
     Write-Host "$P$Gy ╚════════════════════════════════════════════╝"
+}
+
+function Show-Help {
+    $P = Get-Pad; $G = $Gold; $W = $White
+    Clear-Host
+    Write-Host "`n$P$G --- AZTEK SENTINEL MANUAL ---"
+    Write-Host "`n$P$G [0] EMERGENCY RESTORE"
+    Write-Host "$P$W Use this if you want to undo changes. It launches"
+    Write-Host "$P$W Windows System Restore to roll back your PC."
+    Write-Host "`n$P$G [2] GOD MODE"
+    Write-Host "$P$W Creates a folder on your desktop that contains"
+    Write-Host "$P$W every single Windows setting in one list."
+    Write-Host "`n$P$G [7] MAS ACTIVATION"
+    Write-Host "$P$W Uses the latest 'get.activated.win' protocol"
+    Write-Host "$P$W to license Windows and Office permanently."
+    Write-Host "`n$P$G [9] WALLPAPER"
+    Write-Host "$P$W Downloads the official AZTEK aesthetic from GitHub."
+    Write-Host "`n$P$W Press any key to return to menu..."
+    pause > $null
 }
 
 function Create-A2KSafeguard {
@@ -120,6 +141,8 @@ do {
             if (!([System.Management.Automation.PSTypeName]"Wall").Type) { Add-Type $code }
             [Wall]::SystemParametersInfo(20, 0, $Dest, 3) | Out-Null; pause }
         '10'{ Start-Process "https://www.a2k.lat/"; pause }
+        'h' { Show-Help }
+        'H' { Show-Help }
         'x' { break }
         'X' { break }
     }
