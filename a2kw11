@@ -2,189 +2,144 @@
 
 <#
 .SYNOPSIS
-    AZTEK (a2k) tech - PRESTIGE BLACK & GOLD EDITION
-    - FULL AUTO-SETUP
-    - MULTI-LANGUAGE (EN/ES)
-    - TRUE BLACK BACKGROUND & HEX GOLD TEXT
-    - SYSTEM RESTORE SAFEGUARD
+    AZTEK (a2k) tech - SENTINEL EDITION
+    - FORCED PRE-FLIGHT RESTORE POINT
+    - EMERGENCY SYSTEM RECOVERY (RSTRUI)
+    - FORBIDDEN TOOLKIT (WIFI, GODMODE, DNS)
+    - MAS-STYLE CLEAN BOX UI
 #>
 
 # ============================================================================
-# ANSI COLOR DEFINITIONS (The "HTML" of Terminal)
+# ANSI STYLE ENGINE
 # ============================================================================
 $E = [char]27
-$GoldTxt  = "$E[38;2;212;175;55m"  # Metallic Gold RGB
+$GoldTxt  = "$E[38;2;212;175;55m"  
 $WhiteTxt = "$E[38;2;255;255;255m"
-$BgBlack  = "$E[48;2;0;0;0m"        # True Black Background
-$RedTxt   = "$E[38;2;230;0;0m"      # Error/Exit Red
-$GrayTxt  = "$E[38;2;80;80;80m"     # Borders
+$BgBlack  = "$E[48;2;0;0;0m"        
+$RedTxt   = "$E[38;2;230;0;0m"      
+$GrayTxt  = "$E[38;2;80;80;80m"     
 $Reset    = "$E[0m"
 
 # ============================================================================
 # LANGUAGE DATABASE
 # ============================================================================
 $Global:Lang = "EN"
-
 $Text = @{
     EN = @{
-        Header      = "AZTEK TECH (a2k) | PRESTIGE EDITION"
-        Rest        = "CREATE SYSTEM RESTORE POINT"
-        Full        = "THE WORKS (Full AZTEK Auto-Setup)"
-        Apps        = "Install Software Suite"
-        Bloat       = "Remove Bloatware (News, Bing, Teams, etc.)"
-        UI          = "UI Tweaks (Classic Menus, Dark Mode, Taskbar)"
-        Wall        = "Set Wallpaper (AZTEK Win32 Engine)"
-        Perf        = "Optimize Power & Performance"
-        Update      = "Update All Apps & Drivers"
-        Web         = "VISIT AZTEK HUB (Tutorials & Tools)"
-        Exit        = "Exit"
-        Prompt      = "Select an option"
-        RestWait    = "[!] FORGING RESTORE POINT..."
-        Sync        = "SYNCHRONIZING ARSENAL..."
-        Summon      = "Summoning"
-        Done        = "Task Complete."
+        Header = "AZTEK TECH (a2k) | SENTINEL EDITION"
+        PreSafe = "[!] SAFETY FIRST: System Restore is HIGHLY recommended."
+        CreateR = "Create Restore Point Now? (Y/N): "
+        RestWait = "Generating AZTEK Safeguard..."
+        Prompt = "AZTEK Command > "
+        Opt0 = "EMERGENCY RESTORE (Undo Changes)"; Opt1 = "THE WORKS (Auto-Setup + Activation)"
+        Opt2 = "GOD MODE (Unlock All Settings)"; Opt3 = "DNS JUMPER (Gaming Ping/ISP Bypass)"
+        Opt4 = "WIFI PASS RECOVERY (Show Saved)"; Opt5 = "APP KILLER (Force Close Frozen)"
+        Opt6 = "WINDOWS SANDBOX (Test Files)"; Opt7 = "MAS ACTIVATION (Win/Office)"
+        Opt8 = "INSTALL ESSENTIAL SOFTWARE"; Opt9 = "VISIT AZTEK HUB"; OptX = "EXIT"
     }
     ES = @{
-        Header      = "AZTEK TECH (a2k) | EDICIÓN PRESTIGIO"
-        Rest        = "CREAR PUNTO DE RESTAURACIÓN"
-        Full        = "TODO EN UNO (Configuración AZTEK)"
-        Apps        = "Instalar Suite de Software"
-        Bloat       = "Eliminar Bloatware (Noticias, Bing, Teams)"
-        UI          = "Ajustes de UI (Menús Clásicos, Modo Oscuro)"
-        Wall        = "Fondo de Pantalla (Motor Win32)"
-        Perf        = "Optimizar Energía y Rendimiento"
-        Update      = "Actualizar Apps y Controladores"
-        Web         = "VISITAR AZTEK HUB (Tutoriales)"
-        Exit        = "Salir"
-        Prompt      = "Seleccione una opción"
-        RestWait    = "[!] FORJANDO PUNTO DE RESTAURACIÓN..."
-        Sync        = "SINCRONIZANDO ARSENAL..."
-        Summon      = "Invocando"
-        Done        = "Tarea Completada."
+        Header = "AZTEK TECH (a2k) | EDICIÓN CENTINELA"
+        PreSafe = "[!] SEGURIDAD: Se recomienda un Punto de Restauración."
+        CreateR = "¿Crear Punto de Restauración Ahora? (S/N): "
+        RestWait = "Generando Salvaguarda AZTEK..."
+        Prompt = "Comando AZTEK > "
+        Opt0 = "RESTAURACIÓN DE EMERGENCIA (Deshacer)"; Opt1 = "TODO EN UNO (Setup + Activación)"
+        Opt2 = "MODO DIOS (Ajustes Ocultos)"; Opt3 = "DNS JUMPER (Mejor Ping)"
+        Opt4 = "RECUPERAR WIFI (Ver Claves)"; Opt5 = "APP KILLER (Cerrar Congelados)"
+        Opt6 = "WINDOWS SANDBOX (Probar Archivos)"; Opt7 = "ACTIVACIÓN MAS (Win/Office)"
+        Opt8 = "INSTALAR SOFTWARE ESENCIAL"; Opt9 = "VISITAR AZTEK HUB"; OptX = "SALIR"
     }
 }
 
 # ============================================================================
-# UI CORE FUNCTIONS
+# SAFETY FUNCTIONS
 # ============================================================================
-function Set-Language {
-    Write-Host "$BgBlack" -NoNewline
-    Clear-Host
-    Write-Host "`n $GoldTxt [1] English"
-    Write-Host " [2] Español $Reset"
-    $choice = Read-Host "`n AZTEK >"
-    if ($choice -eq "2") { $Global:Lang = "ES" } else { $Global:Lang = "EN" }
-}
-
-function Show-Header {
-    Write-Host "$BgBlack" -NoNewline
-    Clear-Host
-    Write-Host "$GoldTxt"
-    Write-Host @"
-    █████╗ ███████╗████████╗███████╗██╗  ██╗
-    ██╔══██╗╚══███╔╝╚══██╔══╝██╔════╝██║ ██╔╝
-    ███████║  ███╔╝    ██║   █████╗  █████╔╝ 
-    ██╔══██║ ███╔╝     ██║   ██╔══╝  ██╔═██╗ 
-    ██║  ██║███████╗   ██║   ███████╗██║  ██╗
-    ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝
-    >> $($Text[$Global:Lang].Header) <<
-"@
-    Write-Host "$GrayTxt ------------------------------------------------------------ $Reset"
-}
-
-function Show-Menu {
-    Show-Header
-    $L = $Text[$Global:Lang]
-    $Gold = "$BgBlack$GoldTxt"
-    
-    Write-Host "$Gold [0] $WhiteTxt $($L.Rest)"
-    Write-Host "$Gold [1] $WhiteTxt $($L.Full)"
-    Write-Host "$Gold [2] $WhiteTxt $($L.Apps)"
-    Write-Host "$Gold [3] $WhiteTxt $($L.Bloat)"
-    Write-Host "$Gold [4] $WhiteTxt $($L.UI)"
-    Write-Host "$Gold [5] $WhiteTxt $($L.Wall)"
-    Write-Host "$Gold [6] $WhiteTxt $($L.Perf)"
-    Write-Host "$Gold [7] $WhiteTxt $($L.Update)"
-    Write-Host "$Gold [9] $WhiteTxt $($L.Web)"
-    Write-Host "$BgBlack$RedTxt [8] $($L.Exit) $Reset"
-    Write-Host "$GrayTxt ------------------------------------------------------------ $Reset"
-}
-
-# ============================================================================
-# LOGIC CORE FUNCTIONS
-# ============================================================================
-function Create-A2KRestorePoint {
+function Create-A2KSafeguard {
     Write-Host "`n $GoldTxt $($Text[$Global:Lang].RestWait) $Reset"
     Enable-ComputerRestore -Drive "C:\" -ErrorAction SilentlyContinue
-    Checkpoint-Computer -Description "AZTEK_Setup" -RestorePointType "MODIFY_SETTINGS" -ErrorAction SilentlyContinue
+    Checkpoint-Computer -Description "AZTEK_Sentinel_Safe" -RestorePointType "MODIFY_SETTINGS" -ErrorAction SilentlyContinue
 }
 
-function Install-Software {
-    Write-Host "`n $GoldTxt $($Text[$Global:Lang].Sync) $Reset"
-    winget source update
-    $Apps = @("Google.Chrome", "Mozilla.Firefox", "Brave.Brave", "7zip.7zip", "Notepad++.Notepad++", "VideoLAN.VLC", "SumatraPDF.SumatraPDF", "Python.Python.3.13", "Rufus.Rufus", "Daum.PotPlayer", "HandBrake.HandBrake", "Genymobile.scrcpy", "File-New-Project.EarTrumpet", "Klocman.BulkCrapUninstaller", "RevoUninstaller.RevoUninstaller", "AntibodySoftware.WizTree", "MiniTool.PartitionWizard.Free", "th-ch.YouTubeMusic", "Google.PlatformTools", "VMware.WorkstationPro", "GGPoker.GGPoker")
-    foreach ($app in $Apps) {
-        Write-Host " $GoldTxt >> $($Text[$Global:Lang].Summon) $WhiteTxt $app... $Reset"
-        winget install --id $app --silent --accept-package-agreements --accept-source-agreements
-    }
+function Invoke-EmergencyRestore {
+    Write-Host "`n $RedTxt [!] Launching Windows System Restore GUI... $Reset"
+    Start-Process "rstrui.exe"
 }
 
-function Remove-Bloatware {
-    Write-Host "`n $RedTxt [!] PURGING SYSTEMS... $Reset"
-    $Bloat = @("Microsoft.BingNews", "Microsoft.BingWeather", "Microsoft.BingSearch", "MicrosoftTeams", "Microsoft.Teams", "Microsoft.Todos", "Microsoft.YourPhone", "Microsoft.GamingApp", "Microsoft.XboxApp", "Microsoft.MicrosoftSolitaireCollection", "Microsoft.MicrosoftOfficeHub")
-    foreach ($pkg in $Bloat) { Get-AppxPackage -Name $pkg -AllUsers | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue }
+# ============================================================================
+# THE TOOLKIT
+# ============================================================================
+function Enable-GodMode {
+    $Path = "$env:USERPROFILE\Desktop\GodMode.{ED7BA470-8E54-465E-825C-99712043E01C}"
+    if (!(Test-Path $Path)) { New-Item -Path $Path -ItemType Directory | Out-Null }
 }
 
-function Apply-Tweaks {
-    Write-Host "`n $GoldTxt [!] CONFIGURING INTERFACE... $Reset"
-    Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
-    Start-Sleep -Seconds 1
-    Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" AppsUseLightTheme 0 -Force
-    Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" SystemUsesLightTheme 0 -Force
-    $Classic = "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32"
-    if (!(Test-Path $Classic)) { New-Item -Path $Classic -Force | Out-Null }
-    Set-ItemProperty $Classic -Name "(Default)" -Value "" -Force
-    $AdvPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
-    $SearchPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search"
-    Set-ItemProperty -Path $SearchPath -Name "SearchboxTaskbarMode" -Value 0 -Force 
-    Set-ItemProperty -Path $AdvPath -Name "TaskbarDa" -Value 0 -Force               
-    Set-ItemProperty -Path $AdvPath -Name "TaskbarMn" -Value 0 -Force               
-    Set-ItemProperty -Path $AdvPath -Name "HideFileExt" -Value 0 -Force             
-    Set-ItemProperty -Path $AdvPath -Name "Hidden" -Value 1 -Force                  
-    Start-Process explorer
-}
-
-function Set-A2KWallpapers {
-    $WallDir = "$env:USERPROFILE\Pictures\a2k_walls"
-    if (!(Test-Path $WallDir)) { New-Item -ItemType Directory -Path $WallDir -Force | Out-Null }
-    $Url = "https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main/wall1.jpg"
-    $Dest = "$WallDir\wall1.jpg"
-    curl.exe -L -s -o $Dest $Url
-    if (Test-Path $Dest) {
-        $Signature = 'using System.Runtime.InteropServices; public class NativeWallpaper { [DllImport("user32.dll")] public static extern bool SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni); }'
-        if (-not ([System.Management.Automation.PSTypeName]"NativeWallpaper").Type) { Add-Type $Signature }
-        Set-ItemProperty "HKCU:\Control Panel\Desktop" WallpaperStyle 10
-        [NativeWallpaper]::SystemParametersInfo(20, 0, $Dest, 3) | Out-Null
+function Get-WifiKeys {
+    $profiles = netsh wlan show profiles | Select-String "\:(.+)$" | ForEach-Object { $_.Matches.Groups[1].Value.Trim() }
+    foreach ($p in $profiles) {
+        if ($p) { netsh wlan show profile name="$p" key=clear | Select-String "Key Content" | ForEach-Object { 
+            Write-Host " SSID: $p | PASS: $($_.ToString().Split(':')[1].Trim())" -ForegroundColor Green 
+        } }
     }
 }
 
 # ============================================================================
-# MAIN LOOP
+# UI BOX DESIGN
 # ============================================================================
-Set-Language
+function Show-Menu {
+    Write-Host "$BgBlack" -NoNewline; Clear-Host
+    $L = $Text[$Global:Lang]; $G = $GoldTxt; $W = $WhiteTxt; $Gy = $GrayTxt
+
+    Write-Host "`n    $G  █████╗ ███████╗████████╗███████╗██╗  ██╗"
+    Write-Host "    $G  ██╔══██╗╚══███╔╝╚══██╔══╝██╔════╝██║ ██╔╝"
+    Write-Host "    $G  ███████║  ███╔╝    ██║   █████╗  █████╔╝ "
+    Write-Host "    $G  ██╔══██║ ███╔╝     ██║   ██╔══╝  ██╔═██╗ "
+    Write-Host "    $G  ██║  ██║███████╗   ██║   ███████╗██║  ██╗"
+    Write-Host "    $G  ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝"
+    Write-Host "    $Gy  ____________________________________________"
+    Write-Host "    $Gy |                                            |"
+    Write-Host "    $Gy |  $RedTxt [0]$W $($L.Opt0.PadRight(35)) $Gy |"
+    Write-Host "    $Gy |  $G [1]$W $($L.Opt1.PadRight(35)) $Gy |"
+    Write-Host "    $Gy |  $G [2]$W $($L.Opt2.PadRight(35)) $Gy |"
+    Write-Host "    $Gy |  $G [3]$W $($L.Opt3.PadRight(35)) $Gy |"
+    Write-Host "    $Gy |  $G [4]$W $($L.Opt4.PadRight(35)) $Gy |"
+    Write-Host "    $Gy |  $G [5]$W $($L.Opt5.PadRight(35)) $Gy |"
+    Write-Host "    $Gy |  $G [6]$W $($L.Opt6.PadRight(35)) $Gy |"
+    Write-Host "    $Gy |  $G [7]$W $($L.Opt7.PadRight(35)) $Gy |"
+    Write-Host "    $Gy |  $G [8]$W $($L.Opt8.PadRight(35)) $Gy |"
+    Write-Host "    $Gy |  $G [9]$W $($L.Opt9.PadRight(35)) $Gy |"
+    Write-Host "    $Gy |____________________________________________|"
+    Write-Host "    $Gy |  $RedTxt [X]$W $($L.OptX.PadRight(35)) $Gy |"
+    Write-Host "    $Gy |____________________________________________|"
+}
+
+# ============================================================================
+# STARTUP FLOW
+# ============================================================================
+Write-Host "$BgBlack" -NoNewline; Clear-Host
+Write-Host "`n  $GoldTxt [1] English  [2] Español"
+if ((Read-Host "  AZTEK") -eq "2") { $Global:Lang = "ES" }
+
+# Forced Pre-flight Check
+Show-Header
+Write-Host "`n  $RedTxt $($Text[$Global:Lang].PreSafe) $Reset"
+$ans = Read-Host "  $($Text[$Global:Lang].CreateR)"
+if ($ans -match "[YySs]") { Create-A2KSafeguard }
+
 do {
     Show-Menu
-    $choice = Read-Host "`n $GoldTxt AZTEK > $Reset"
-    switch ($choice) {
-        '0' { Create-A2KRestorePoint; pause }
-        '1' { Create-A2KRestorePoint; Install-Software; Remove-Bloatware; Apply-Tweaks; Set-A2KWallpapers; pause }
-        '2' { Install-Software; pause }
-        '3' { Remove-Bloatware; pause }
-        '4' { Apply-Tweaks; pause }
-        '5' { Set-A2KWallpapers; pause }
-        '6' { powercfg /setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c; pause }
-        '7' { winget upgrade --all; pause }
-        '9' { Start-Process "https://yourwebsite.com"; pause } # Placeholder for your site
-        '8' { break }
+    $c = Read-Host "`n    $GoldTxt $($Text[$Global:Lang].Prompt)$Reset"
+    switch ($c) {
+        '0' { Invoke-EmergencyRestore; pause }
+        '1' { Create-A2KSafeguard; Enable-GodMode; irm https://get.massgrave.dev | iex; pause }
+        '2' { Enable-GodMode; pause }
+        '3' { netsh interface ip set dns name="Ethernet" source=static address=1.1.1.1; pause }
+        '4' { Get-WifiKeys; pause }
+        '5' { Stop-Process -Name (Read-Host "Process Name") -Force; pause }
+        '6' { Enable-WindowsOptionalFeature -Online -FeatureName "Containers-DisposableClientVM" -All; pause }
+        '7' { irm https://get.massgrave.dev | iex; pause }
+        '8' { winget install --id Google.Chrome; winget install --id 7zip.7zip; pause }
+        '9' { Start-Process "https://yourwebsite.com"; pause }
+        'x' { break }
+        'X' { break }
     }
-} while ($choice -ne '8')
+} while ($true)
