@@ -3,8 +3,8 @@
 <#
 .SYNOPSIS
     AZTEK (a2k) tech - SENTINEL MASTER RELEASE
-    - VERSION: 2.1 (2026-02-05)
-    - WEBSITE: https://www.a2k.lat/
+    - VERSION: 2.2 (2026-02-05)
+    - FIX: Option 10 Redirect to #download
 #>
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -31,7 +31,7 @@ $Text = @{
         Opt4 = "WIFI PASS RECOVERY"; Opt5 = "APP KILLER (Force Close)"
         Opt6 = "WINDOWS SANDBOX"; Opt7 = "MAS ACTIVATION (Win/Office)"
         Opt8 = "INSTALL ESSENTIAL APPS"; Opt9 = "SET AZTEK WALLPAPER"
-        Opt10 = "VISIT A2K.LAT"; OptH = "MANUAL / HELP"; OptX = "EXIT"
+        Opt10 = "VISIT A2K.LAT TOOLS"; OptH = "MANUAL / HELP"; OptX = "EXIT"
         GodDone = "[✓] God Mode Folder created on Desktop!"
     }
     ES = @{
@@ -42,7 +42,7 @@ $Text = @{
         Opt4 = "RECUPERAR CLAVES WIFI"; Opt5 = "APP KILLER (Cerrar Apps)"
         Opt6 = "WINDOWS SANDBOX"; Opt7 = "ACTIVACIÓN MAS (Win/Office)"
         Opt8 = "INSTALAR APPS ESENCIALES"; Opt9 = "PONER FONDO AZTEK"
-        Opt10 = "VISITAR A2K.LAT"; OptH = "MANUAL / AYUDA"; OptX = "SALIR"
+        Opt10 = "VISITAR A2K.LAT HERRAMIENTAS"; OptH = "MANUAL / AYUDA"; OptX = "SALIR"
         GodDone = "[✓] ¡Carpeta Modo Dios creada en el Escritorio!"
     }
 }
@@ -139,7 +139,7 @@ do {
             $code = 'using System.Runtime.InteropServices; public class Wall { [DllImport("user32.dll")] public static extern int SystemParametersInfo(int u, int p, string v, int f); }'
             if (!([System.Management.Automation.PSTypeName]"Wall").Type) { Add-Type $code }
             [Wall]::SystemParametersInfo(20, 0, $Dest, 3) | Out-Null; pause }
-        '10'{ Start-Process "https://www.a2k.lat/"; pause }
+        '10'{ Start-Process "https://www.a2k.lat/#download"; pause }
         'h' { Show-Help }
         'H' { Show-Help }
         'x' { break }
