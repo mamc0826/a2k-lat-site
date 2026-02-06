@@ -2,169 +2,200 @@
 
 <#
 .SYNOPSIS
-    Windows 11 a2k tech Ultimate Setup
-    TARGETED BLOATWARE: Bing, News, Teams, Todo, Phone Link.
-    FIXED: Nuclear Registry Bypass for Taskbar Permissions.
+    AZTEK (a2k) tech Multi-Language Suite
+    COLORS: Gold & Black
+    LANGUAGES: English & Español
 #>
 
 # ============================================================================
-# MENU
+# GLOBAL SETTINGS & LANGUAGE ENGINE
 # ============================================================================
-function Show-Menu {
-    Clear-Host
-    Write-Host "========================================" -ForegroundColor Cyan
-    Write-Host "       Windows 11 a2k tech" -ForegroundColor White -BackgroundColor Blue
-    Write-Host "========================================" -ForegroundColor Cyan
-    Write-Host " 1) FULL AUTO-SETUP (The Works)"
-    Write-Host " 2) Install Software Suite"
-    Write-Host " 3) Remove Bloatware (News, Bing, Teams, etc.)"
-    Write-Host " 4) UI Tweaks & Classic Menus"
-    Write-Host " 5) Set Wallpaper (Win32)"
-    Write-Host " 6) Optimize Power & Performance"
-    Write-Host " 7) Update All Apps & Drivers"
-    Write-Host " 8) Exit"
-    Write-Host "========================================" -ForegroundColor Cyan
-}
+$Global:Lang = "EN" # Default
 
-# ============================================================================
-# OPTION 5 – WALLPAPER ENGINE
-# ============================================================================
-function Set-A2KWallpapers {
-    Write-Host "`n[!] Setting Wallpaper..." -ForegroundColor Yellow
-    $WallDir = "$env:USERPROFILE\Pictures\a2k_walls"
-    if (!(Test-Path $WallDir)) { New-Item -ItemType Directory -Path $WallDir -Force | Out-Null }
-
-    $Url = "https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main/wall1.jpg"
-    $Dest = "$WallDir\wall1.jpg"
-    curl.exe -L -s -o $Dest $Url
-
-    if (Test-Path $Dest) {
-        $Signature = 'using System.Runtime.InteropServices; public class NativeWallpaper { [DllImport("user32.dll")] public static extern bool SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni); }'
-        if (-not ([System.Management.Automation.PSTypeName]"NativeWallpaper").Type) { Add-Type $Signature }
-        
-        Set-ItemProperty "HKCU:\Control Panel\Desktop" WallpaperStyle 10
-        [NativeWallpaper]::SystemParametersInfo(20, 0, $Dest, 3) | Out-Null
-        Write-Host "✓ Wallpaper applied." -ForegroundColor Green
+$Text = @{
+    EN = @{
+        Header      = "AZTEK TECH (a2k) | PRESTIGE EDITION"
+        Rest        = "CREATE SYSTEM RESTORE POINT"
+        Full        = "THE WORKS (Full AZTEK Auto-Setup)"
+        Apps        = "Install Software Suite"
+        Bloat       = "Remove Bloatware (News, Bing, Teams, etc.)"
+        UI          = "UI Tweaks (Classic Menus, Dark Mode, Taskbar)"
+        Wall        = "Set Wallpaper (AZTEK Win32 Engine)"
+        Perf        = "Optimize Power & Performance"
+        Update      = "Update All Apps & Drivers"
+        Web         = "VISIT AZTEK HUB (Tutorials & Tools)"
+        Exit        = "Exit"
+        Prompt      = "Select an option"
+        RestDone    = "✓ System Protected."
+        RestWait    = "[!] Forging Restore Point..."
+        WallDone    = "✓ Aesthetic Locked."
+        PerfDone    = "✓ Performance Profile Active."
+        UIDone      = "✓ Interface optimized to AZTEK Standards."
+        BloatDone   = "✓ Purging Microsoft Bloatware..."
+        Sync        = "Synchronizing Software Arsenal..."
+        Summon      = "Summoning"
+    }
+    ES = @{
+        Header      = "AZTEK TECH (a2k) | EDICIÓN PRESTIGIO"
+        Rest        = "CREAR PUNTO DE RESTAURACIÓN"
+        Full        = "TODO EN UNO (Configuración AZTEK Auto)"
+        Apps        = "Instalar Suite de Software"
+        Bloat       = "Eliminar Bloatware (News, Bing, Teams, etc.)"
+        UI          = "Ajustes de UI (Menús Clásicos, Modo Oscuro)"
+        Wall        = "Poner Fondo de Pantalla (Motor Win32)"
+        Perf        = "Optimizar Energía y Rendimiento"
+        Update      = "Actualizar Apps y Drivers"
+        Web         = "VISITAR AZTEK HUB (Tutoriales y Herramientas)"
+        Exit        = "Salir"
+        Prompt      = "Seleccione una opción"
+        RestDone    = "✓ Sistema Protegido."
+        RestWait    = "[!] Forjando Punto de Restauración..."
+        WallDone    = "✓ Estética Asegurada."
+        PerfDone    = "✓ Perfil de Rendimiento Activo."
+        UIDone      = "✓ Interfaz optimizada al estándar AZTEK."
+        BloatDone   = "✓ Purgando Bloatware de Microsoft..."
+        Sync        = "Sincronizando Arsenal de Software..."
+        Summon      = "Invocando"
     }
 }
 
 # ============================================================================
-# SOFTWARE INSTALL
+# UI FUNCTIONS
 # ============================================================================
+function Set-Language {
+    Clear-Host
+    Write-Host " [1] English" -ForegroundColor Yellow
+    Write-Host " [2] Español" -ForegroundColor Yellow
+    $choice = Read-Host "`nSelect Language / Seleccione Idioma"
+    if ($choice -eq "2") { $Global:Lang = "ES" } else { $Global:Lang = "EN" }
+}
+
+function Show-Header {
+    Clear-Host
+    $Gold = "Yellow"
+    Write-Host @"
+    █████╗ ███████╗████████╗███████╗██╗  ██╗
+    ██╔══██╗╚══███╔╝╚══██╔══╝██╔════╝██║ ██╔╝
+    ███████║  ███╔╝    ██║   █████╗  █████╔╝ 
+    ██╔══██║ ███╔╝     ██║   ██╔══╝  ██╔═██╗ 
+    ██║  ██║███████╗   ██║   ███████╗██║  ██╗
+    ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝
+    >> $($Text[$Global:Lang].Header) <<
+"@ -ForegroundColor $Gold
+    Write-Host " ------------------------------------------------------------" -ForegroundColor DarkGray
+}
+
+function Show-Menu {
+    Show-Header
+    $Gold = "Yellow"
+    $L = $Text[$Global:Lang]
+    
+    Write-Host " [0] " -NoNewline -ForegroundColor $Gold; Write-Host $L.Rest
+    Write-Host " [1] " -NoNewline -ForegroundColor $Gold; Write-Host $L.Full
+    Write-Host " [2] " -NoNewline -ForegroundColor $Gold; Write-Host $L.Apps
+    Write-Host " [3] " -NoNewline -ForegroundColor $Gold; Write-Host $L.Bloat
+    Write-Host " [4] " -NoNewline -ForegroundColor $Gold; Write-Host $L.UI
+    Write-Host " [5] " -NoNewline -ForegroundColor $Gold; Write-Host $L.Wall
+    Write-Host " [6] " -NoNewline -ForegroundColor $Gold; Write-Host $L.Perf
+    Write-Host " [7] " -NoNewline -ForegroundColor $Gold; Write-Host $L.Update
+    Write-Host " [9] " -NoNewline -ForegroundColor $Gold; Write-Host $L.Web
+    Write-Host " [8] " -NoNewline -ForegroundColor "Red"; Write-Host $L.Exit
+    Write-Host "`n ------------------------------------------------------------" -ForegroundColor DarkGray
+}
+
+# ============================================================================
+# LOGIC FUNCTIONS
+# ============================================================================
+function Create-A2KRestorePoint {
+    $L = $Text[$Global:Lang]
+    Write-Host "`n$($L.RestWait)" -ForegroundColor Cyan
+    Enable-ComputerRestore -Drive "C:\" -ErrorAction SilentlyContinue
+    try {
+        Checkpoint-Computer -Description "AZTEK_Setup" -RestorePointType "MODIFY_SETTINGS"
+        Write-Host $L.RestDone -ForegroundColor Green
+    } catch { Write-Host ">> Skip." -ForegroundColor DarkGray }
+}
+
 function Install-Software {
-    Write-Host "`n[!] Updating Winget Sources..." -ForegroundColor Yellow
+    $L = $Text[$Global:Lang]
+    Write-Host "`n[!] $($L.Sync)" -ForegroundColor Yellow
     winget source update
-
-    $Apps = @(
-        "Google.Chrome", "Mozilla.Firefox", "Brave.Brave", "7zip.7zip",
-        "Notepad++.Notepad++", "VideoLAN.VLC", "SumatraPDF.SumatraPDF",
-        "Python.Python.3.13", "Rufus.Rufus", "Daum.PotPlayer", 
-        "HandBrake.HandBrake", "Genymobile.scrcpy", "File-New-Project.EarTrumpet",
-        "Klocman.BulkCrapUninstaller", "RevoUninstaller.RevoUninstaller",
-        "AntibodySoftware.WizTree", "MiniTool.PartitionWizard.Free",
-        "th-ch.YouTubeMusic", "Google.PlatformTools",
-        "VMware.WorkstationPro", "GGPoker.GGPoker"
-    )
-
+    $Apps = @("Google.Chrome", "Mozilla.Firefox", "Brave.Brave", "7zip.7zip", "Notepad++.Notepad++", "VideoLAN.VLC", "SumatraPDF.SumatraPDF", "Python.Python.3.13", "Rufus.Rufus", "Daum.PotPlayer", "HandBrake.HandBrake", "Genymobile.scrcpy", "File-New-Project.EarTrumpet", "Klocman.BulkCrapUninstaller", "RevoUninstaller.RevoUninstaller", "AntibodySoftware.WizTree", "MiniTool.PartitionWizard.Free", "th-ch.YouTubeMusic", "Google.PlatformTools", "VMware.WorkstationPro", "GGPoker.GGPoker")
     foreach ($app in $Apps) {
-        Write-Host "Installing/Updating $app..." -ForegroundColor Green
+        Write-Host ">> $($L.Summon) $app..." -ForegroundColor Yellow
         winget install --id $app --silent --accept-package-agreements --accept-source-agreements
     }
 }
 
-# ============================================================================
-# BLOATWARE REMOVAL (NEW TARGETS)
-# ============================================================================
 function Remove-Bloatware {
-    Write-Host "`n[!] Stripping Targeted Bloatware..." -ForegroundColor Yellow
-    
-    $Bloat = @(
-        "Microsoft.BingNews",              # Microsoft News
-        "Microsoft.BingWeather",           # Bing Weather
-        "Microsoft.BingSearch",            # Bing Search App
-        "MicrosoftTeams",                  # Teams (Consumer)
-        "Microsoft.Teams",                 # Teams (Work)
-        "Microsoft.Todos",                 # Microsoft To Do
-        "Microsoft.YourPhone",             # Phone Link
-        "Microsoft.GamingApp",             # Xbox App
-        "Microsoft.XboxApp",
-        "Microsoft.MicrosoftSolitaireCollection",
-        "Microsoft.MicrosoftOfficeHub"     # Office App
-    )
-
-    foreach ($pkg in $Bloat) {
-        Write-Host "Removing $pkg..." -ForegroundColor Gray
-        Get-AppxPackage -Name $pkg -AllUsers | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue
-    }
-
-    # Specifically targeting the "WebSearch" (Bing in Start Menu)
-    Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Name "DisableSearchBoxSuggestions" -Value 1 -ErrorAction SilentlyContinue
+    $L = $Text[$Global:Lang]
+    Write-Host "`n$($L.BloatDone)" -ForegroundColor Red
+    $Bloat = @("Microsoft.BingNews", "Microsoft.BingWeather", "Microsoft.BingSearch", "MicrosoftTeams", "Microsoft.Teams", "Microsoft.Todos", "Microsoft.YourPhone", "Microsoft.GamingApp", "Microsoft.XboxApp", "Microsoft.MicrosoftSolitaireCollection", "Microsoft.MicrosoftOfficeHub")
+    foreach ($pkg in $Bloat) { Get-AppxPackage -Name $pkg -AllUsers | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue }
 }
 
-# ============================================================================
-# UI TWEAKS (NUCLEAR PERMISSION BYPASS)
-# ============================================================================
 function Apply-Tweaks {
-    Write-Host "`n[!] Refreshing Shell & Bypassing Registry Locks..." -ForegroundColor Yellow
-
-    # Kill Explorer
+    $L = $Text[$Global:Lang]
+    Write-Host "`n[!] UI..." -ForegroundColor Yellow
     Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
     Start-Sleep -Seconds 1
-
-    # Classic Menu & Themes
     Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" AppsUseLightTheme 0 -Force
     Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" SystemUsesLightTheme 0 -Force
-
     $Classic = "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32"
     if (!(Test-Path $Classic)) { New-Item -Path $Classic -Force | Out-Null }
     Set-ItemProperty $Classic -Name "(Default)" -Value "" -Force
-
-    # --- TASKBAR PERMISSION BYPASS ---
     $AdvPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
-    $KeysToForce = @("TaskbarDa", "TaskbarMn") # Widgets and Chat
-    
-    foreach ($key in $KeysToForce) {
-        try {
-            # Try to force delete the property before recreating it
-            Remove-ItemProperty -Path $AdvPath -Name $key -ErrorAction SilentlyContinue
-            New-ItemProperty -Path $AdvPath -Name $key -Value 0 -PropertyType DWord -Force | Out-Null
-        } catch {
-            # If still fails, try setting directly one last time
-            Set-ItemProperty -Path $AdvPath -Name $key -Value 0 -Force -ErrorAction SilentlyContinue
-        }
-    }
-
-    Set-ItemProperty -Path $AdvPath -Name "HideFileExt" -Value 0 -Force
-    Set-ItemProperty -Path $AdvPath -Name "Hidden" -Value 1 -Force
-
-    # Restart Explorer
+    $SearchPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search"
+    Set-ItemProperty -Path $SearchPath -Name "SearchboxTaskbarMode" -Value 0 -Force 
+    Set-ItemProperty -Path $AdvPath -Name "TaskbarDa" -Value 0 -Force               
+    Set-ItemProperty -Path $AdvPath -Name "TaskbarMn" -Value 0 -Force               
+    Set-ItemProperty -Path $AdvPath -Name "HideFileExt" -Value 0 -Force             
+    Set-ItemProperty -Path $AdvPath -Name "Hidden" -Value 1 -Force                  
     Start-Process explorer
-    Write-Host "✓ UI Tweaks applied and Shell refreshed." -ForegroundColor Green
+    Write-Host $L.UIDone -ForegroundColor Green
+}
+
+function Set-A2KWallpapers {
+    $L = $Text[$Global:Lang]
+    Write-Host "`n[!] Wallpaper..." -ForegroundColor Yellow
+    $WallDir = "$env:USERPROFILE\Pictures\a2k_walls"
+    if (!(Test-Path $WallDir)) { New-Item -ItemType Directory -Path $WallDir -Force | Out-Null }
+    $Url = "https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main/wall1.jpg"
+    $Dest = "$WallDir\wall1.jpg"
+    curl.exe -L -s -o $Dest $Url
+    if (Test-Path $Dest) {
+        $Signature = 'using System.Runtime.InteropServices; public class NativeWallpaper { [DllImport("user32.dll")] public static extern bool SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni); }'
+        if (-not ([System.Management.Automation.PSTypeName]"NativeWallpaper").Type) { Add-Type $Signature }
+        Set-ItemProperty "HKCU:\Control Panel\Desktop" WallpaperStyle 10
+        [NativeWallpaper]::SystemParametersInfo(20, 0, $Dest, 3) | Out-Null
+        Write-Host $L.WallDone -ForegroundColor Green
+    }
+}
+
+function Open-AztekHub {
+    # Replace the URL below with your actual website link when ready
+    $Url = "https://yourwebsite.com" 
+    Write-Host "`n[!] Opening AZTEK HUB..." -ForegroundColor Yellow
+    Start-Process $Url
 }
 
 # ============================================================================
-# PERFORMANCE
+# MAIN EXECUTION
 # ============================================================================
-function Optimize-Performance {
-    Write-Host "`n[!] Optimizing Performance..." -ForegroundColor Yellow
-    powercfg /setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
-    Write-Host "✓ High Performance profile set." -ForegroundColor Green
-}
-
-# ============================================================================
-# MAIN LOOP
-# ============================================================================
+Set-Language
 do {
     Show-Menu
-    $choice = Read-Host "`nSelect an option"
+    $choice = Read-Host "`n$($Text[$Global:Lang].Prompt)"
     switch ($choice) {
-        '1' { Install-Software; Remove-Bloatware; Apply-Tweaks; Set-A2KWallpapers; Optimize-Performance; pause }
+        '0' { Create-A2KRestorePoint; pause }
+        '1' { Create-A2KRestorePoint; Install-Software; Remove-Bloatware; Apply-Tweaks; Set-A2KWallpapers; pause }
         '2' { Install-Software; pause }
         '3' { Remove-Bloatware; pause }
         '4' { Apply-Tweaks; pause }
         '5' { Set-A2KWallpapers; pause }
-        '6' { Optimize-Performance; pause }
+        '6' { powercfg /setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c; pause }
         '7' { winget upgrade --all; pause }
+        '9' { Open-AztekHub; pause }
         '8' { break }
     }
 } while ($choice -ne '8')
