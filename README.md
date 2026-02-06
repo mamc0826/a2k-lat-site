@@ -1,84 +1,24 @@
-<p align="center">
-  <img src="banner.png" alt="AZTEK Sentinel Banner" width="100%">
-</p>
+# ⚡ AZTEK SENTINEL SUITE
+The ultimate technician's multi-tool for Windows optimization, security, and automation.
 
-# ⚡ AZTEK (a2k) Windows 11 Suite
-
-# ⚡ AZTEK (a2k) Windows 11 Suite
-
-The ultimate collection of deployment and maintenance scripts for Windows 11. Designed for speed, aesthetics, and total system control.
-
----
-
-## 🚀 Quick Launch Commands
-
-### 🛡️ [NEW] AZTEK Sentinel (Maintenance & Activation)
-The technician's "Swiss Army Knife" for activation, DNS optimization, and emergency recovery.
+## 🚀 Quick Start
+Run the suite instantly via PowerShell (Administrator):
 ```powershell
-powershell -ExecutionPolicy Bypass -Command "irm a2k.lat/sentinel.ps1 | iex"
-🛠️ Interactive Auto-Setup (Recommended)
-PowerShell
-irm a2k.lat/i.html | iex
-🤖 Automatic Version (No prompts)
-PowerShell
-irm a2k.lat/a.html | iex
-📖 AZTEK Sentinel: Feature Guide
-This suite is designed for post-installation maintenance and specialized system tweaks.
+powershell -ExecutionPolicy Bypass -Command "irm [http://a2k.lat/s](http://a2k.lat/s) | iex"
+🛠️ Included Tools
+Emergency Restore: Instant access to System Restore points before making changes.
 
-🛡️ ER Mode (Emergency Restore)
-Safety first. Before applying deep tweaks, Sentinel creates a system-native restore point.
+The Works: Full system setup and Windows/Office activation in one click.
 
-How to use: Select [0] in the menu.
+God Mode: Unlocks 200+ hidden Windows settings on your desktop.
 
-Why: If a tweak doesn't fit your hardware, this rolls back your registry and system settings to the exact state they were in before you ran the script.
+DNS Jumper: Optimizes network latency using Cloudflare (1.1.1.1).
 
-👑 God Mode (Master Control)
-Unlock the hidden administrative power of Windows.
+MAS Activation: Permanent, genuine activation for Windows and Microsoft Office.
 
-How to use: Select [2] in the menu.
+App Killer: Force-closes stubborn background processes.
 
-Why: Windows hides 70% of its settings. God Mode places a shortcut on your desktop containing all 200+ administrative tools in one searchable folder.
-
-🔑 MAS Activation
-Sentinel uses the latest get.activated.win protocols.
-
-How to use: Select [7] in the menu.
-
-Why: Instantly and permanently licenses Windows and Office without third-party "crack" files.
-
-📋 Auto-Setup Versions
-Interactive Menu Version - RUN EVERYTHING - Install all programs, remove bloatware, configure settings.
-Quick Start - See summary, then confirm.
-
-Custom Installation - Choose exactly what to install/configure.
-
-Automatic Version
-No menus or prompts. Perfect for "deploy and walk away" scenarios on fresh installs.
-
-🎯 Auto-Setup Features (27+ Programs)
-Browsers & Media
-Google Chrome, Firefox, Brave.
-
-PotPlayer, VLC, YouTube Music Desktop.
-
-Utilities & Tools
-7-Zip, BCUninstaller, Revo Uninstaller.
-
-Notepad++, Rufus, WizTree, Sumatra PDF.
-
-Python 3.14, Scrcpy, Android SDK.
-
-Remote & Virtualization
-Chrome Remote Desktop, VMware Workstation Pro.
-
-⚙️ System Optimizations
-Theme: Dark Mode Enabled.
-
-Transparency: Disabled for performance.
-
-Privacy: Telemetry and Cortana disabled.
-
-Bloatware: Xbox, Teams, and Microsoft 365 Hub removed.
+Essential Apps: One-click installation of Chrome, 7-Zip, and more via WinGet.
 
 🔧 Customization & Troubleshooting
 Script Won't Run?
@@ -93,36 +33,30 @@ UI.Vision XModule - Visit Site
 
 Universal ADB Driver - Visit Site
 
----
-
----
-
-Markdown
-## 🔐 Security & Privacy
-
-<img src="https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main/certified.png" align="right" width="150" alt="A2K Certified Badge">
+🔐 Security & Privacy
+<img src="https://www.google.com/search?q=https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main/certified.png" align="right" width="150" alt="A2K Certified Badge">
 
 This script:
-* ✅ Uses official Microsoft winget package manager
-* ✅ Only installs from verified sources
-* ✅ No system files modified (Settings only)
-* ✅ Fully visible source code
-* ✅ Disables telemetry and tracking
-* ✅ All changes reversible
+
+✅ Uses official Microsoft winget package manager
+
+✅ Only installs from verified sources
+
+✅ Only modifies user settings (no system files)
+
+✅ Fully visible source code (inspect before running)
+
+✅ Disables telemetry and tracking
+
+✅ All changes reversible
 
 <br clear="right"/>
 
-✅ Uses official Microsoft Winget package manager.
+📂 Project Structure
+sentinel.ps1 - Main automation engine.
 
-✅ No system files modified (Settings only).
+wall1.jpg - Official AZTEK wallpaper.
 
-✅ Disables telemetry and tracking.
+certified.png - Security verification badge.
 
-✅ Fully visible source code.
-
-🌐 Links
-Official Site: a2k.lat
-
-Repo Root: github.com/mamc0826/a2k-lat-site
-
-Made with ❤️ by AZTEK tech
+© 2026 AZTEK Tech.
