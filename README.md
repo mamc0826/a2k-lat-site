@@ -93,7 +93,6 @@ UI.Vision XModule - Visit Site
 
 Universal ADB Driver - Visit Site
 
-🔐 Security & Privacy
 ## 🔐 Security & Privacy
 
 <img src="certified.png" align="right" width="150">
