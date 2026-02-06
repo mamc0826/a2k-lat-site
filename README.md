@@ -5,7 +5,7 @@ The ultimate technician's multi-tool for Windows optimization, security, and aut
 
 ## 🚀 Quick Start
 Run the suite instantly via PowerShell (Administrator):
-```powershell
+powershell
 powershell -ExecutionPolicy Bypass -Command "irm [http://a2k.lat/s](http://a2k.lat/s) | iex"
 
 🛠️ Included Tools
@@ -42,7 +42,6 @@ UI.Vision XModule - Visit Site
 Universal ADB Driver - Visit Site
 
 🔐 Security & Privacy
-<img src="https://www.google.com/search?q=https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main/certified.png" align="right" width="150" alt="A2K Certified Badge">
 
 This script:
 
