@@ -97,6 +97,7 @@ Universal ADB Driver - Visit Site
 
 ---
 
+Markdown
 ## 🔐 Security & Privacy
 
 <img src="https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main/certified.png" align="right" width="150" alt="A2K Certified Badge">
@@ -104,8 +105,8 @@ Universal ADB Driver - Visit Site
 This script:
 * ✅ Uses official Microsoft winget package manager
 * ✅ Only installs from verified sources
-* ✅ Only modifies user settings (no system files)
-* ✅ Fully visible source code (inspect before running)
+* ✅ No system files modified (Settings only)
+* ✅ Fully visible source code
 * ✅ Disables telemetry and tracking
 * ✅ All changes reversible
 
