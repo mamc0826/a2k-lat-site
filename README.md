@@ -1,10 +1,13 @@
 # ⚡ AZTEK SENTINEL SUITE
+![Banner](https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main/banner.png)
+
 The ultimate technician's multi-tool for Windows optimization, security, and automation.
 
 ## 🚀 Quick Start
 Run the suite instantly via PowerShell (Administrator):
 ```powershell
 powershell -ExecutionPolicy Bypass -Command "irm [http://a2k.lat/s](http://a2k.lat/s) | iex"
+
 🛠️ Included Tools
 Emergency Restore: Instant access to System Restore points before making changes.
 
@@ -19,6 +22,11 @@ MAS Activation: Permanent, genuine activation for Windows and Microsoft Office.
 App Killer: Force-closes stubborn background processes.
 
 Essential Apps: One-click installation of Chrome, 7-Zip, and more via WinGet.
+
+🖼️ Official Aesthetic
+The Sentinel Suite comes with custom branding. Use Option 9 in the menu to set the official wallpaper:
+
+<img src="https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main/wall1.jpg" width="600" alt="AZTEK Wallpaper Preview">
 
 🔧 Customization & Troubleshooting
 Script Won't Run?
@@ -58,5 +66,7 @@ sentinel.ps1 - Main automation engine.
 wall1.jpg - Official AZTEK wallpaper.
 
 certified.png - Security verification badge.
+
+banner.png - Repo branding.
 
 © 2026 AZTEK Tech.
