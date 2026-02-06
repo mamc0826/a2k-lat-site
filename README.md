@@ -1,3 +1,9 @@
+<p align="center">
+  <img src="banner.png" alt="AZTEK Sentinel Banner" width="100%">
+</p>
+
+# ⚡ AZTEK (a2k) Windows 11 Suite
+
 # ⚡ AZTEK (a2k) Windows 11 Suite
 
 The ultimate collection of deployment and maintenance scripts for Windows 11. Designed for speed, aesthetics, and total system control.
