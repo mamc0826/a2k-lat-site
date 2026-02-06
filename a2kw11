@@ -2,10 +2,9 @@
 
 <#
 .SYNOPSIS
-    AZTEK (a2k) tech - SENTINEL FINAL
-    - FIXED: New MAS URL (get.activated.win)
-    - FIXED: UI Alignment & Centering
+    AZTEK (a2k) tech - SENTINEL FINAL BUILD
     - WEBSITE: https://www.a2k.lat/
+    - REPO: Root Deployment Version
 #>
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -90,11 +89,6 @@ function Create-A2KSafeguard {
     Checkpoint-Computer -Description "AZTEK_Sentinel" -RestorePointType "MODIFY_SETTINGS" -ErrorAction SilentlyContinue
 }
 
-function Invoke-MAS {
-    Write-Host "`n$Gold [!] Connecting to Activation Servers... $Reset"
-    irm https://get.activated.win | iex
-}
-
 Write-Host "$Black" -NoNewline; Clear-Host
 Write-Host "`n  $Gold [1] English  [2] Español"
 if ((Read-Host "  AZTEK") -eq "2") { $Global:Lang = "ES" }
@@ -108,7 +102,7 @@ do {
     $c = Read-Host "`n$(Get-Pad)$Gold $($Text[$Global:Lang].Prompt)$Reset"
     switch ($c) {
         '0' { Start-Process "rstrui.exe"; pause }
-        '1' { Create-A2KSafeguard; Invoke-MAS; pause }
+        '1' { Create-A2KSafeguard; irm https://get.activated.win | iex; pause }
         '2' { $p = "$env:USERPROFILE\Desktop\GodMode.{ED7BA470-8E54-465E-825C-99712043E01C}"
               if (!(Test-Path $p)) { New-Item -Path $p -ItemType Directory | Out-Null }
               Write-Host "`n$Gold $($Text[$Global:Lang].GodDone) $Reset"; pause }
@@ -116,7 +110,7 @@ do {
         '4' { netsh wlan show profiles | Select-String "\:(.+)$" | % { $n = $_.Matches.Groups[1].Value.Trim(); netsh wlan show profile name="$n" key=clear | Select-String "Key Content" | % { Write-Host " SSID: $n | PASS: $($_.ToString().Split(':')[1].Trim())" -ForegroundColor Green } }; pause }
         '5' { Stop-Process -Name (Read-Host "Process Name") -Force; pause }
         '6' { Enable-WindowsOptionalFeature -Online -FeatureName "Containers-DisposableClientVM" -All; pause }
-        '7' { Invoke-MAS; pause }
+        '7' { irm https://get.activated.win | iex; pause }
         '8' { winget install --id Google.Chrome; winget install --id 7zip.7zip; pause }
         '9' { 
             $Url = "https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main/wall1.jpg"
