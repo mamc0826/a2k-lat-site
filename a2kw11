@@ -2,15 +2,28 @@
 
 <#
 .SYNOPSIS
-    AZTEK (a2k) tech Multi-Language Suite
-    COLORS: Gold & Black
-    LANGUAGES: English & Español
+    AZTEK (a2k) tech - PRESTIGE BLACK & GOLD EDITION
+    - FULL AUTO-SETUP
+    - MULTI-LANGUAGE (EN/ES)
+    - TRUE BLACK BACKGROUND & HEX GOLD TEXT
+    - SYSTEM RESTORE SAFEGUARD
 #>
 
 # ============================================================================
-# GLOBAL SETTINGS & LANGUAGE ENGINE
+# ANSI COLOR DEFINITIONS (The "HTML" of Terminal)
 # ============================================================================
-$Global:Lang = "EN" # Default
+$E = [char]27
+$GoldTxt  = "$E[38;2;212;175;55m"  # Metallic Gold RGB
+$WhiteTxt = "$E[38;2;255;255;255m"
+$BgBlack  = "$E[48;2;0;0;0m"        # True Black Background
+$RedTxt   = "$E[38;2;230;0;0m"      # Error/Exit Red
+$GrayTxt  = "$E[38;2;80;80;80m"     # Borders
+$Reset    = "$E[0m"
+
+# ============================================================================
+# LANGUAGE DATABASE
+# ============================================================================
+$Global:Lang = "EN"
 
 $Text = @{
     EN = @{
@@ -26,53 +39,47 @@ $Text = @{
         Web         = "VISIT AZTEK HUB (Tutorials & Tools)"
         Exit        = "Exit"
         Prompt      = "Select an option"
-        RestDone    = "✓ System Protected."
-        RestWait    = "[!] Forging Restore Point..."
-        WallDone    = "✓ Aesthetic Locked."
-        PerfDone    = "✓ Performance Profile Active."
-        UIDone      = "✓ Interface optimized to AZTEK Standards."
-        BloatDone   = "✓ Purging Microsoft Bloatware..."
-        Sync        = "Synchronizing Software Arsenal..."
+        RestWait    = "[!] FORGING RESTORE POINT..."
+        Sync        = "SYNCHRONIZING ARSENAL..."
         Summon      = "Summoning"
+        Done        = "Task Complete."
     }
     ES = @{
         Header      = "AZTEK TECH (a2k) | EDICIÓN PRESTIGIO"
         Rest        = "CREAR PUNTO DE RESTAURACIÓN"
-        Full        = "TODO EN UNO (Configuración AZTEK Auto)"
+        Full        = "TODO EN UNO (Configuración AZTEK)"
         Apps        = "Instalar Suite de Software"
-        Bloat       = "Eliminar Bloatware (News, Bing, Teams, etc.)"
+        Bloat       = "Eliminar Bloatware (Noticias, Bing, Teams)"
         UI          = "Ajustes de UI (Menús Clásicos, Modo Oscuro)"
-        Wall        = "Poner Fondo de Pantalla (Motor Win32)"
+        Wall        = "Fondo de Pantalla (Motor Win32)"
         Perf        = "Optimizar Energía y Rendimiento"
-        Update      = "Actualizar Apps y Drivers"
-        Web         = "VISITAR AZTEK HUB (Tutoriales y Herramientas)"
+        Update      = "Actualizar Apps y Controladores"
+        Web         = "VISITAR AZTEK HUB (Tutoriales)"
         Exit        = "Salir"
         Prompt      = "Seleccione una opción"
-        RestDone    = "✓ Sistema Protegido."
-        RestWait    = "[!] Forjando Punto de Restauración..."
-        WallDone    = "✓ Estética Asegurada."
-        PerfDone    = "✓ Perfil de Rendimiento Activo."
-        UIDone      = "✓ Interfaz optimizada al estándar AZTEK."
-        BloatDone   = "✓ Purgando Bloatware de Microsoft..."
-        Sync        = "Sincronizando Arsenal de Software..."
+        RestWait    = "[!] FORJANDO PUNTO DE RESTAURACIÓN..."
+        Sync        = "SINCRONIZANDO ARSENAL..."
         Summon      = "Invocando"
+        Done        = "Tarea Completada."
     }
 }
 
 # ============================================================================
-# UI FUNCTIONS
+# UI CORE FUNCTIONS
 # ============================================================================
 function Set-Language {
+    Write-Host "$BgBlack" -NoNewline
     Clear-Host
-    Write-Host " [1] English" -ForegroundColor Yellow
-    Write-Host " [2] Español" -ForegroundColor Yellow
-    $choice = Read-Host "`nSelect Language / Seleccione Idioma"
+    Write-Host "`n $GoldTxt [1] English"
+    Write-Host " [2] Español $Reset"
+    $choice = Read-Host "`n AZTEK >"
     if ($choice -eq "2") { $Global:Lang = "ES" } else { $Global:Lang = "EN" }
 }
 
 function Show-Header {
+    Write-Host "$BgBlack" -NoNewline
     Clear-Host
-    $Gold = "Yellow"
+    Write-Host "$GoldTxt"
     Write-Host @"
     █████╗ ███████╗████████╗███████╗██╗  ██╗
     ██╔══██╗╚══███╔╝╚══██╔══╝██╔════╝██║ ██╔╝
@@ -81,62 +88,55 @@ function Show-Header {
     ██║  ██║███████╗   ██║   ███████╗██║  ██╗
     ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝
     >> $($Text[$Global:Lang].Header) <<
-"@ -ForegroundColor $Gold
-    Write-Host " ------------------------------------------------------------" -ForegroundColor DarkGray
+"@
+    Write-Host "$GrayTxt ------------------------------------------------------------ $Reset"
 }
 
 function Show-Menu {
     Show-Header
-    $Gold = "Yellow"
     $L = $Text[$Global:Lang]
+    $Gold = "$BgBlack$GoldTxt"
     
-    Write-Host " [0] " -NoNewline -ForegroundColor $Gold; Write-Host $L.Rest
-    Write-Host " [1] " -NoNewline -ForegroundColor $Gold; Write-Host $L.Full
-    Write-Host " [2] " -NoNewline -ForegroundColor $Gold; Write-Host $L.Apps
-    Write-Host " [3] " -NoNewline -ForegroundColor $Gold; Write-Host $L.Bloat
-    Write-Host " [4] " -NoNewline -ForegroundColor $Gold; Write-Host $L.UI
-    Write-Host " [5] " -NoNewline -ForegroundColor $Gold; Write-Host $L.Wall
-    Write-Host " [6] " -NoNewline -ForegroundColor $Gold; Write-Host $L.Perf
-    Write-Host " [7] " -NoNewline -ForegroundColor $Gold; Write-Host $L.Update
-    Write-Host " [9] " -NoNewline -ForegroundColor $Gold; Write-Host $L.Web
-    Write-Host " [8] " -NoNewline -ForegroundColor "Red"; Write-Host $L.Exit
-    Write-Host "`n ------------------------------------------------------------" -ForegroundColor DarkGray
+    Write-Host "$Gold [0] $WhiteTxt $($L.Rest)"
+    Write-Host "$Gold [1] $WhiteTxt $($L.Full)"
+    Write-Host "$Gold [2] $WhiteTxt $($L.Apps)"
+    Write-Host "$Gold [3] $WhiteTxt $($L.Bloat)"
+    Write-Host "$Gold [4] $WhiteTxt $($L.UI)"
+    Write-Host "$Gold [5] $WhiteTxt $($L.Wall)"
+    Write-Host "$Gold [6] $WhiteTxt $($L.Perf)"
+    Write-Host "$Gold [7] $WhiteTxt $($L.Update)"
+    Write-Host "$Gold [9] $WhiteTxt $($L.Web)"
+    Write-Host "$BgBlack$RedTxt [8] $($L.Exit) $Reset"
+    Write-Host "$GrayTxt ------------------------------------------------------------ $Reset"
 }
 
 # ============================================================================
-# LOGIC FUNCTIONS
+# LOGIC CORE FUNCTIONS
 # ============================================================================
 function Create-A2KRestorePoint {
-    $L = $Text[$Global:Lang]
-    Write-Host "`n$($L.RestWait)" -ForegroundColor Cyan
+    Write-Host "`n $GoldTxt $($Text[$Global:Lang].RestWait) $Reset"
     Enable-ComputerRestore -Drive "C:\" -ErrorAction SilentlyContinue
-    try {
-        Checkpoint-Computer -Description "AZTEK_Setup" -RestorePointType "MODIFY_SETTINGS"
-        Write-Host $L.RestDone -ForegroundColor Green
-    } catch { Write-Host ">> Skip." -ForegroundColor DarkGray }
+    Checkpoint-Computer -Description "AZTEK_Setup" -RestorePointType "MODIFY_SETTINGS" -ErrorAction SilentlyContinue
 }
 
 function Install-Software {
-    $L = $Text[$Global:Lang]
-    Write-Host "`n[!] $($L.Sync)" -ForegroundColor Yellow
+    Write-Host "`n $GoldTxt $($Text[$Global:Lang].Sync) $Reset"
     winget source update
     $Apps = @("Google.Chrome", "Mozilla.Firefox", "Brave.Brave", "7zip.7zip", "Notepad++.Notepad++", "VideoLAN.VLC", "SumatraPDF.SumatraPDF", "Python.Python.3.13", "Rufus.Rufus", "Daum.PotPlayer", "HandBrake.HandBrake", "Genymobile.scrcpy", "File-New-Project.EarTrumpet", "Klocman.BulkCrapUninstaller", "RevoUninstaller.RevoUninstaller", "AntibodySoftware.WizTree", "MiniTool.PartitionWizard.Free", "th-ch.YouTubeMusic", "Google.PlatformTools", "VMware.WorkstationPro", "GGPoker.GGPoker")
     foreach ($app in $Apps) {
-        Write-Host ">> $($L.Summon) $app..." -ForegroundColor Yellow
+        Write-Host " $GoldTxt >> $($Text[$Global:Lang].Summon) $WhiteTxt $app... $Reset"
         winget install --id $app --silent --accept-package-agreements --accept-source-agreements
     }
 }
 
 function Remove-Bloatware {
-    $L = $Text[$Global:Lang]
-    Write-Host "`n$($L.BloatDone)" -ForegroundColor Red
+    Write-Host "`n $RedTxt [!] PURGING SYSTEMS... $Reset"
     $Bloat = @("Microsoft.BingNews", "Microsoft.BingWeather", "Microsoft.BingSearch", "MicrosoftTeams", "Microsoft.Teams", "Microsoft.Todos", "Microsoft.YourPhone", "Microsoft.GamingApp", "Microsoft.XboxApp", "Microsoft.MicrosoftSolitaireCollection", "Microsoft.MicrosoftOfficeHub")
     foreach ($pkg in $Bloat) { Get-AppxPackage -Name $pkg -AllUsers | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue }
 }
 
 function Apply-Tweaks {
-    $L = $Text[$Global:Lang]
-    Write-Host "`n[!] UI..." -ForegroundColor Yellow
+    Write-Host "`n $GoldTxt [!] CONFIGURING INTERFACE... $Reset"
     Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
     Start-Sleep -Seconds 1
     Set-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" AppsUseLightTheme 0 -Force
@@ -152,12 +152,9 @@ function Apply-Tweaks {
     Set-ItemProperty -Path $AdvPath -Name "HideFileExt" -Value 0 -Force             
     Set-ItemProperty -Path $AdvPath -Name "Hidden" -Value 1 -Force                  
     Start-Process explorer
-    Write-Host $L.UIDone -ForegroundColor Green
 }
 
 function Set-A2KWallpapers {
-    $L = $Text[$Global:Lang]
-    Write-Host "`n[!] Wallpaper..." -ForegroundColor Yellow
     $WallDir = "$env:USERPROFILE\Pictures\a2k_walls"
     if (!(Test-Path $WallDir)) { New-Item -ItemType Directory -Path $WallDir -Force | Out-Null }
     $Url = "https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main/wall1.jpg"
@@ -168,24 +165,16 @@ function Set-A2KWallpapers {
         if (-not ([System.Management.Automation.PSTypeName]"NativeWallpaper").Type) { Add-Type $Signature }
         Set-ItemProperty "HKCU:\Control Panel\Desktop" WallpaperStyle 10
         [NativeWallpaper]::SystemParametersInfo(20, 0, $Dest, 3) | Out-Null
-        Write-Host $L.WallDone -ForegroundColor Green
     }
 }
 
-function Open-AztekHub {
-    # Replace the URL below with your actual website link when ready
-    $Url = "https://yourwebsite.com" 
-    Write-Host "`n[!] Opening AZTEK HUB..." -ForegroundColor Yellow
-    Start-Process $Url
-}
-
 # ============================================================================
-# MAIN EXECUTION
+# MAIN LOOP
 # ============================================================================
 Set-Language
 do {
     Show-Menu
-    $choice = Read-Host "`n$($Text[$Global:Lang].Prompt)"
+    $choice = Read-Host "`n $GoldTxt AZTEK > $Reset"
     switch ($choice) {
         '0' { Create-A2KRestorePoint; pause }
         '1' { Create-A2KRestorePoint; Install-Software; Remove-Bloatware; Apply-Tweaks; Set-A2KWallpapers; pause }
@@ -195,7 +184,7 @@ do {
         '5' { Set-A2KWallpapers; pause }
         '6' { powercfg /setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c; pause }
         '7' { winget upgrade --all; pause }
-        '9' { Open-AztekHub; pause }
+        '9' { Start-Process "https://yourwebsite.com"; pause } # Placeholder for your site
         '8' { break }
     }
 } while ($choice -ne '8')
