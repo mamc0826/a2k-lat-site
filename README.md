@@ -93,17 +93,23 @@ UI.Vision XModule - Visit Site
 
 Universal ADB Driver - Visit Site
 
+---
+
+---
+
 ## 🔐 Security & Privacy
 
-<img src="certified.png" align="right" width="150">
+<img src="./certified.png" align="right" width="150" alt="A2K Certified Badge">
 
 This script:
-- ✅ Uses official Microsoft winget package manager
-- ✅ Only installs from verified sources
-- ✅ Only modifies user settings (no system files)
-- ✅ Fully visible source code (inspect before running)
-- ✅ Disables telemetry and tracking
-- ✅ All changes reversible
+* ✅ Uses official Microsoft winget package manager
+* ✅ Only installs from verified sources
+* ✅ Only modifies user settings (no system files)
+* ✅ Fully visible source code (inspect before running)
+* ✅ Disables telemetry and tracking
+* ✅ All changes reversible
+
+<br clear="right"/>
 
 ✅ Uses official Microsoft Winget package manager.
 
