@@ -3,8 +3,8 @@
 <#
 .SYNOPSIS
     AZTEK (a2k) tech - SENTINEL MASTER RELEASE
-    - VERSION: 2.2 (2026-02-05)
-    - FIX: Option 10 Redirect to #download
+    - VERSION: 2.3 (2026-02-05)
+    - ACCESS: irm a2k.lat/s | iex
 #>
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -31,7 +31,7 @@ $Text = @{
         Opt4 = "WIFI PASS RECOVERY"; Opt5 = "APP KILLER (Force Close)"
         Opt6 = "WINDOWS SANDBOX"; Opt7 = "MAS ACTIVATION (Win/Office)"
         Opt8 = "INSTALL ESSENTIAL APPS"; Opt9 = "SET AZTEK WALLPAPER"
-        Opt10 = "VISIT A2K.LAT TOOLS"; OptH = "MANUAL / HELP"; OptX = "EXIT"
+        Opt10 = "VISIT A2K.LAT TOOLS"; Opt11 = "VIEW SOURCE CODE"; OptH = "MANUAL / HELP"; OptX = "EXIT"
         GodDone = "[✓] God Mode Folder created on Desktop!"
     }
     ES = @{
@@ -42,7 +42,7 @@ $Text = @{
         Opt4 = "RECUPERAR CLAVES WIFI"; Opt5 = "APP KILLER (Cerrar Apps)"
         Opt6 = "WINDOWS SANDBOX"; Opt7 = "ACTIVACIÓN MAS (Win/Office)"
         Opt8 = "INSTALAR APPS ESENCIALES"; Opt9 = "PONER FONDO AZTEK"
-        Opt10 = "VISITAR A2K.LAT HERRAMIENTAS"; OptH = "MANUAL / AYUDA"; OptX = "SALIR"
+        Opt10 = "VISITAR A2K.LAT HERRAMIENTAS"; Opt11 = "VER CÓDIGO FUENTE"; OptH = "MANUAL / AYUDA"; OptX = "SALIR"
         GodDone = "[✓] ¡Carpeta Modo Dios creada en el Escritorio!"
     }
 }
@@ -76,6 +76,7 @@ function Show-Menu {
     Write-Host "$P$Gy ║ $G [8]$W $($L.Opt8.PadRight(37)) $Gy ║"
     Write-Host "$P$Gy ║ $G [9]$W $($L.Opt9.PadRight(37)) $Gy ║"
     Write-Host "$P$Gy ║ $G [10]$W $($L.Opt10.PadRight(36)) $Gy ║"
+    Write-Host "$P$Gy ║ $G [11]$W $($L.Opt11.PadRight(36)) $Gy ║"
     Write-Host "$P$Gy ╠════════════════════════════════════════════╣"
     Write-Host "$P$Gy ║ $W [H]$W $($L.OptH.PadRight(37)) $Gy ║"
     Write-Host "$P$Gy ║ $R [X]$W $($L.OptX.PadRight(37)) $Gy ║"
@@ -140,6 +141,7 @@ do {
             if (!([System.Management.Automation.PSTypeName]"Wall").Type) { Add-Type $code }
             [Wall]::SystemParametersInfo(20, 0, $Dest, 3) | Out-Null; pause }
         '10'{ Start-Process "https://www.a2k.lat/#download"; pause }
+        '11'{ Start-Process "https://github.com/mamc0826/a2k-lat-site/blob/main/sentinel.ps1"; pause }
         'h' { Show-Help }
         'H' { Show-Help }
         'x' { break }
