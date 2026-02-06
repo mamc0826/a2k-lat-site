@@ -2,23 +2,26 @@
 
 <#
 .SYNOPSIS
-    AZTEK (a2k) tech - SENTINEL EDITION
-    - FORCED PRE-FLIGHT RESTORE POINT
-    - EMERGENCY SYSTEM RECOVERY (RSTRUI)
-    - FORBIDDEN TOOLKIT (WIFI, GODMODE, DNS)
-    - MAS-STYLE CLEAN BOX UI
+    AZTEK (a2k) tech - SENTINEL ULTIMATE
+    - FIXED: irm Connection Errors (TLS 1.2 Force)
+    - FIXED: Restore Point Frequency Error
+    - RESTORED: AZTEK Wallpaper Engine
+    - DESIGN: Perfectly Centered MAS-Style Double-Border
 #>
+
+# Force TLS 1.2 for web requests (Fixes the 'irm' error)
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 # ============================================================================
 # ANSI STYLE ENGINE
 # ============================================================================
 $E = [char]27
-$GoldTxt  = "$E[38;2;212;175;55m"  
-$WhiteTxt = "$E[38;2;255;255;255m"
-$BgBlack  = "$E[48;2;0;0;0m"        
-$RedTxt   = "$E[38;2;230;0;0m"      
-$GrayTxt  = "$E[38;2;80;80;80m"     
-$Reset    = "$E[0m"
+$Gold  = "$E[38;2;212;175;55m"  
+$White = "$E[38;2;255;255;255m"
+$Black = "$E[48;2;0;0;0m"        
+$Red   = "$E[38;2;230;0;0m"      
+$Gray  = "$E[38;2;100;100;100m"  
+$Reset = "$E[0m"
 
 # ============================================================================
 # LANGUAGE DATABASE
@@ -26,119 +29,128 @@ $Reset    = "$E[0m"
 $Global:Lang = "EN"
 $Text = @{
     EN = @{
-        Header = "AZTEK TECH (a2k) | SENTINEL EDITION"
-        PreSafe = "[!] SAFETY FIRST: System Restore is HIGHLY recommended."
-        CreateR = "Create Restore Point Now? (Y/N): "
-        RestWait = "Generating AZTEK Safeguard..."
-        Prompt = "AZTEK Command > "
-        Opt0 = "EMERGENCY RESTORE (Undo Changes)"; Opt1 = "THE WORKS (Auto-Setup + Activation)"
-        Opt2 = "GOD MODE (Unlock All Settings)"; Opt3 = "DNS JUMPER (Gaming Ping/ISP Bypass)"
-        Opt4 = "WIFI PASS RECOVERY (Show Saved)"; Opt5 = "APP KILLER (Force Close Frozen)"
-        Opt6 = "WINDOWS SANDBOX (Test Files)"; Opt7 = "MAS ACTIVATION (Win/Office)"
-        Opt8 = "INSTALL ESSENTIAL SOFTWARE"; Opt9 = "VISIT AZTEK HUB"; OptX = "EXIT"
+        PreSafe = "[!] SAFETY: System Restore point is recommended."; CreateR = "Create Safeguard? (Y/N): "
+        RestWait = "Generating AZTEK Safeguard..."; Prompt = "AZTEK Command > "
+        Opt0 = "EMERGENCY RESTORE (Undo)"; Opt1 = "THE WORKS (Setup + Activation)"
+        Opt2 = "GOD MODE (Unlock Settings)"; Opt3 = "DNS JUMPER (Better Ping)"
+        Opt4 = "WIFI PASS RECOVERY"; Opt5 = "APP KILLER (Force Close)"
+        Opt6 = "WINDOWS SANDBOX"; Opt7 = "MAS ACTIVATION (Win/Office)"
+        Opt8 = "INSTALL ESSENTIAL APPS"; Opt9 = "SET AZTEK WALLPAPER"
+        Opt10 = "VISIT AZTEK HUB"; OptX = "EXIT"
     }
     ES = @{
-        Header = "AZTEK TECH (a2k) | EDICIÓN CENTINELA"
-        PreSafe = "[!] SEGURIDAD: Se recomienda un Punto de Restauración."
-        CreateR = "¿Crear Punto de Restauración Ahora? (S/N): "
-        RestWait = "Generando Salvaguarda AZTEK..."
-        Prompt = "Comando AZTEK > "
-        Opt0 = "RESTAURACIÓN DE EMERGENCIA (Deshacer)"; Opt1 = "TODO EN UNO (Setup + Activación)"
+        PreSafe = "[!] SEGURIDAD: Se recomienda punto de restauración."; CreateR = "¿Crear Salvaguarda? (S/N): "
+        RestWait = "Generando Salvaguarda AZTEK..."; Prompt = "Comando AZTEK > "
+        Opt0 = "RESTAURACIÓN DE EMERGENCIA"; Opt1 = "TODO EN UNO (Setup + Activación)"
         Opt2 = "MODO DIOS (Ajustes Ocultos)"; Opt3 = "DNS JUMPER (Mejor Ping)"
-        Opt4 = "RECUPERAR WIFI (Ver Claves)"; Opt5 = "APP KILLER (Cerrar Congelados)"
-        Opt6 = "WINDOWS SANDBOX (Probar Archivos)"; Opt7 = "ACTIVACIÓN MAS (Win/Office)"
-        Opt8 = "INSTALAR SOFTWARE ESENCIAL"; Opt9 = "VISITAR AZTEK HUB"; OptX = "SALIR"
+        Opt4 = "RECUPERAR CLAVES WIFI"; Opt5 = "APP KILLER (Cerrar Apps)"
+        Opt6 = "WINDOWS SANDBOX"; Opt7 = "ACTIVACIÓN MAS (Win/Office)"
+        Opt8 = "INSTALAR APPS ESENCIALES"; Opt9 = "PONER FONDO AZTEK"
+        Opt10 = "VISITAR AZTEK HUB"; OptX = "SALIR"
     }
 }
 
 # ============================================================================
-# SAFETY FUNCTIONS
+# UI ENGINE
+# ============================================================================
+function Get-Pad {
+    $W = $Host.UI.RawUI.WindowSize.Width
+    $Pad = [math]::Max(0, [int](($W - 52) / 2))
+    return " " * $Pad
+}
+
+function Show-Header {
+    Write-Host "$Black" -NoNewline; Clear-Host
+    $P = Get-Pad; $G = $Gold
+    Write-Host "`n$P$G  █████╗ ███████╗████████╗███████╗██╗  ██╗"
+    Write-Host "$P$G  ██╔══██╗╚══███╔╝╚══██╔══╝██╔════╝██║ ██╔╝"
+    Write-Host "$P$G  ███████║  ███╔╝    ██║   █████╗  █████╔╝ "
+    Write-Host "$P$G  ██╔══██║ ███╔╝     ██║   ██╔══╝  ██╔═██╗ "
+    Write-Host "$P$G  ██║  ██║███████╗   ██║   ███████╗██║  ██╗"
+    Write-Host "$P$G  ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝"
+}
+
+function Show-Menu {
+    Show-Header
+    $P = Get-Pad; $L = $Text[$Global:Lang]; $G = $Gold; $W = $White; $Gy = $Gray; $R = $Red
+    
+    $items = @(
+        "$R  [0]$W $($L.Opt0)", "$G  [1]$W $($L.Opt1)", "$G  [2]$W $($L.Opt2)", 
+        "$G  [3]$W $($L.Opt3)", "$G  [4]$W $($L.Opt4)", "$G  [5]$W $($L.Opt5)", 
+        "$G  [6]$W $($L.Opt6)", "$G  [7]$W $($L.Opt7)", "$G  [8]$W $($L.Opt8)", 
+        "$G  [9]$W $($L.Opt9)", "$G [10]$W $($L.Opt10)"
+    )
+
+    Write-Host "$P$Gy ╔══════════════════════════════════════════════════╗"
+    foreach ($i in $items) {
+        $clean = $i -replace "\$E\[[^m]*m", "" # Calculate length without ANSI codes
+        $space = 50 - $clean.Length
+        Write-Host "$P$Gy ║ $i$(" " * $space)$Gy ║"
+    }
+    Write-Host "$P$Gy ╠══════════════════════════════════════════════════╣"
+    Write-Host "$P$Gy ║$R  [X]$W $($L.OptX.PadRight(43)) $Gy ║"
+    Write-Host "$P$Gy ╚══════════════════════════════════════════════════╝"
+}
+
+# ============================================================================
+# LOGIC FUNCTIONS
 # ============================================================================
 function Create-A2KSafeguard {
-    Write-Host "`n $GoldTxt $($Text[$Global:Lang].RestWait) $Reset"
+    Write-Host "`n$Gold [!] $($Text[$Global:Lang].RestWait) $Reset"
+    # Registry Fix: Allow creating restore points more than once a day
+    $Path = "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\SystemRestore"
+    Set-ItemProperty -Path $Path -Name "SystemRestorePointCreationFrequency" -Value 0 -Force -ErrorAction SilentlyContinue
     Enable-ComputerRestore -Drive "C:\" -ErrorAction SilentlyContinue
-    Checkpoint-Computer -Description "AZTEK_Sentinel_Safe" -RestorePointType "MODIFY_SETTINGS" -ErrorAction SilentlyContinue
+    Checkpoint-Computer -Description "AZTEK_Sentinel" -RestorePointType "MODIFY_SETTINGS" -ErrorAction SilentlyContinue
 }
 
-function Invoke-EmergencyRestore {
-    Write-Host "`n $RedTxt [!] Launching Windows System Restore GUI... $Reset"
-    Start-Process "rstrui.exe"
+function Set-A2KWallpaper {
+    Write-Host "`n$Gold [!] Downloading AZTEK Aesthetics... $Reset"
+    $Url = "https://raw.githubusercontent.com/mamc0826/a2k-lat-site/main/wall1.jpg"
+    $Dest = "$env:USERPROFILE\Pictures\aztek_wall.jpg"
+    curl.exe -L -s -o $Dest $Url
+    $code = 'using System.Runtime.InteropServices; public class Wall { [DllImport("user32.dll")] public static extern int SystemParametersInfo(int u, int p, string v, int f); }'
+    if (!([System.Management.Automation.PSTypeName]"Wall").Type) { Add-Type $code }
+    [Wall]::SystemParametersInfo(20, 0, $Dest, 3) | Out-Null
+    Write-Host " [✓] Style Applied." -ForegroundColor Green
 }
 
-# ============================================================================
-# THE TOOLKIT
-# ============================================================================
-function Enable-GodMode {
-    $Path = "$env:USERPROFILE\Desktop\GodMode.{ED7BA470-8E54-465E-825C-99712043E01C}"
-    if (!(Test-Path $Path)) { New-Item -Path $Path -ItemType Directory | Out-Null }
-}
-
-function Get-WifiKeys {
-    $profiles = netsh wlan show profiles | Select-String "\:(.+)$" | ForEach-Object { $_.Matches.Groups[1].Value.Trim() }
-    foreach ($p in $profiles) {
-        if ($p) { netsh wlan show profile name="$p" key=clear | Select-String "Key Content" | ForEach-Object { 
-            Write-Host " SSID: $p | PASS: $($_.ToString().Split(':')[1].Trim())" -ForegroundColor Green 
-        } }
+function Set-DNS {
+    Write-Host "`n$Gold [!] Optimizing Network Adapters... $Reset"
+    Get-NetAdapter | Where-Object { $_.Status -eq "Up" } | ForEach-Object {
+        Set-DnsClientServerAddress -InterfaceAlias $_.Name -ServerAddresses ("1.1.1.1", "1.0.0.1") -ErrorAction SilentlyContinue
     }
+    ipconfig /flushdns | Out-Null
+    Write-Host " [✓] DNS Jump Complete (Cloudflare)." -ForegroundColor Green
 }
 
 # ============================================================================
-# UI BOX DESIGN
+# MAIN FLOW
 # ============================================================================
-function Show-Menu {
-    Write-Host "$BgBlack" -NoNewline; Clear-Host
-    $L = $Text[$Global:Lang]; $G = $GoldTxt; $W = $WhiteTxt; $Gy = $GrayTxt
-
-    Write-Host "`n    $G  █████╗ ███████╗████████╗███████╗██╗  ██╗"
-    Write-Host "    $G  ██╔══██╗╚══███╔╝╚══██╔══╝██╔════╝██║ ██╔╝"
-    Write-Host "    $G  ███████║  ███╔╝    ██║   █████╗  █████╔╝ "
-    Write-Host "    $G  ██╔══██║ ███╔╝     ██║   ██╔══╝  ██╔═██╗ "
-    Write-Host "    $G  ██║  ██║███████╗   ██║   ███████╗██║  ██╗"
-    Write-Host "    $G  ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝"
-    Write-Host "    $Gy  ____________________________________________"
-    Write-Host "    $Gy |                                            |"
-    Write-Host "    $Gy |  $RedTxt [0]$W $($L.Opt0.PadRight(35)) $Gy |"
-    Write-Host "    $Gy |  $G [1]$W $($L.Opt1.PadRight(35)) $Gy |"
-    Write-Host "    $Gy |  $G [2]$W $($L.Opt2.PadRight(35)) $Gy |"
-    Write-Host "    $Gy |  $G [3]$W $($L.Opt3.PadRight(35)) $Gy |"
-    Write-Host "    $Gy |  $G [4]$W $($L.Opt4.PadRight(35)) $Gy |"
-    Write-Host "    $Gy |  $G [5]$W $($L.Opt5.PadRight(35)) $Gy |"
-    Write-Host "    $Gy |  $G [6]$W $($L.Opt6.PadRight(35)) $Gy |"
-    Write-Host "    $Gy |  $G [7]$W $($L.Opt7.PadRight(35)) $Gy |"
-    Write-Host "    $Gy |  $G [8]$W $($L.Opt8.PadRight(35)) $Gy |"
-    Write-Host "    $Gy |  $G [9]$W $($L.Opt9.PadRight(35)) $Gy |"
-    Write-Host "    $Gy |____________________________________________|"
-    Write-Host "    $Gy |  $RedTxt [X]$W $($L.OptX.PadRight(35)) $Gy |"
-    Write-Host "    $Gy |____________________________________________|"
-}
-
-# ============================================================================
-# STARTUP FLOW
-# ============================================================================
-Write-Host "$BgBlack" -NoNewline; Clear-Host
-Write-Host "`n  $GoldTxt [1] English  [2] Español"
+Write-Host "$Black" -NoNewline; Clear-Host
+Write-Host "`n  $Gold [1] English  [2] Español"
 if ((Read-Host "  AZTEK") -eq "2") { $Global:Lang = "ES" }
 
-# Forced Pre-flight Check
 Show-Header
-Write-Host "`n  $RedTxt $($Text[$Global:Lang].PreSafe) $Reset"
-$ans = Read-Host "  $($Text[$Global:Lang].CreateR)"
-if ($ans -match "[YySs]") { Create-A2KSafeguard }
+Write-Host "`n$Red $($Text[$Global:Lang].PreSafe) $Reset"
+if ((Read-Host " $($Text[$Global:Lang].CreateR)") -match "[YySs]") { Create-A2KSafeguard }
 
 do {
     Show-Menu
-    $c = Read-Host "`n    $GoldTxt $($Text[$Global:Lang].Prompt)$Reset"
+    $c = Read-Host "$(Get-Pad)$Gold $($Text[$Global:Lang].Prompt)$Reset"
     switch ($c) {
-        '0' { Invoke-EmergencyRestore; pause }
-        '1' { Create-A2KSafeguard; Enable-GodMode; irm https://get.massgrave.dev | iex; pause }
-        '2' { Enable-GodMode; pause }
-        '3' { netsh interface ip set dns name="Ethernet" source=static address=1.1.1.1; pause }
-        '4' { Get-WifiKeys; pause }
+        '0' { Start-Process "rstrui.exe"; pause }
+        '1' { Create-A2KSafeguard; irm https://get.massgrave.dev | iex; pause }
+        '2' { $p = "$env:USERPROFILE\Desktop\GodMode.{ED7BA470-8E54-465E-825C-99712043E01C}"
+              if (!(Test-Path $p)) { New-Item -Path $p -ItemType Directory | Out-Null }; pause }
+        '3' { Set-DNS; pause }
+        '4' { netsh wlan show profiles | Select-String "\:(.+)$" | % { $n = $_.Matches.Groups[1].Value.Trim(); netsh wlan show profile name="$n" key=clear | Select-String "Key Content" | % { Write-Host " SSID: $n | PASS: $($_.ToString().Split(':')[1].Trim())" -ForegroundColor Green } }; pause }
         '5' { Stop-Process -Name (Read-Host "Process Name") -Force; pause }
         '6' { Enable-WindowsOptionalFeature -Online -FeatureName "Containers-DisposableClientVM" -All; pause }
         '7' { irm https://get.massgrave.dev | iex; pause }
         '8' { winget install --id Google.Chrome; winget install --id 7zip.7zip; pause }
-        '9' { Start-Process "https://yourwebsite.com"; pause }
+        '9' { Set-A2KWallpaper; pause }
+        '10'{ Start-Process "https://yourwebsite.com"; pause }
         'x' { break }
         'X' { break }
     }
