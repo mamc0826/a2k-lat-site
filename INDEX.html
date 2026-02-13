@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A2K TECHNOLOGY | UNDER CONSTRUCTION</title>
+	<link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
+
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap');
+
+        /* CSS Variables */
+        :root {
+            --gold: #D4AF37;
+            --dark-gold: #8B6B05;
+            --black: #050505;
+            --white: #ffffff;
+            --glow-white: rgba(255, 255, 255, 0.8);
+            --reforge-blue: #00d9ff;
+            --pulse-purple: #bc13fe;
+            --guard-red: #ff3131;
+            --emergency-red: #ff0000;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--black);
+            color: var(--white);
+            overflow-x: hidden;
+        }
+
+        /* Fixed Background and Circuit Overlays */
+        .bg-wrapper {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), 
+                        url('assets/images/COMINGSOON.JPG')  no-repeat center center/cover;
+        }
+
+        .circuit-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle at 2px 2px, rgba(212, 175, 55, 0.05) 1px, transparent 0);
+            background-size: 30px 30px;
+        }
+
+        /* Language Switcher */
+        .lang-switch {
+            position: fixed;
+            top: 30px; 
+            right: 30px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--gold);
+            color: var(--white);
+            padding: 10px 20px;
+            font-family: 'Orbitron';
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+            border-radius: 2px;
+        }
+
+        .lang-switch:hover {
+            background: var(--gold);
+            color: black;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+        }
+
+        .flag-icon {
+            width: 24px;
+            height: 16px;
+            object-fit: cover;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* Hero Section with Transparent Box */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 80px 20px 40px 20px;
+        }
+
+        .hero-box {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            padding: 60px 40px;
+            max-width: 950px;
+            width: 100%;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.7);
+            border-radius: 4px;
+        }
+
+        .hero h1 {
+            font-family: 'Orbitron';
+            font-size: clamp(2.5rem, 10vw, 6rem);
+            color: var(--gold);
+            text-shadow: 0 0 25px rgba(212, 175, 55, 0.6);
+            margin-bottom: 20px;
+            font-weight: 900;
+            letter-spacing: -2px;
+        }
+
+        .systems-subtitle {
+            font-family: 'Rajdhani';
+            font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+            max-width: 800px;
+            color: #eee;
+            margin: 0 auto 35px auto;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(0.9rem, 2vw, 1.3rem);
+            letter-spacing: 5px;
+            color: var(--white);
+            text-shadow: 0 0 10px var(--glow-white);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        /* MASSIVE UNDER CONSTRUCTION BADGE - WHITE TEXT / RED GLOW */
+        .status-badge {
+            display: inline-block;
+            font-family: 'Orbitron';
+            background: rgba(255, 0, 0, 0.1);
+            border: 4px solid var(--emergency-red);
+            padding: 20px 50px;
+            letter-spacing: 12px;
+            color: var(--white); /* White Letters */
+            margin-bottom: 50px;
+            font-weight: 900;
+            font-size: clamp(1.1rem, 4vw, 2.2rem);
+            text-shadow: 0 0 15px var(--emergency-red), 0 0 30px var(--emergency-red); /* Red Glow */
+            box-shadow: 0 0 40px rgba(255, 0, 0, 0.4);
+            animation: hyper-pulse 1.5s infinite alternate;
+            text-transform: uppercase;
+        }
+
+        @keyframes hyper-pulse {
+            0% { opacity: 0.7; transform: scale(0.95); box-shadow: 0 0 20px rgba(255, 0, 0, 0.2); }
+            100% { opacity: 1; transform: scale(1.05); box-shadow: 0 0 50px rgba(255, 0, 0, 0.6); }
+        }
+
+        /* Arsenal and Content Styling */
+        .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+
+        .dropdown-trigger {
+            width: 100%;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 25px;
+            font-family: 'Orbitron';
+            font-size: clamp(1.2rem, 5vw, 1.8rem);
+            letter-spacing: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .dropdown-trigger:hover { background: rgba(212, 175, 55, 0.2); }
+        .dropdown-trigger::after { content: '▼'; font-size: 1.4rem; transition: 0.4s; }
+        .dropdown-trigger.active::after { transform: rotate(180deg); }
+
+        .dropdown-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(0,0,0,0.4);
+        }
+
+        .dropdown-content.open { max-height: 3000px; padding-bottom: 60px; }
+
+        .list-container { display: grid; grid-template-columns: 1fr; gap: 25px; padding: 25px; }
+
+        .list-item {
+            background: rgba(0,0,0,0.8);
+            border-left: 6px solid var(--gold);
+            padding: 30px;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden; /* Important for sliding logo */
+        }
+
+        .list-item h3 { font-family: 'Orbitron'; margin-bottom: 15px; letter-spacing: 2px; font-size: 1.4rem; position: relative; z-index: 2; }
+        .list-item p { font-size: 1.05rem; line-height: 1.6; margin-bottom: 15px; color: #ddd; position: relative; z-index: 2; }
+        .list-item .features { font-size: 0.9rem; font-style: italic; color: var(--gold); letter-spacing: 1px; position: relative; z-index: 2; }
+
+        /* Specific Arsenal Colors */
+        .reforge { border-color: var(--reforge-blue); } .reforge h3 { color: var(--reforge-blue); }
+        .pulse-engine { border-color: var(--pulse-purple); } .pulse-engine h3 { color: var(--pulse-purple); }
+        .guard { border-color: var(--guard-red); } .guard h3 { color: var(--guard-red); }
+
+        /* Massive Sliding Guard Logo */
+        .guard::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -100%; /* Start off-screen to the right */
+            width: 100%;  /* Same size as the box */
+            height: 100%;
+            background: url('assets/images/GUARDLOGO.PNG') no-repeat center center/contain;
+            background-color: rgba(255, 49, 49, 0.05); /* Slight tint for the background */
+            opacity: 0.8;
+            filter: drop-shadow(-10px 0 20px rgba(255, 49, 49, 0.4));
+            transition: right 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+            z-index: 1;
+        }
+
+        .guard:hover::after {
+            right: 0; /* Slide in on hover */
+        }
+
+        /* Tools / Coming Soon Section */
+        .tools-section { margin-top: 80px; border-top: 1px solid rgba(212, 175, 55, 0.3); padding-top: 60px; }
+        .tools-title { font-family: 'Orbitron'; color: var(--gold); font-size: clamp(1.5rem, 5vw, 2.2rem); margin-bottom: 40px; text-align: center; letter-spacing: 5px; }
+
+        .tool-link-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            padding: 40px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 2px;
+            transition: 0.3s;
+        }
+
+        .coming-soon-label {
+            font-family: 'Orbitron';
+            letter-spacing: 10px;
+            color: rgba(255,255,255,0.3);
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        /* Mobile Specific Overrides */
+        @media (max-width: 600px) {
+            .lang-switch {
+                top: auto; bottom: 30px; right: 50%;
+                transform: translateX(50%);
+                font-size: 0.75rem;
+            }
+            .hero-box { padding: 50px 20px; }
+            .status-badge { letter-spacing: 6px; padding: 15px 25px; margin-bottom: 30px; }
+            .hero h1 { letter-spacing: -1px; }
+            .guard::after { width: 100%; height: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-wrapper"></div>
+    <div class="circuit-overlay"></div>
+    
+    <button class="lang-switch" onclick="toggleLanguage()" id="langBtn">
+        <img src="https://flagcdn.com/w40/mx.png" id="langFlag" class="flag-icon" alt="Language">
+        <span id="langLabel">ESPAÑOL</span>
+    </button>
+
+    <section class="hero">
+        <div class="hero-box">
+            <div class="status-badge" id="status-main">UNDER CONSTRUCTION</div>
+            <h1 id="hero-title">A2K TECH</h1>
+            <p class="systems-subtitle" id="systems-text">A2K Systems™ is a focused collection of purpose-built infrastructure tools designed to protect integrity, optimize environments, and automate digital workflows.</p>
+            <p class="hero-subtitle" id="hero-subtitle">Fusing Ancient Knowledge with Future Hardware</p>
+        </div>
+    </section>
+
+    <div class="container">
+        <!-- ARSENAL DROPDOWN -->
+        <button class="dropdown-trigger" onclick="toggleArsenal()" id="arsenalBtn">ARSENAL</button>
+        <div class="dropdown-content" id="arsenalContent">
+            <div class="list-container">
+                <div class="list-item reforge">
+                    <h3>AZTEK REFORGE™</h3>
+                    <p id="desc1">Windows configuration and deployment toolkit designed to streamline setup and performance standards.</p>
+                    <span class="features" id="feat1">Structured setup. Controlled configuration. Reliable execution.</span>
+                </div>
+                <div class="list-item pulse-engine">
+                    <h3>AZTEK PULSE ENGINE™</h3>
+                    <p id="desc2">Intelligent media automation framework built to transform content into high-frequency output.</p>
+                    <span class="features" id="feat2">Optimized. Tracked. Deployment-ready.</span>
+                </div>
+                <div class="list-item guard">
+                    <h3>A2K GUARD™</h3>
+                    <p id="desc3">Verification and anti-abuse framework engineered to detect automation patterns and enforce fairness.</p>
+                    <span class="features" id="feat3">Real participants. Real engagement. Real winners.</span>
+                </div>
+                <div class="list-item mystery-item">
+                    <h3 id="mystery-title">ULTIMATE KNOWLEDGE BASE</h3>
+                    <p id="mystery-desc">The mystery of Advanced Knowledge in mobile architecture revealed.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOOLS / COMING SOON -->
+        <div class="tools-section">
+            <h2 class="tools-title" id="toolsTitle">TOOLS & RESOURCES</h2>
+            <div id="tools-list">
+                <div class="tool-link-card">
+                    <span class="coming-soon-label">COMING SOON</span>
+                </div>
+                <div class="tool-link-card">
+                    <span class="coming-soon-label">COMING SOON</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                status: "UNDER CONSTRUCTION",
+                systems: "A2K Systems™ is a focused collection of purpose-built infrastructure tools designed to protect integrity, optimize environments, and automate digital workflows.",
+                heroSub: "Fusing Ancient Knowledge with Future Hardware",
+                arsenal: "ARSENAL",
+                tools: "TOOLS & RESOURCES",
+                mysteryT: "ULTIMATE KNOWLEDGE BASE",
+                mysteryD: "The mystery of Advanced Knowledge in mobile architecture revealed.",
+                comingSoon: "COMING SOON",
+                desc1: "Windows configuration and deployment toolkit designed to streamline setup and performance standards.",
+                feat1: "Structured setup. Controlled configuration. Reliable execution.",
+                desc2: "Intelligent media automation framework built to transform content into high-frequency output.",
+                feat2: "Optimized. Tracked. Deployment-ready.",
+                desc3: "Verification and anti-abuse framework engineered to detect automation patterns and enforce fairness.",
+                feat3: "Real participants. Real engagement. Real winners.",
+                btnLabel: "ESPAÑOL",
+                flag: "https://flagcdn.com/w40/mx.png"
+            },
+            es: {
+                status: "BAJO CONSTRUCCIÓN",
+                systems: "A2K Systems™ es una colección de herramientas de infraestructura diseñadas para proteger la integridad, optimizar entornos y automatizar flujos digitales.",
+                heroSub: "Fusionando Sabiduría Ancestral con Hardware del Futuro",
+                arsenal: "ARSENAL",
+                tools: "HERRAMIENTAS Y RECURSOS",
+                mysteryT: "BASE DE CONOCIMIENTO DEFINITIVA",
+                mysteryD: "El misterio del Conocimiento Avanzado en la arquitectura móvil revelado.",
+                comingSoon: "PRÓXIMAMENTE",
+                desc1: "Kit de herramientas de configuración de Windows diseñado para optimizar los estándares de rendimiento.",
+                feat1: "Configuración estructurada. Ejecución confiable y controlada.",
+                desc2: "Marco de automatización de medios inteligente diseñado para transformar contenido de alta frecuencia.",
+                feat2: "Optimizado. Rastreado. Listo para el despliegue.",
+                desc3: "Marco de verificación diseñado para detectar patrones de automatización y garantizar la equidad.",
+                feat3: "Participantes reales. Compromiso real. Ganadores reales.",
+                btnLabel: "ENGLISH",
+                flag: "https://flagcdn.com/w40/us.png"
+            }
+        };
+
+        let currentLang = 'en';
+
+        function toggleArsenal() {
+            const content = document.getElementById('arsenalContent');
+            const btn = document.getElementById('arsenalBtn');
+            content.classList.toggle('open');
+            btn.classList.toggle('active');
+        }
+
+        function toggleLanguage() {
+            currentLang = (currentLang === 'en') ? 'es' : 'en';
+            setLanguage(currentLang);
+        }
+
+        function setLanguage(lang) {
+            document.getElementById('status-main').innerText = translations[lang].status;
+            document.getElementById('systems-text').innerText = translations[lang].systems;
+            document.getElementById('hero-subtitle').innerText = translations[lang].heroSub;
+            document.getElementById('arsenalBtn').innerText = translations[lang].arsenal;
+            document.getElementById('toolsTitle').innerText = translations[lang].tools;
+            document.getElementById('mystery-title').innerText = translations[lang].mysteryT;
+            document.getElementById('mystery-desc').innerText = translations[lang].mysteryD;
+            
+            // Arsenal Internal Content
+            document.getElementById('desc1').innerText = translations[lang].desc1;
+            document.getElementById('feat1').innerText = translations[lang].feat1;
+            document.getElementById('desc2').innerText = translations[lang].desc2;
+            document.getElementById('feat2').innerText = translations[lang].feat2;
+            document.getElementById('desc3').innerText = translations[lang].desc3;
+            document.getElementById('feat3').innerText = translations[lang].feat3;
+
+            // Coming Soon Labels
+            document.querySelectorAll('.coming-soon-label').forEach(label => {
+                label.innerText = translations[lang].comingSoon;
+            });
+
+            // UI Elements
+            document.getElementById('langLabel').innerText = translations[lang].btnLabel;
+            document.getElementById('langFlag').src = translations[lang].flag;
+            
+            currentLang = lang;
+        }
+    </script>
+</body>
+</html>
