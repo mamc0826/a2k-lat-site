@@ -192,49 +192,141 @@
 
         .dropdown-content.open { max-height: 3000px; padding-bottom: 60px; }
 
-        .list-container { display: grid; grid-template-columns: 1fr; gap: 25px; padding: 25px; }
-
-        .list-item {
-            background: rgba(0,0,0,0.8);
-            border-left: 6px solid var(--gold);
-            padding: 30px;
-            transition: 0.3s;
-            position: relative;
-            overflow: hidden; /* Important for sliding logo */
+        .list-container {
+            display: grid;
+            gap: 30px;
+            padding: 50px 30px;
         }
 
-        .list-item h3 { font-family: 'Orbitron'; margin-bottom: 15px; letter-spacing: 2px; font-size: 1.4rem; position: relative; z-index: 2; }
-        .list-item p { font-size: 1.05rem; line-height: 1.6; margin-bottom: 15px; color: #ddd; position: relative; z-index: 2; }
-        .list-item .features { font-size: 0.9rem; font-style: italic; color: var(--gold); letter-spacing: 1px; position: relative; z-index: 2; }
+        .list-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 30px;
+            border-left: 4px solid var(--gold);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
 
-        /* Specific Arsenal Colors */
-        .reforge { border-color: var(--reforge-blue); } .reforge h3 { color: var(--reforge-blue); }
-        .pulse-engine { border-color: var(--pulse-purple); } .pulse-engine h3 { color: var(--pulse-purple); }
-        .guard { border-color: var(--guard-red); } .guard h3 { color: var(--guard-red); }
+        .list-item:hover { background: rgba(212, 175, 55, 0.08); transform: translateX(8px); }
 
-        /* Massive Sliding Guard Logo */
+        .list-item h3 {
+            font-family: 'Orbitron';
+            color: var(--gold);
+            font-size: clamp(1.1rem, 3vw, 1.6rem);
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+        }
+
+        .list-item p {
+            color: #ddd;
+            line-height: 1.8;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+
+        .features {
+            display: block;
+            color: rgba(255,255,255,0.5);
+            font-style: italic;
+            font-size: 0.95rem;
+        }
+
+        /* REFORGE green with sliding logo */
+        .reforge { 
+            border-left-color: #00ff00;
+            position: relative;
+        }
+        .reforge:hover { box-shadow: 0 0 30px rgba(0, 255, 0, 0.15); }
+        .reforge h3 { 
+            color: #00ff00; 
+            text-shadow: 0 0 15px rgba(0, 255, 0, 0.4); 
+        }
+
+        .reforge::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -100%;
+            transform: translateY(-50%);
+            width: 120px;
+            height: 120px;
+            background-image: url('assets/images/REFORGELOGO.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.15;
+            pointer-events: none;
+            transition: right 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+            z-index: 1;
+        }
+
+        .reforge:hover::after {
+            right: 0;
+        }
+
+        /* PULSE ENGINE purple */
+        .pulse-engine { border-left-color: var(--pulse-purple); }
+        .pulse-engine:hover { box-shadow: 0 0 30px rgba(188, 19, 254, 0.15); }
+        .pulse-engine h3 { color: var(--pulse-purple); text-shadow: 0 0 15px rgba(188, 19, 254, 0.4); }
+
+        /* A2K GUARD - Red with Logo */
+        .guard {
+            border-left-color: var(--guard-red);
+            position: relative;
+        }
+
+        .guard:hover {
+            box-shadow: 0 0 30px rgba(255, 49, 49, 0.15);
+        }
+
+        .guard h3 {
+            color: var(--guard-red);
+            text-shadow: 0 0 15px rgba(255, 49, 49, 0.4);
+        }
+
         .guard::after {
             content: '';
             position: absolute;
-            top: 0;
-            right: -100%; /* Start off-screen to the right */
-            width: 100%;  /* Same size as the box */
-            height: 100%;
-            background: url('assets/images/GUARDLOGO.PNG') no-repeat center center/contain;
-            background-color: rgba(255, 49, 49, 0.05); /* Slight tint for the background */
-            opacity: 0.8;
-            filter: drop-shadow(-10px 0 20px rgba(255, 49, 49, 0.4));
+            top: 50%;
+            right: -100%;
+            transform: translateY(-50%);
+            width: 180px;
+            height: 180px;
+            background-image: url('assets/images/GUARDLOGO.PNG');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 1;
+            pointer-events: none;
             transition: right 0.6s cubic-bezier(0.19, 1, 0.22, 1);
             z-index: 1;
         }
 
         .guard:hover::after {
-            right: 0; /* Slide in on hover */
+            right: 10px; /* Slide in on hover */
         }
 
+        /* Mystery Item (Gold) */
+        .mystery-item { border-left-color: var(--gold); }
+        .mystery-item:hover { box-shadow: 0 0 30px rgba(212, 175, 55, 0.15); }
+
         /* Tools / Coming Soon Section */
-        .tools-section { margin-top: 80px; border-top: 1px solid rgba(212, 175, 55, 0.3); padding-top: 60px; }
-        .tools-title { font-family: 'Orbitron'; color: var(--gold); font-size: clamp(1.5rem, 5vw, 2.2rem); margin-bottom: 40px; text-align: center; letter-spacing: 5px; }
+        .tools-section { 
+            margin-top: 80px; 
+            border-top: 1px solid rgba(212, 175, 55, 0.3); 
+            padding-top: 60px; 
+        }
+        
+        .tools-title { 
+            font-family: 'Orbitron'; 
+            color: var(--white);
+            text-shadow: 0 0 20px var(--reforge-blue), 0 0 40px var(--reforge-blue);
+            font-size: clamp(1.5rem, 5vw, 2.2rem); 
+            margin-bottom: 40px; 
+            text-align: center; 
+            letter-spacing: 5px; 
+        }
 
         .tool-link-card {
             background: rgba(255,255,255,0.04);
@@ -246,6 +338,107 @@
             align-items: center;
             border-radius: 2px;
             transition: 0.3s;
+            position: relative;
+        }
+
+        .tool-link-card.clickable {
+            cursor: pointer;
+        }
+
+        .tool-link-card.clickable:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(212, 175, 55, 0.4);
+            transform: translateY(-3px);
+        }
+
+        .tool-link-card.non-clickable {
+            cursor: default;
+            opacity: 0.9;
+        }
+
+        /* Tool card with logo */
+        .tool-card-content {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .tool-logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+        }
+
+        .tool-text {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .tool-name {
+            font-family: 'Orbitron';
+            font-size: 1.4rem;
+            color: var(--white);
+            text-shadow: 0 0 15px var(--reforge-blue), 0 0 30px var(--reforge-blue);
+            letter-spacing: 3px;
+        }
+
+        /* Green styling for Aztek Reforge tool card */
+        .tool-reforge .tool-name {
+            color: #00ff00;
+            text-shadow: 0 0 15px rgba(0, 255, 0, 0.6), 0 0 30px rgba(0, 255, 0, 0.4);
+        }
+
+        .tool-reforge {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-reforge::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -100%;
+            transform: translateY(-50%);
+            width: 150px;
+            height: 150px;
+            background-image: url('assets/images/REFORGELOGO.PNG');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 1;
+            pointer-events: none;
+            transition: right 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+            z-index: 1;
+        }
+
+        .tool-reforge:hover::after {
+            right: 15px;
+        }
+
+        /* Yellow styling for Advanced Knowledge Bible */
+        .tool-bible .tool-name {
+            color: #FFD700;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.6), 0 0 30px rgba(255, 215, 0, 0.4);
+        }
+
+        .tool-subtitle {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Centered white glowing COMING SOON */
+        .coming-soon-centered {
+            font-family: 'Orbitron';
+            letter-spacing: 10px;
+            color: var(--white);
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            text-align: center;
         }
 
         .coming-soon-label {
@@ -268,6 +461,8 @@
             .status-badge { letter-spacing: 6px; padding: 15px 25px; margin-bottom: 30px; }
             .hero h1 { letter-spacing: -1px; }
             .guard::after { width: 100%; height: 100%; }
+            .tool-logo { width: 60px; height: 60px; }
+            .tool-name { font-size: 1.1rem; }
         }
     </style>
 </head>
@@ -295,11 +490,6 @@
         <button class="dropdown-trigger" onclick="toggleArsenal()" id="arsenalBtn">ARSENAL</button>
         <div class="dropdown-content" id="arsenalContent">
             <div class="list-container">
-                <div class="list-item reforge">
-                    <h3>AZTEK REFORGE™</h3>
-                    <p id="desc1">Windows configuration and deployment toolkit designed to streamline setup and performance standards.</p>
-                    <span class="features" id="feat1">Structured setup. Controlled configuration. Reliable execution.</span>
-                </div>
                 <div class="list-item pulse-engine">
                     <h3>AZTEK PULSE ENGINE™</h3>
                     <p id="desc2">Intelligent media automation framework built to transform content into high-frequency output.</p>
@@ -310,22 +500,32 @@
                     <p id="desc3">Verification and anti-abuse framework engineered to detect automation patterns and enforce fairness.</p>
                     <span class="features" id="feat3">Real participants. Real engagement. Real winners.</span>
                 </div>
-                <div class="list-item mystery-item">
-                    <h3 id="mystery-title">ULTIMATE KNOWLEDGE BASE</h3>
-                    <p id="mystery-desc">The mystery of Advanced Knowledge in mobile architecture revealed.</p>
-                </div>
             </div>
         </div>
 
         <!-- TOOLS / COMING SOON -->
         <div class="tools-section">
             <h2 class="tools-title" id="toolsTitle">TOOLS & RESOURCES</h2>
+
             <div id="tools-list">
-                <div class="tool-link-card">
-                    <span class="coming-soon-label">COMING SOON</span>
+                <!-- Aztek Reforge - Clickable with green styling and sliding logo -->
+                <div class="tool-link-card clickable tool-reforge" onclick="window.location.href='a2k.lat/reforge'">
+                    <div class="tool-card-content">
+                        <div class="tool-text">
+                            <div class="tool-name" id="reforgeName">AZTEK REFORGE™</div>
+                            <div class="tool-subtitle" id="reforgeSubtitle">System Recast for Peak Performance</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="tool-link-card">
-                    <span class="coming-soon-label">COMING SOON</span>
+
+                <!-- Aztek Advanced Knowledge Bible - Non-clickable with yellow and centered glowing COMING SOON -->
+                <div class="tool-link-card non-clickable tool-bible">
+                    <div class="tool-card-content">
+                        <div class="tool-text" style="width: 100%;">
+                            <div class="tool-name" id="bibleName" style="text-align: center;">AZTEK ADVANCED KNOWLEDGE BIBLE</div>
+                            <div class="coming-soon-centered" id="bibleComingSoon">COMING SOON</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -339,15 +539,15 @@
                 heroSub: "Fusing Ancient Knowledge with Future Hardware",
                 arsenal: "ARSENAL",
                 tools: "TOOLS & RESOURCES",
-                mysteryT: "ULTIMATE KNOWLEDGE BASE",
-                mysteryD: "The mystery of Advanced Knowledge in mobile architecture revealed.",
                 comingSoon: "COMING SOON",
-                desc1: "Windows configuration and deployment toolkit designed to streamline setup and performance standards.",
-                feat1: "Structured setup. Controlled configuration. Reliable execution.",
                 desc2: "Intelligent media automation framework built to transform content into high-frequency output.",
                 feat2: "Optimized. Tracked. Deployment-ready.",
                 desc3: "Verification and anti-abuse framework engineered to detect automation patterns and enforce fairness.",
                 feat3: "Real participants. Real engagement. Real winners.",
+                reforgeName: "AZTEK REFORGE™",
+                reforgeSubtitle: "System Recast for Peak Performance",
+                bibleName: "AZTEK ADVANCED KNOWLEDGE BIBLE",
+                bibleComingSoon: "COMING SOON",
                 btnLabel: "ESPAÑOL",
                 flag: "https://flagcdn.com/w40/mx.png"
             },
@@ -357,15 +557,15 @@
                 heroSub: "Fusionando Sabiduría Ancestral con Hardware del Futuro",
                 arsenal: "ARSENAL",
                 tools: "HERRAMIENTAS Y RECURSOS",
-                mysteryT: "BASE DE CONOCIMIENTO DEFINITIVA",
-                mysteryD: "El misterio del Conocimiento Avanzado en la arquitectura móvil revelado.",
                 comingSoon: "PRÓXIMAMENTE",
-                desc1: "Kit de herramientas de configuración de Windows diseñado para optimizar los estándares de rendimiento.",
-                feat1: "Configuración estructurada. Ejecución confiable y controlada.",
                 desc2: "Marco de automatización de medios inteligente diseñado para transformar contenido de alta frecuencia.",
                 feat2: "Optimizado. Rastreado. Listo para el despliegue.",
                 desc3: "Marco de verificación diseñado para detectar patrones de automatización y garantizar la equidad.",
                 feat3: "Participantes reales. Compromiso real. Ganadores reales.",
+                reforgeName: "AZTEK REFORGE™",
+                reforgeSubtitle: "Reconfiguración del Sistema para Máximo Rendimiento",
+                bibleName: "BIBLIA DE CONOCIMIENTO AVANZADO AZTEK",
+                bibleComingSoon: "PRÓXIMAMENTE",
                 btnLabel: "ENGLISH",
                 flag: "https://flagcdn.com/w40/us.png"
             }
@@ -391,16 +591,18 @@
             document.getElementById('hero-subtitle').innerText = translations[lang].heroSub;
             document.getElementById('arsenalBtn').innerText = translations[lang].arsenal;
             document.getElementById('toolsTitle').innerText = translations[lang].tools;
-            document.getElementById('mystery-title').innerText = translations[lang].mysteryT;
-            document.getElementById('mystery-desc').innerText = translations[lang].mysteryD;
             
             // Arsenal Internal Content
-            document.getElementById('desc1').innerText = translations[lang].desc1;
-            document.getElementById('feat1').innerText = translations[lang].feat1;
             document.getElementById('desc2').innerText = translations[lang].desc2;
             document.getElementById('feat2').innerText = translations[lang].feat2;
             document.getElementById('desc3').innerText = translations[lang].desc3;
             document.getElementById('feat3').innerText = translations[lang].feat3;
+
+            // Tool Cards
+            document.getElementById('reforgeName').innerText = translations[lang].reforgeName;
+            document.getElementById('reforgeSubtitle').innerText = translations[lang].reforgeSubtitle;
+            document.getElementById('bibleName').innerText = translations[lang].bibleName;
+            document.getElementById('bibleComingSoon').innerText = translations[lang].bibleComingSoon;
 
             // Coming Soon Labels
             document.querySelectorAll('.coming-soon-label').forEach(label => {
