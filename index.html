@@ -33,6 +33,9 @@
             background: var(--black);
             color: var(--white);
             overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         /* Fixed Background and Circuit Overlays */
@@ -96,13 +99,14 @@
 
         /* Hero Section */
         .hero {
-            min-height: 100vh;
+            min-height: 80vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 80px 20px 40px 20px;
+            padding: 100px 20px 40px 20px;
+            width: 100%;
         }
 
         .hero-box {
@@ -154,13 +158,14 @@
             padding: 20px 50px;
             letter-spacing: 12px;
             color: var(--white);
-            margin-bottom: 50px;
             font-weight: 900;
             font-size: clamp(1.1rem, 4vw, 2.2rem);
             text-shadow: 0 0 15px var(--emergency-red), 0 0 30px var(--emergency-red);
             box-shadow: 0 0 40px rgba(255, 0, 0, 0.4);
             animation: hyper-pulse 1.5s infinite alternate;
             text-transform: uppercase;
+            margin: 40px 0;
+            text-align: center;
         }
 
         @keyframes hyper-pulse {
@@ -171,8 +176,12 @@
         /* Container & Dropdowns */
         .container {
             max-width: 1000px;
+            width: 100%;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 0 20px 80px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .dropdown-trigger {
@@ -197,6 +206,7 @@
         .dropdown-trigger.active::after { transform: rotate(180deg); }
 
         .dropdown-content {
+            width: 100%;
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
@@ -218,7 +228,7 @@
             transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
-            min-height: 180px; /* Base height for logo alignment */
+            min-height: 200px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -235,22 +245,31 @@
             font-size: clamp(1.1rem, 3vw, 1.6rem);
             letter-spacing: 3px;
             margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
         }
 
         .list-item p {
-            color: #ddd;
+            color: var(--white) !important;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
             line-height: 1.8;
-            font-size: 1rem;
+            font-size: 1.1rem;
             margin-bottom: 15px;
-            font-weight: 300;
-            max-width: 80%; /* Give room for logos */
+            font-weight: 500;
+            max-width: 70%;
+            position: relative;
+            z-index: 2;
         }
 
         .features {
             display: block;
-            color: rgba(255,255,255,0.5);
+            color: var(--white) !important;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
             font-style: italic;
-            font-size: 0.95rem;
+            font-size: 1rem;
+            font-weight: 600;
+            position: relative;
+            z-index: 2;
         }
 
         /* Section Colors */
@@ -260,24 +279,37 @@
         .guard { border-left-color: var(--guard-red); }
         .guard h3 { color: var(--guard-red); text-shadow: 0 0 15px rgba(255, 49, 49, 0.4); }
 
-        .guard::after {
+        /* Logos for Arsenal Items */
+        .list-item::after {
             content: '';
             position: absolute;
             top: 0;
             right: -100%;
-            height: 100%; /* Match parent height */
-            width: 250px; /* Wider to allow proportions */
-            background: url('assets/images/GUARDLOGO.PNG') no-repeat right center/contain;
-            opacity: 0.8;
+            height: 100%;
+            width: 250px;
+            background-repeat: no-repeat;
+            background-position: right center;
+            background-size: contain;
+            opacity: 0.6;
             transition: right 0.6s cubic-bezier(0.19, 1, 0.22, 1);
             z-index: 1;
             pointer-events: none;
         }
 
-        .guard:hover::after { right: 0; }
+        .guard::after {
+            background-image: url('assets/images/GUARDLOGO.PNG');
+        }
+
+        .pulse-engine::after {
+            background-image: url('assets/images/REFORGELOGO.PNG');
+            filter: hue-rotate(270deg);
+        }
+
+        .list-item:hover::after { right: 10px; }
 
         /* Tools Section */
         .tools-section {
+            width: 100%;
             margin-top: 80px;
             border-top: 1px solid rgba(212, 175, 55, 0.3);
             padding-top: 60px;
@@ -305,6 +337,7 @@
             transition: 0.3s;
             position: relative;
             text-decoration: none;
+            overflow: hidden;
         }
 
         .tool-link-card.clickable:hover {
@@ -319,6 +352,8 @@
             gap: 30px;
             width: 100%;
             justify-content: center;
+            position: relative;
+            z-index: 2;
         }
 
         .tool-text {
@@ -341,7 +376,6 @@
             text-shadow: 0 0 15px rgba(0, 255, 0, 0.6);
         }
 
-        /* COMING SOON Stylization for Reforge Subtitle */
         .reforge-status-style {
             font-family: 'Orbitron';
             letter-spacing: 10px;
@@ -353,7 +387,6 @@
             margin-top: 10px;
         }
 
-        .tool-reforge { overflow: hidden; }
         .tool-reforge::after {
             content: '';
             position: absolute;
@@ -364,9 +397,11 @@
             background: url('assets/images/REFORGELOGO.PNG') no-repeat right center/contain;
             transition: right 0.6s cubic-bezier(0.19, 1, 0.22, 1);
             pointer-events: none;
+            opacity: 0.5;
+            z-index: 1;
         }
 
-        .tool-reforge:hover::after { right: 0; }
+        .tool-reforge:hover::after { right: 20px; }
 
         .tool-bible .tool-name {
             color: #FFD700;
@@ -392,7 +427,7 @@
             .hero-box { padding: 50px 20px; }
             .status-badge { letter-spacing: 6px; padding: 15px 25px; }
             .tool-name { font-size: 1.1rem; }
-            .guard::after, .tool-reforge::after { width: 150px; opacity: 0.4; }
+            .list-item::after, .tool-reforge::after { width: 150px; opacity: 0.4; }
         }
     </style>
 </head>
@@ -407,12 +442,17 @@
     </button>
 
     <section class="hero">
+        <!-- OBJECT 1: Above Hero Box (formerly inside) -->
+        <div class="status-badge" id="status-1">UNDER CONSTRUCTION</div>
+        
         <div class="hero-box">
-            <div class="status-badge" id="status-main">UNDER CONSTRUCTION</div>
             <h1 id="hero-title">A2K TECH</h1>
             <p class="systems-subtitle" id="systems-text">A2K Systems™ is a focused collection of purpose-built infrastructure tools designed to protect integrity, optimize environments, and automate digital workflows.</p>
             <p class="hero-subtitle" id="hero-subtitle">Fusing Ancient Knowledge with Future Hardware</p>
         </div>
+
+        <!-- OBJECT 2: Below Hero Box and Above Arsenal Trigger -->
+        <div class="status-badge" id="status-2">UNDER CONSTRUCTION</div>
     </section>
 
     <div class="container">
@@ -455,6 +495,9 @@
                 </div>
             </div>
         </div>
+
+        <!-- OBJECT 3: Very bottom of the page -->
+        <div class="status-badge" id="status-3">UNDER CONSTRUCTION</div>
     </div>
 
     <script>
@@ -497,7 +540,6 @@
             }
         };
 
-        // Initialize from localStorage or default to 'en'
         let currentLang = localStorage.getItem('a2k_preferred_lang') || 'en';
 
         function toggleArsenal() {
@@ -514,7 +556,13 @@
         }
 
         function setLanguage(lang) {
-            document.getElementById('status-main').innerText = translations[lang].status;
+            // Update all status badges
+            const statusBadges = ['status-1', 'status-2', 'status-3'];
+            statusBadges.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.innerText = translations[lang].status;
+            });
+
             document.getElementById('systems-text').innerText = translations[lang].systems;
             document.getElementById('hero-subtitle').innerText = translations[lang].heroSub;
             document.getElementById('arsenalBtn').innerText = translations[lang].arsenal;
@@ -531,7 +579,6 @@
             document.getElementById('langFlag').src = translations[lang].flag;
         }
 
-        // Run on load
         window.onload = () => {
             setLanguage(currentLang);
         };
