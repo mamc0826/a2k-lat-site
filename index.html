@@ -218,6 +218,10 @@
             transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
+            min-height: 180px; /* Base height for logo alignment */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .list-item:hover {
@@ -239,6 +243,7 @@
             font-size: 1rem;
             margin-bottom: 15px;
             font-weight: 300;
+            max-width: 80%; /* Give room for logos */
         }
 
         .features {
@@ -252,24 +257,24 @@
         .pulse-engine { border-left-color: var(--pulse-purple); }
         .pulse-engine h3 { color: var(--pulse-purple); text-shadow: 0 0 15px rgba(188, 19, 254, 0.4); }
 
-        .guard { border-left-color: var(--guard-red); position: relative; }
+        .guard { border-left-color: var(--guard-red); }
         .guard h3 { color: var(--guard-red); text-shadow: 0 0 15px rgba(255, 49, 49, 0.4); }
 
         .guard::after {
             content: '';
             position: absolute;
-            top: 50%;
+            top: 0;
             right: -100%;
-            transform: translateY(-50%);
-            width: 180px;
-            height: 180px;
-            background: url('assets/images/GUARDLOGO.PNG') no-repeat center/contain;
-            opacity: 1;
+            height: 100%; /* Match parent height */
+            width: 250px; /* Wider to allow proportions */
+            background: url('assets/images/GUARDLOGO.PNG') no-repeat right center/contain;
+            opacity: 0.8;
             transition: right 0.6s cubic-bezier(0.19, 1, 0.22, 1);
             z-index: 1;
+            pointer-events: none;
         }
 
-        .guard:hover::after { right: 10px; }
+        .guard:hover::after { right: 0; }
 
         /* Tools Section */
         .tools-section {
@@ -320,6 +325,7 @@
             display: flex;
             flex-direction: column;
             gap: 5px;
+            text-align: center;
         }
 
         .tool-name {
@@ -335,30 +341,37 @@
             text-shadow: 0 0 15px rgba(0, 255, 0, 0.6);
         }
 
+        /* COMING SOON Stylization for Reforge Subtitle */
+        .reforge-status-style {
+            font-family: 'Orbitron';
+            letter-spacing: 10px;
+            color: var(--white);
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+
         .tool-reforge { overflow: hidden; }
         .tool-reforge::after {
             content: '';
             position: absolute;
-            top: 50%;
+            top: 0;
             right: -100%;
-            transform: translateY(-50%);
-            width: 150px;
-            height: 150px;
-            background: url('assets/images/REFORGELOGO.PNG') no-repeat center/contain;
+            height: 100%;
+            width: 250px;
+            background: url('assets/images/REFORGELOGO.PNG') no-repeat right center/contain;
             transition: right 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+            pointer-events: none;
         }
 
-        .tool-reforge:hover::after { right: 15px; }
+        .tool-reforge:hover::after { right: 0; }
 
         .tool-bible .tool-name {
             color: #FFD700;
             text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
             text-align: center;
-        }
-
-        .tool-subtitle {
-            font-size: 0.9rem;
-            color: rgba(255,255,255,0.6);
         }
 
         .coming-soon-centered {
@@ -370,6 +383,7 @@
             font-weight: 700;
             text-transform: uppercase;
             text-align: center;
+            margin-top: 10px;
         }
 
         /* Mobile Adjustments */
@@ -378,6 +392,7 @@
             .hero-box { padding: 50px 20px; }
             .status-badge { letter-spacing: 6px; padding: 15px 25px; }
             .tool-name { font-size: 1.1rem; }
+            .guard::after, .tool-reforge::after { width: 150px; opacity: 0.4; }
         }
     </style>
 </head>
@@ -425,7 +440,7 @@
                     <div class="tool-card-content">
                         <div class="tool-text">
                             <div class="tool-name" id="reforgeName">AZTEK REFORGE™</div>
-                            <div class="tool-subtitle" id="reforgeSubtitle">System Recast for Peak Performance</div>
+                            <div class="reforge-status-style" id="reforgeSubtitle">System Recast for Peak Performance</div>
                         </div>
                     </div>
                 </a>
@@ -482,7 +497,8 @@
             }
         };
 
-        let currentLang = 'en';
+        // Initialize from localStorage or default to 'en'
+        let currentLang = localStorage.getItem('a2k_preferred_lang') || 'en';
 
         function toggleArsenal() {
             const content = document.getElementById('arsenalContent');
@@ -493,6 +509,7 @@
 
         function toggleLanguage() {
             currentLang = (currentLang === 'en') ? 'es' : 'en';
+            localStorage.setItem('a2k_preferred_lang', currentLang);
             setLanguage(currentLang);
         }
 
@@ -513,6 +530,11 @@
             document.getElementById('langLabel').innerText = translations[lang].btnLabel;
             document.getElementById('langFlag').src = translations[lang].flag;
         }
+
+        // Run on load
+        window.onload = () => {
+            setLanguage(currentLang);
+        };
     </script>
 </body>
 </html>
