@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>A2K TECHNOLOGY | UNDER CONSTRUCTION</title>
-	<link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap');
@@ -22,7 +22,11 @@
             --emergency-red: #ff0000;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             font-family: 'Rajdhani', sans-serif;
@@ -34,15 +38,21 @@
         /* Fixed Background and Circuit Overlays */
         .bg-wrapper {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: -2;
             background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), 
-                        url('assets/images/COMINGSOON.JPG')  no-repeat center center/cover;
+                        url('assets/images/COMINGSOON.JPG') no-repeat center center/cover;
         }
 
         .circuit-overlay {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: -1;
             background-image: radial-gradient(circle at 2px 2px, rgba(212, 175, 55, 0.05) 1px, transparent 0);
             background-size: 30px 30px;
@@ -51,7 +61,7 @@
         /* Language Switcher */
         .lang-switch {
             position: fixed;
-            top: 30px; 
+            top: 30px;
             right: 30px;
             z-index: 1000;
             background: rgba(0, 0, 0, 0.7);
@@ -135,6 +145,7 @@
             text-transform: uppercase;
         }
 
+        /* Status Badge */
         .status-badge {
             display: inline-block;
             font-family: 'Orbitron';
@@ -153,12 +164,16 @@
         }
 
         @keyframes hyper-pulse {
-            0% { opacity: 0.7; transform: scale(0.95); }
-            100% { opacity: 1; transform: scale(1.05); }
+            0% { opacity: 0.7; transform: scale(0.95); box-shadow: 0 0 20px rgba(255, 0, 0, 0.2); }
+            100% { opacity: 1; transform: scale(1.05); box-shadow: 0 0 50px rgba(255, 0, 0, 0.6); }
         }
 
-        /* Arsenal and Content Styling */
-        .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+        /* Container & Dropdowns */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
 
         .dropdown-trigger {
             width: 100%;
@@ -177,6 +192,7 @@
             margin-bottom: 15px;
         }
 
+        .dropdown-trigger:hover { background: rgba(212, 175, 55, 0.2); }
         .dropdown-trigger::after { content: '▼'; font-size: 1.4rem; transition: 0.4s; }
         .dropdown-trigger.active::after { transform: rotate(180deg); }
 
@@ -204,23 +220,72 @@
             overflow: hidden;
         }
 
-        .list-item h3 { font-family: 'Orbitron'; color: var(--gold); letter-spacing: 3px; margin-bottom: 15px; }
+        .list-item:hover {
+            background: rgba(212, 175, 55, 0.08);
+            transform: translateX(8px);
+        }
+
+        .list-item h3 {
+            font-family: 'Orbitron';
+            color: var(--gold);
+            font-size: clamp(1.1rem, 3vw, 1.6rem);
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+        }
+
+        .list-item p {
+            color: #ddd;
+            line-height: 1.8;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+
+        .features {
+            display: block;
+            color: rgba(255,255,255,0.5);
+            font-style: italic;
+            font-size: 0.95rem;
+        }
+
+        /* Section Colors */
+        .pulse-engine { border-left-color: var(--pulse-purple); }
+        .pulse-engine h3 { color: var(--pulse-purple); text-shadow: 0 0 15px rgba(188, 19, 254, 0.4); }
+
+        .guard { border-left-color: var(--guard-red); position: relative; }
+        .guard h3 { color: var(--guard-red); text-shadow: 0 0 15px rgba(255, 49, 49, 0.4); }
+
+        .guard::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -100%;
+            transform: translateY(-50%);
+            width: 180px;
+            height: 180px;
+            background: url('assets/images/GUARDLOGO.PNG') no-repeat center/contain;
+            opacity: 1;
+            transition: right 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+            z-index: 1;
+        }
+
+        .guard:hover::after { right: 10px; }
 
         /* Tools Section */
-        .tools-section { 
-            margin-top: 80px; 
-            border-top: 1px solid rgba(212, 175, 55, 0.3); 
-            padding-top: 60px; 
+        .tools-section {
+            margin-top: 80px;
+            border-top: 1px solid rgba(212, 175, 55, 0.3);
+            padding-top: 60px;
         }
-        
-        .tools-title { 
-            font-family: 'Orbitron'; 
+
+        .tools-title {
+            font-family: 'Orbitron';
             color: var(--white);
-            text-shadow: 0 0 20px var(--reforge-blue);
-            font-size: clamp(1.5rem, 5vw, 2.2rem); 
-            margin-bottom: 40px; 
-            text-align: center; 
-            letter-spacing: 5px; 
+            text-shadow: 0 0 20px var(--reforge-blue), 0 0 40px var(--reforge-blue);
+            font-size: clamp(1.5rem, 5vw, 2.2rem);
+            margin-bottom: 40px;
+            text-align: center;
+            letter-spacing: 5px;
         }
 
         .tool-link-card {
@@ -234,33 +299,43 @@
             border-radius: 2px;
             transition: 0.3s;
             position: relative;
+            text-decoration: none;
         }
 
-        .tool-link-card.clickable { cursor: pointer; }
         .tool-link-card.clickable:hover {
             background: rgba(255,255,255,0.08);
             border-color: rgba(212, 175, 55, 0.4);
             transform: translateY(-3px);
         }
 
-        .tool-card-content { display: flex; align-items: center; gap: 30px; width: 100%; justify-content: center; }
+        .tool-card-content {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            width: 100%;
+            justify-content: center;
+        }
 
-        .tool-text { display: flex; flex-direction: column; gap: 5px; }
+        .tool-text {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
 
         .tool-name {
             font-family: 'Orbitron';
             font-size: 1.4rem;
             color: var(--white);
-            text-shadow: 0 0 15px var(--reforge-blue);
             letter-spacing: 3px;
         }
 
-        /* Reforge Specific */
+        /* Reforge Special Styling */
         .tool-reforge .tool-name {
             color: #00ff00;
             text-shadow: 0 0 15px rgba(0, 255, 0, 0.6);
         }
 
+        .tool-reforge { overflow: hidden; }
         .tool-reforge::after {
             content: '';
             position: absolute;
@@ -269,14 +344,22 @@
             transform: translateY(-50%);
             width: 150px;
             height: 150px;
-            background-image: url('assets/images/REFORGELOGO.PNG');
-            background-size: contain;
-            background-repeat: no-repeat;
-            opacity: 1;
+            background: url('assets/images/REFORGELOGO.PNG') no-repeat center/contain;
             transition: right 0.6s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         .tool-reforge:hover::after { right: 15px; }
+
+        .tool-bible .tool-name {
+            color: #FFD700;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+            text-align: center;
+        }
+
+        .tool-subtitle {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.6);
+        }
 
         .coming-soon-centered {
             font-family: 'Orbitron';
@@ -284,11 +367,16 @@
             color: var(--white);
             text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
             font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
             text-align: center;
         }
 
+        /* Mobile Adjustments */
         @media (max-width: 600px) {
+            .lang-switch { top: auto; bottom: 30px; right: 50%; transform: translateX(50%); }
             .hero-box { padding: 50px 20px; }
+            .status-badge { letter-spacing: 6px; padding: 15px 25px; }
             .tool-name { font-size: 1.1rem; }
         }
     </style>
@@ -316,33 +404,36 @@
         <button class="dropdown-trigger" onclick="toggleArsenal()" id="arsenalBtn">ARSENAL</button>
         <div class="dropdown-content" id="arsenalContent">
             <div class="list-container">
-                <div class="list-item">
+                <div class="list-item pulse-engine">
                     <h3>AZTEK PULSE ENGINE™</h3>
                     <p id="desc2">Intelligent media automation framework built to transform content into high-frequency output.</p>
+                    <span class="features" id="feat2">Optimized. Tracked. Deployment-ready.</span>
                 </div>
-                <div class="list-item">
+                <div class="list-item guard">
                     <h3>A2K GUARD™</h3>
                     <p id="desc3">Verification and anti-abuse framework engineered to detect automation patterns and enforce fairness.</p>
+                    <span class="features" id="feat3">Real participants. Real engagement. Real winners.</span>
                 </div>
             </div>
         </div>
 
         <div class="tools-section">
             <h2 class="tools-title" id="toolsTitle">TOOLS & RESOURCES</h2>
+
             <div id="tools-list">
-                <div class="tool-link-card clickable tool-reforge" onclick="window.location.href='./reforge/'">
+                <a href="reforge/index.html" class="tool-link-card clickable tool-reforge">
                     <div class="tool-card-content">
                         <div class="tool-text">
                             <div class="tool-name" id="reforgeName">AZTEK REFORGE™</div>
                             <div class="tool-subtitle" id="reforgeSubtitle">System Recast for Peak Performance</div>
                         </div>
                     </div>
-                </div>
+                </a>
 
                 <div class="tool-link-card non-clickable tool-bible">
                     <div class="tool-card-content">
                         <div class="tool-text" style="width: 100%;">
-                            <div class="tool-name" id="bibleName" style="text-align: center;">AZTEK ADVANCED KNOWLEDGE BIBLE</div>
+                            <div class="tool-name" id="bibleName">AZTEK ADVANCED KNOWLEDGE BIBLE</div>
                             <div class="coming-soon-centered" id="bibleComingSoon">COMING SOON</div>
                         </div>
                     </div>
@@ -359,6 +450,11 @@
                 heroSub: "Fusing Ancient Knowledge with Future Hardware",
                 arsenal: "ARSENAL",
                 tools: "TOOLS & RESOURCES",
+                comingSoon: "COMING SOON",
+                desc2: "Intelligent media automation framework built to transform content into high-frequency output.",
+                feat2: "Optimized. Tracked. Deployment-ready.",
+                desc3: "Verification and anti-abuse framework engineered to detect automation patterns and enforce fairness.",
+                feat3: "Real participants. Real engagement. Real winners.",
                 reforgeName: "AZTEK REFORGE™",
                 reforgeSubtitle: "System Recast for Peak Performance",
                 bibleName: "AZTEK ADVANCED KNOWLEDGE BIBLE",
@@ -372,6 +468,11 @@
                 heroSub: "Fusionando Sabiduría Ancestral con Hardware del Futuro",
                 arsenal: "ARSENAL",
                 tools: "HERRAMIENTAS Y RECURSOS",
+                comingSoon: "PRÓXIMAMENTE",
+                desc2: "Marco de automatización de medios inteligente diseñado para transformar contenido de alta frecuencia.",
+                feat2: "Optimizado. Rastreado. Listo para el despliegue.",
+                desc3: "Marco de verificación diseñado para detectar patrones de automatización y garantizar la equidad.",
+                feat3: "Participantes reales. Compromiso real. Ganadores reales.",
                 reforgeName: "AZTEK REFORGE™",
                 reforgeSubtitle: "Reconfiguración del Sistema para Máximo Rendimiento",
                 bibleName: "BIBLIA DE CONOCIMIENTO AVANZADO AZTEK",
@@ -401,6 +502,10 @@
             document.getElementById('hero-subtitle').innerText = translations[lang].heroSub;
             document.getElementById('arsenalBtn').innerText = translations[lang].arsenal;
             document.getElementById('toolsTitle').innerText = translations[lang].tools;
+            document.getElementById('desc2').innerText = translations[lang].desc2;
+            document.getElementById('feat2').innerText = translations[lang].feat2;
+            document.getElementById('desc3').innerText = translations[lang].desc3;
+            document.getElementById('feat3').innerText = translations[lang].feat3;
             document.getElementById('reforgeName').innerText = translations[lang].reforgeName;
             document.getElementById('reforgeSubtitle').innerText = translations[lang].reforgeSubtitle;
             document.getElementById('bibleName').innerText = translations[lang].bibleName;
