@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>A2K - Advanced Device Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #C8962A;
+            --gold-bright: #F0C040;
+            --obsidian: #040608;
+            --cyan: #00D4FF;
+            --white: #ffffff;
+        }
+
+        body {
+            background-color: var(--obsidian);
+            color: #f8fafc;
+            font-family: 'Rajdhani', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .aztec-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            background-image: 
+                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        /* Enhanced Visible Scanline */
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(0, 212, 255, 0.6), 
+                rgba(0, 212, 255, 0.8), 
+                rgba(0, 212, 255, 0.6), 
+                transparent);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+            z-index: 50;
+            animation: scan 8s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scan { 0% { top: -10vh; } 100% { top: 110vh; } }
+
+        .glass-header {
+            background: rgba(4, 6, 8, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.15);
+            z-index: 100;
+        }
+
+        .tool-card {
+            background: rgba(10, 15, 25, 0.9);
+            border: 1px solid rgba(0, 212, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s ease-out;
+        }
+
+        .tool-card:active {
+            transform: scale(0.96);
+            border-color: var(--cyan);
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        /* Glow Text Effect */
+        .glow-text-white {
+            color: var(--white);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 25px rgba(255, 255, 255, 0.3);
+        }
+        
+        .blue-brand {
+            color: var(--cyan);
+            text-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+        }
+
+        .btn-action {
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-family: 'Share Tech Mono', monospace;
+            text-transform: uppercase;
+        }
+
+        .search-bar {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .nav-logo {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 2px;
+            color: var(--gold-bright);
+        }
+
+        /* Realistic Icon Colors */
+        .icon-google { color: #4285F4; }
+        .icon-samsung { color: #1428a0; }
+        .icon-chrome { color: #EA4335; }
+        .icon-settings { color: #9E9E9E; }
+
+        ::-webkit-scrollbar { width: 0px; }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <canvas id="bg-canvas"></canvas>
+    <div class="aztec-grid"></div>
+    <div class="scanline"></div>
+
+    <header class="glass-header sticky top-0">
+        <div class="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 border border-cyan-500/50 flex items-center justify-center bg-black rotate-45">
+                    <i class="fas fa-microchip text-cyan-400 -rotate-45 text-xs"></i>
+                </div>
+                <h1 class="nav-logo text-lg font-black tracking-widest">A2K</h1>
+            </div>
+            <button id="toggleLang" class="text-[10px] font-bold border border-gold-600/50 text-gold-bright px-3 py-1.5 uppercase tracking-widest hover:bg-gold-600 transition-all flex items-center gap-2">
+                <img src="https://flagcdn.com/w40/us.png" id="langFlag" class="w-4 border border-white/20" alt="lang">
+                <span id="langLabel">ENGLISH</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="relative z-10 max-w-2xl mx-auto px-4 pt-8 pb-24">
+        <!-- Hero Section -->
+        <div class="mb-8 border-l-2 border-cyan-500 pl-4">
+            <div class="text-[10px] font-mono text-cyan-500 mb-1 tracking-[0.3em]" data-i18n="tag">▸ A2K SYSTEMS · TOOL 002</div>
+            <h2 id="heroTitle" class="text-4xl font-black tracking-tight font-['Cinzel'] leading-none">
+                <span class="blue-brand">FRP</span><span class="glow-text-white ml-2">A2K</span>
+            </h2>
+            <p id="heroDesc" class="text-xs text-slate-400 leading-relaxed max-w-xs mt-3 font-medium">Advanced Device Management System. Decrypting protection layers via integrated logic.</p>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="sticky top-[72px] z-40 py-3 mb-8">
+            <div class="search-bar flex items-center px-4 py-3 rounded-sm backdrop-blur-md">
+                <i class="fas fa-terminal text-cyan-500 text-xs mr-3"></i>
+                <input type="text" id="searchInput" placeholder="Enter Module ID..." class="bg-transparent border-none outline-none text-sm w-full placeholder:text-slate-700 text-cyan-50">
+            </div>
+        </div>
+
+        <!-- Section: Shortcuts -->
+        <section class="mb-10">
+            <div class="flex items-center gap-2 mb-4">
+                <div class="w-2 h-2 bg-gold shadow-[0_0_10px_#C8962A]"></div>
+                <h3 class="text-[11px] font-bold uppercase tracking-[0.4em] text-gold-bright section-title" data-en="Internal Gateways" data-es="Puertas Internas">Internal Gateways</h3>
+            </div>
+            <div class="grid grid-cols-3 sm:grid-cols-4 gap-3" id="shortcutsGrid"></div>
+        </section>
+
+        <!-- Section: Essential APKs -->
+        <section class="mb-10">
+            <div class="flex items-center gap-2 mb-4">
+                <div class="w-2 h-2 bg-cyan-500 shadow-[0_0_10px_#00D4FF]"></div>
+                <h3 class="text-[11px] font-bold uppercase tracking-[0.4em] text-cyan-500 section-title" data-en="Binary Modules" data-es="Módulos Binarios">Binary Modules</h3>
+            </div>
+            <div class="space-y-3" id="apkGrid"></div>
+        </section>
+
+        <!-- Section: Account Managers -->
+        <section>
+            <div class="flex items-center gap-2 mb-4">
+                <div class="w-2 h-2 bg-purple-500 shadow-[0_0_10px_#A855F7]"></div>
+                <h3 class="text-[11px] font-bold uppercase tracking-[0.4em] text-purple-400 section-title" data-en="Identity Keys" data-es="Llaves de Identidad">Identity Keys</h3>
+            </div>
+            <div class="grid grid-cols-2 gap-3" id="gamGrid"></div>
+        </section>
+    </main>
+
+    <!-- Bottom Status Bar -->
+    <div class="fixed bottom-0 inset-x-0 glass-header p-4 flex justify-between items-center border-t border-cyan-500/20">
+        <p class="text-[9px] text-cyan-800 font-bold uppercase tracking-[0.2em] font-mono">Kernel: 0x8A2K // Secure Link</p>
+        <div class="flex gap-2">
+            <div class="w-1.5 h-1.5 bg-cyan-500 animate-ping"></div>
+            <div class="w-1.5 h-1.5 bg-cyan-900"></div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let W, H, particles = [];
+        const GLYPHS = ['◈', '◆', '01', 'A2K', 'FRP', 'X'];
+
+        function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+        resize(); window.addEventListener('resize', resize);
+        
+        function mkP() {
+            return {
+                x: Math.random() * W,
+                y: Math.random() * H + H,
+                vy: -(Math.random() * 0.4 + 0.1),
+                vx: (Math.random() - 0.5) * 0.3,
+                alpha: Math.random() * 0.12 + 0.05,
+                size: Math.random() * 6 + 10,
+                glyph: GLYPHS[Math.floor(Math.random() * GLYPHS.length)],
+                life: 0,
+                maxLife: Math.random() * 500 + 300
+            };
+        }
+
+        for (let i = 0; i < 30; i++) particles.push(mkP());
+
+        function frame() {
+            ctx.clearRect(0, 0, W, H);
+            particles.forEach((p, i) => {
+                p.life++;
+                if (p.life > p.maxLife || p.y < -20) { particles[i] = mkP(); return; }
+                p.x += p.vx; p.y += p.vy;
+                ctx.globalAlpha = p.alpha * (1 - p.life / p.maxLife);
+                ctx.fillStyle = '#00D4FF';
+                ctx.font = `${p.size}px 'Share Tech Mono'`;
+                ctx.fillText(p.glyph, p.x, p.y);
+            });
+            requestAnimationFrame(frame);
+        }
+        frame();
+
+        const tools = {
+            shortcuts: [
+                { name: "Settings", icon: "fa-gear", color: "icon-settings", url: "intent://com.android.settings/#Intent;scheme=android-app;end" },
+                { name: "Google Search", icon: "fa-brands fa-google", color: "icon-google", url: "intent://com.google.android.googlequicksearchbox/#Intent;scheme=android-app;end" },
+                { name: "Knox Lock", icon: "fa-shield-halved", color: "icon-samsung", url: "intent://com.android.settings.password.ScreenLockSuggestionActivity/#Intent;scheme=android-app;end" },
+                { name: "Assistant", icon: "fa-microphone", color: "icon-google", url: "intent://com.google.android.apps.googleassistant/#Intent;scheme=android-app;end" },
+                { name: "Samsung Files", icon: "fa-folder-closed", color: "icon-samsung", url: "intent://com.sec.android.app.myfiles/#Intent;scheme=android-app;end" },
+                { name: "Chrome", icon: "fa-brands fa-chrome", color: "icon-chrome", url: "intent://com.sec.android.app.sbrowser/#Intent;scheme=android-app;end" },
+                { name: "Radio Dial", icon: "fa-phone-flip", color: "text-green-500", url: "tel:*#*#4636#*#*" },
+                { name: "Dev Mode", icon: "fa-code", color: "text-cyan-400", url: "intent://com.android.settings.Settings$DevelopmentSettingsActivity/#Intent;scheme=android-app;end" }
+            ],
+            apks: [
+                { name: "FRP Bypass Pro", size: "1.2MB", icon: "fa-unlock-keyhole", url: "https://frpbypass.romstage.com/FRP_Bypass.apk" },
+                { name: "Alliance Shield X", size: "15MB", icon: "fa-shield-virus", url: "https://frpbypass.romstage.com/Alliance_Shield.apk" },
+                { name: "QuickShortcutMaker", size: "2MB", icon: "fa-bolt", url: "https://frpbypass.romstage.com/QuickShortcutMaker.apk" },
+                { name: "vnROM Bypass", size: "28MB", icon: "fa-microchip", url: "https://frpbypass.romstage.com/vnROM_Bypass.apk" },
+                { name: "Technocare Tr.", size: "11MB", icon: "fa-screwdriver-wrench", url: "https://frpbypass.romstage.com/Technocare.apk" }
+            ],
+            gam: [
+                { name: "Identity Manager 10", ver: "10.0" },
+                { name: "Identity Manager 9", ver: "9.0" },
+                { name: "Identity Manager 8", ver: "8.1" },
+                { name: "Identity Manager 6", ver: "6.0" }
+            ]
+        };
+
+        let currentLang = 'en';
+
+        function render(filter = "") {
+            const f = filter.toLowerCase();
+            const sGrid = document.getElementById('shortcutsGrid');
+            const aGrid = document.getElementById('apkGrid');
+            const gGrid = document.getElementById('gamGrid');
+
+            sGrid.innerHTML = tools.shortcuts.filter(i => i.name.toLowerCase().includes(f)).map(item => `
+                <a href="${item.url}" class="tool-card p-4 rounded-sm flex flex-col items-center gap-2 border-b-2 border-cyan-500/10">
+                    <i class="${item.icon} ${item.color} text-base"></i>
+                    <span class="text-[8px] font-bold uppercase tracking-widest text-slate-300 truncate w-full text-center">${item.name}</span>
+                </a>
+            `).join('');
+
+            aGrid.innerHTML = tools.apks.filter(i => i.name.toLowerCase().includes(f)).map(item => `
+                <div class="tool-card p-4 rounded-sm flex items-center justify-between border-l-2 border-cyan-500/30">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 bg-cyan-500/5 flex items-center justify-center border border-cyan-500/10">
+                            <i class="fas ${item.icon} text-cyan-500 text-xs"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-white tracking-widest uppercase">${item.name}</h4>
+                            <p class="text-[9px] text-slate-500 font-mono tracking-widest">${item.size}</p>
+                        </div>
+                    </div>
+                    <a href="${item.url}" class="btn-action px-4 py-2 text-[9px] font-bold tracking-widest">Execute</a>
+                </div>
+            `).join('');
+
+            gGrid.innerHTML = tools.gam.filter(i => i.name.toLowerCase().includes(f)).map(item => `
+                <a href="https://frpbypass.romstage.com/GAM_${item.ver}.apk" class="tool-card p-3 rounded-sm flex flex-col gap-1 border-r-2 border-purple-900/50">
+                    <span class="text-[10px] font-bold text-white tracking-widest uppercase">${item.name}</span>
+                    <span class="text-[8px] text-purple-400 font-mono">SIGNATURE: v${item.ver}</span>
+                </a>
+            `).join('');
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'es' : 'en';
+            const t = {
+                en: { h_pre: "FRP", h_post: "A2K", d: "Advanced Device Management System. Decrypting protection layers via integrated logic.", l: "ENGLISH", f: "https://flagcdn.com/w40/us.png", tag: "▸ A2K SYSTEMS · TOOL 002" },
+                es: { h_pre: "FRP", h_post: "A2K", d: "Sistema de gestión avanzada. Descifrando capas de protección mediante lógica integrada.", l: "ESPAÑOL", f: "https://flagcdn.com/w40/mx.png", tag: "▸ A2K SISTEMAS · HERRAMIENTA 002" }
+            };
+            document.getElementById('heroTitle').innerHTML = `<span class="blue-brand">${t[currentLang].h_pre}</span><span class="glow-text-white ml-2">${t[currentLang].h_post}</span>`;
+            document.getElementById('heroDesc').innerText = t[currentLang].d;
+            document.getElementById('langLabel').innerText = t[currentLang].l;
+            document.getElementById('langFlag').src = t[currentLang].f;
+            document.querySelector('[data-i18n="tag"]').innerText = t[currentLang].tag;
+            document.querySelectorAll('.section-title').forEach(el => {
+                el.innerText = el.getAttribute(`data-${currentLang}`);
+            });
+        }
+
+        document.getElementById('searchInput').addEventListener('input', (e) => render(e.target.value));
+        document.getElementById('toggleLang').addEventListener('click', toggleLanguage);
+
+        window.onload = () => render();
+    </script>
+</body>
+</html>
