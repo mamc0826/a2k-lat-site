@@ -100,6 +100,41 @@
         .stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
         .stat-value { font-family: 'Orbitron'; font-size: 1.4rem; color: var(--electric-orange); margin-top: 5px; }
 
+        /* Notes field */
+        .notes-area {
+            background: var(--deep-matte);
+            border: 1px solid var(--border-dim);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .notes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #111;
+            padding-bottom: 10px;
+        }
+        .notes-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--neon-amber);
+            text-transform: uppercase;
+        }
+        .notes-textarea {
+            width: 100%;
+            height: 150px;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-family: 'Inter';
+            font-size: 1rem;
+            resize: vertical;
+            outline: none;
+            line-height: 1.6;
+        }
+
         /* Language Selectors */
         .lang-row {
             display: flex;
@@ -385,7 +420,6 @@
         <div class="logo-main">A2K Interpreter Dashboard</div>
         <div class="logo-sub">TLATOLLI</div>
     </div>
-    <!-- Translate button moved to input panel, so nav only has brand -->
 </nav>
 
 <div class="dashboard-container">
@@ -403,6 +437,14 @@
             <span class="stat-label">System Uplink</span>
             <div class="stat-value" id="statusText">ACTIVE</div>
         </div>
+    </div>
+
+    <!-- Notes Field (not sent to DeepL) -->
+    <div class="notes-area">
+        <div class="notes-header">
+            <span class="notes-title"><i class="ph ph-notebook"></i> Session Notes (not translated)</span>
+        </div>
+        <textarea id="notesField" class="notes-textarea" placeholder="Type any notes, client info, reminders here... (not sent to DeepL)"></textarea>
     </div>
 
     <!-- Language Selector Row -->
@@ -462,10 +504,9 @@
         <div class="input-panel">
             <div class="panel-header">
                 <span class="panel-title"><i class="ph ph-waveform"></i> Listen / Capture</span>
-                <span style="font-size: 0.6rem; color: #444;">CTRL + ENTER TO PUSH (Manual mode)</span>
+                <span style="font-size: 0.6rem; color: #444;">ENTER to translate | SHIFT+ENTER new line</span>
             </div>
-            <textarea id="sourceText" placeholder="Audio stream data or manual input..."></textarea>
-            <!-- Translate button now inside the input panel -->
+            <textarea id="sourceText" placeholder="Type or paste text here... (Shift+Enter for new line, Enter to translate)"></textarea>
             <div class="translate-btn-container">
                 <button class="btn-glow" id="translateBtn" onclick="translateNow()">
                     <span class="btn-text"><i class="ph ph-lightning"></i> TRANSLATE</span>
@@ -478,7 +519,7 @@
                 <span class="panel-title"><i class="ph ph-brackets-curly"></i> Tlatolli Interpretation</span>
                 <i class="ph ph-copy" style="cursor:pointer" onclick="copyResult()"></i>
             </div>
-            <textarea id="targetText" placeholder="Processed interpretation will appear here..." readonly></textarea>
+            <textarea id="targetText" placeholder="Translation will appear here (line breaks preserved)..." readonly></textarea>
         </div>
     </div>
 
@@ -730,10 +771,10 @@
         }
     }
 
-    // Manual translation (triggered by button or Ctrl+Enter)
+    // Manual translation (triggered by button or Enter)
     async function translateNow() {
-        const text = document.getElementById('sourceText').value.trim();
-        if (!text) return;
+        const text = document.getElementById('sourceText').value;
+        if (!text.trim()) return;
 
         // Show loading on button
         const translateBtn = document.getElementById('translateBtn');
@@ -754,8 +795,8 @@
     function triggerLiveTranslation() {
         if (liveDebounceTimer) clearTimeout(liveDebounceTimer);
         liveDebounceTimer = setTimeout(async () => {
-            const text = document.getElementById('sourceText').value.trim();
-            if (text) {
+            const text = document.getElementById('sourceText').value;
+            if (text.trim()) {
                 await performTranslation(text);
             }
         }, 300); // 300ms debounce
@@ -763,9 +804,9 @@
 
     // Auto translation (called by timer)
     async function autoTranslate() {
-        const text = document.getElementById('sourceText').value.trim();
+        const text = document.getElementById('sourceText').value;
         // Only translate if text is non-empty and has changed since last auto translation
-        if (!text || text === lastTranslatedText) return;
+        if (!text.trim() || text === lastTranslatedText) return;
 
         lastTranslatedText = text;
         await performTranslation(text);
@@ -847,15 +888,16 @@
         });
     }
 
-    // ================= INIT =================
-    document.addEventListener('keydown', (e) => {
-        if (e.ctrlKey && e.key === 'Enter') {
-            e.preventDefault();
-            // Only trigger in manual mode? Or always? Let's keep as manual trigger always available.
+    // ================= ENTER KEY HANDLER =================
+    document.getElementById('sourceText').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault(); // prevent newline
             translateNow();
         }
+        // Shift+Enter will add newline normally
     });
 
+    // ================= INIT =================
     // When interval changes while in auto mode, restart the timer
     document.getElementById('autoInterval').addEventListener('change', () => {
         if (currentMode === 'auto') {
