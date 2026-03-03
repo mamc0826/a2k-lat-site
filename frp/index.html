@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>A2K — Advanced Device Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -272,6 +272,8 @@
         .fade-up:nth-child(7) { animation-delay: 0.35s; }
         .fade-up:nth-child(8) { animation-delay: 0.40s; }
 
+        /* icon sizing */
+        .icon-wrap svg, .apk-icon-wrap svg { display:block; }
         /* icon colors */
         .icon-google { color: #4285F4; }
         .icon-samsung { color: #4dabf7; }
@@ -291,7 +293,7 @@
         <div class="flex items-center gap-3">
             <div class="relative w-9 h-9 flex items-center justify-center">
                 <div class="absolute inset-0 border border-cyan-500/40 rotate-45 bg-black/60"></div>
-                <i class="fas fa-microchip text-cyan-400 text-[11px] relative z-10"></i>
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="13" height="13" class="relative z-10"><rect x="7" y="7" width="10" height="10" rx="1" fill="#00D4FF"/><rect x="9" y="9" width="6" height="6" rx="0.5" fill="#0E7490"/><line x1="3" y1="9" x2="7" y2="9" stroke="#00D4FF" stroke-width="1.5"/><line x1="3" y1="12" x2="7" y2="12" stroke="#00D4FF" stroke-width="1.5"/><line x1="3" y1="15" x2="7" y2="15" stroke="#00D4FF" stroke-width="1.5"/><line x1="17" y1="9" x2="21" y2="9" stroke="#00D4FF" stroke-width="1.5"/><line x1="17" y1="12" x2="21" y2="12" stroke="#00D4FF" stroke-width="1.5"/><line x1="17" y1="15" x2="21" y2="15" stroke="#00D4FF" stroke-width="1.5"/><line x1="9" y1="3" x2="9" y2="7" stroke="#00D4FF" stroke-width="1.5"/><line x1="12" y1="3" x2="12" y2="7" stroke="#00D4FF" stroke-width="1.5"/><line x1="15" y1="3" x2="15" y2="7" stroke="#00D4FF" stroke-width="1.5"/><line x1="9" y1="17" x2="9" y2="21" stroke="#00D4FF" stroke-width="1.5"/><line x1="12" y1="17" x2="12" y2="21" stroke="#00D4FF" stroke-width="1.5"/><line x1="15" y1="17" x2="15" y2="21" stroke="#00D4FF" stroke-width="1.5"/></svg>
             </div>
             <div>
                 <h1 class="nav-logo text-base leading-none">A2K</h1>
@@ -348,9 +350,9 @@
     <!-- Search -->
     <div class="sticky top-[60px] z-40 py-2.5 mb-8 desktop-col-full" style="background: linear-gradient(to bottom, var(--obsidian) 60%, transparent);">
         <div class="search-wrap flex items-center px-4 py-3">
-            <i class="fas fa-terminal text-cyan-600 text-xs mr-3 flex-shrink-0"></i>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="13" height="13" class="flex-shrink-0 mr-3" style="min-width:13px"><path d="M4 6l4 4-4 4" stroke="#00D4FF" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 18h8" stroke="#00D4FF" stroke-width="2" stroke-linecap="round"/></svg>
             <input type="text" id="searchInput" placeholder="Enter module ID or name..." autocomplete="off" autocorrect="off" spellcheck="false">
-            <i class="fas fa-times text-slate-700 text-xs ml-2 cursor-pointer flex-shrink-0" id="clearSearch" style="display:none" onclick="document.getElementById('searchInput').value='';document.getElementById('searchInput').dispatchEvent(new Event('input'));"></i>
+            <svg id="clearSearch" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="13" height="13" class="ml-2 cursor-pointer flex-shrink-0" style="display:none;min-width:13px" onclick="document.getElementById('searchInput').value='';document.getElementById('searchInput').dispatchEvent(new Event('input'));"><path d="M18 6L6 18M6 6l12 12" stroke="#475569" stroke-width="2" stroke-linecap="round"/></svg>
         </div>
     </div>
 
@@ -446,24 +448,57 @@
         requestAnimationFrame(frame);
     })();
 
+    /* ── SVG Icon Library ── */
+    const ICONS = {
+        // Realistic brand SVGs
+        settings: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="22" height="22"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.92c.04-.34.07-.69.07-1.08s-.03-.74-.07-1.08l2.32-1.82c.21-.16.27-.46.13-.7l-2.2-3.81c-.13-.25-.42-.33-.67-.25l-2.73 1.1c-.57-.44-1.18-.8-1.86-1.08l-.42-2.9A.518.518 0 0 0 12 2h-4.4c-.26 0-.47.19-.51.44l-.42 2.9c-.68.28-1.29.64-1.86 1.08L2.08 5.33c-.25-.08-.54 0-.67.25L-.8 9.39c-.14.24-.08.54.14.7l2.32 1.82c-.04.34-.07.69-.07 1.08s.03.74.07 1.08L-.33 15.9c-.22.16-.28.46-.14.7l2.2 3.81c.13.25.42.33.67.25l2.73-1.1c.57.44 1.18.8 1.86 1.08l.42 2.9c.04.25.25.44.51.44H12c.26 0 .47-.19.51-.44l.42-2.9c.68-.28 1.29-.64 1.86-1.08l2.73 1.1c.25.08.54 0 .67-.25l2.2-3.81c.14-.24.08-.54-.13-.7l-2.33-1.81z" fill="#9E9E9E"/></svg>`,
+
+        google: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="22" height="22"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>`,
+
+        assistant: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="22" height="22"><defs><linearGradient id="ga1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4285F4"/><stop offset="100%" stop-color="#34A853"/></linearGradient><linearGradient id="ga2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FBBC05"/><stop offset="100%" stop-color="#EA4335"/></linearGradient></defs><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="url(#ga1)" opacity="0.15"/><path d="M12 6.5c-3.04 0-5.5 2.46-5.5 5.5s2.46 5.5 5.5 5.5 5.5-2.46 5.5-5.5-2.46-5.5-5.5-5.5z" fill="url(#ga2)"/><circle cx="12" cy="12" r="2.5" fill="white"/></svg>`,
+
+        samsung_files: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="22" height="22"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z" fill="#1E88E5"/><path d="M20 8H4V6h8l2 2h6v0z" fill="#1565C0" opacity="0.5"/></svg>`,
+
+        chrome: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="22" height="22"><circle cx="12" cy="12" r="10" fill="#fff"/><path d="M12 2a10 10 0 0 1 8.66 5H12a5 5 0 0 0-4.33 2.5L5.16 5.4A9.96 9.96 0 0 1 12 2z" fill="#EA4335"/><path d="M22 12a10 10 0 0 1-5 8.66l-3.46-6A5 5 0 0 0 17 12h5z" fill="#34A853"/><path d="M2 12a10 10 0 0 0 3.16 7.26L8.6 13.3A5 5 0 0 1 7 12H2z" fill="#FBBC05"/><circle cx="12" cy="12" r="4" fill="#4285F4"/><circle cx="12" cy="12" r="2.5" fill="white"/></svg>`,
+
+        knox: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="22" height="22"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5L12 1z" fill="#1428A0"/><path d="M12 3.18L5 6.6V11c0 4.52 3.13 8.75 7 9.93 3.87-1.18 7-5.41 7-9.93V6.6L12 3.18z" fill="#1E40AF" opacity="0.6"/><path d="M10 12l-2-2 1.41-1.41L10 9.17l4.59-4.58L16 6l-6 6z" fill="white"/></svg>`,
+
+        phone: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="22" height="22"><rect x="5" y="2" width="14" height="20" rx="2" fill="#263238"/><rect x="6" y="4" width="12" height="14" fill="#37474F"/><rect x="7" y="5" width="10" height="12" fill="#546E7A"/><circle cx="12" cy="20" r="1" fill="#607D8B"/><path d="M7 5h10v12H7z" fill="#4DD0E1" opacity="0.15"/><text x="12" y="13" text-anchor="middle" font-size="5" fill="#4DD0E1" font-family="monospace">INFO</text></svg>`,
+
+        devmode: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="22" height="22"><rect x="2" y="3" width="20" height="14" rx="1.5" fill="#1A237E"/><rect x="3" y="4" width="18" height="12" fill="#0D47A1" rx="0.5"/><path d="M7 10l-2.5 2L7 14" stroke="#00E5FF" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M17 10l2.5 2L17 14" stroke="#00E5FF" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M14 8l-4 8" stroke="#76FF03" stroke-width="1.5" stroke-linecap="round"/><rect x="7" y="17" width="10" height="2" fill="#283593" rx="0.5"/><rect x="9" y="19" width="6" height="2" fill="#1A237E"/></svg>`,
+
+        // APK icons
+        unlock: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="18" height="18"><rect x="5" y="11" width="14" height="10" rx="1.5" fill="#00BCD4"/><path d="M8 11V7a4 4 0 0 1 8 0" stroke="#00BCD4" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="12" cy="16" r="2" fill="white"/><path d="M12 16v2" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+
+        shield_virus: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="18" height="18"><path d="M12 2L4 6v5c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V6L12 2z" fill="#7C3AED"/><path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="8" r="1.5" fill="#A78BFA"/></svg>`,
+
+        bolt: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="18" height="18"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z" fill="#FBBF24"/><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z" fill="none" stroke="#F59E0B" stroke-width="0.5"/></svg>`,
+
+        chip: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="18" height="18"><rect x="7" y="7" width="10" height="10" rx="1" fill="#06B6D4"/><rect x="9" y="9" width="6" height="6" rx="0.5" fill="#0E7490"/><line x1="3" y1="9" x2="7" y2="9" stroke="#06B6D4" stroke-width="1.5"/><line x1="3" y1="12" x2="7" y2="12" stroke="#06B6D4" stroke-width="1.5"/><line x1="3" y1="15" x2="7" y2="15" stroke="#06B6D4" stroke-width="1.5"/><line x1="17" y1="9" x2="21" y2="9" stroke="#06B6D4" stroke-width="1.5"/><line x1="17" y1="12" x2="21" y2="12" stroke="#06B6D4" stroke-width="1.5"/><line x1="17" y1="15" x2="21" y2="15" stroke="#06B6D4" stroke-width="1.5"/><line x1="9" y1="3" x2="9" y2="7" stroke="#06B6D4" stroke-width="1.5"/><line x1="12" y1="3" x2="12" y2="7" stroke="#06B6D4" stroke-width="1.5"/><line x1="15" y1="3" x2="15" y2="7" stroke="#06B6D4" stroke-width="1.5"/><line x1="9" y1="17" x2="9" y2="21" stroke="#06B6D4" stroke-width="1.5"/><line x1="12" y1="17" x2="12" y2="21" stroke="#06B6D4" stroke-width="1.5"/><line x1="15" y1="17" x2="15" y2="21" stroke="#06B6D4" stroke-width="1.5"/></svg>`,
+
+        wrench: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="18" height="18"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77c.57 1.4.47 3.05-.42 4.3A4.5 4.5 0 0 1 16 12a4.5 4.5 0 0 1-1.2-.17L8 18.63A2.5 2.5 0 1 1 4.37 15l6.8-6.8A4.5 4.5 0 0 1 11 7a4.5 4.5 0 0 1 4.3-4.77L14.7 6.3z" fill="#F97316"/></svg>`,
+
+        key: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="8" cy="10" r="5" fill="none" stroke="#A855F7" stroke-width="2"/><path d="M13 10h8M18 10v3" stroke="#A855F7" stroke-width="2" stroke-linecap="round"/><circle cx="8" cy="10" r="2" fill="#A855F7"/></svg>`,
+    };
+
     /* ── Data ── */
     const tools = {
         shortcuts: [
-            { name: "Settings",      icon: "fa-gear",               color: "icon-settings", url: "intent://com.android.settings/#Intent;scheme=android-app;end" },
-            { name: "Google",        icon: "fa-brands fa-google",   color: "icon-google",   url: "intent://com.google.android.googlequicksearchbox/#Intent;scheme=android-app;end" },
-            { name: "Knox Lock",     icon: "fa-shield-halved",      color: "icon-samsung",  url: "intent://com.android.settings.password.ScreenLockSuggestionActivity/#Intent;scheme=android-app;end" },
-            { name: "Assistant",     icon: "fa-microphone",         color: "icon-google",   url: "intent://com.google.android.apps.googleassistant/#Intent;scheme=android-app;end" },
-            { name: "Samsung Files", icon: "fa-folder-closed",      color: "icon-samsung",  url: "intent://com.sec.android.app.myfiles/#Intent;scheme=android-app;end" },
-            { name: "Browser",       icon: "fa-brands fa-chrome",   color: "icon-chrome",   url: "intent://com.sec.android.app.sbrowser/#Intent;scheme=android-app;end" },
-            { name: "Radio Dial",    icon: "fa-phone-flip",         color: "text-green-400",url: "tel:*#*#4636#*#*" },
-            { name: "Dev Mode",      icon: "fa-code",               color: "text-cyan-400", url: "intent://com.android.settings.Settings$DevelopmentSettingsActivity/#Intent;scheme=android-app;end" }
+            { name: "Settings",      svg: "settings",       url: "intent://com.android.settings/#Intent;scheme=android-app;end" },
+            { name: "Google",        svg: "google",         url: "intent://com.google.android.googlequicksearchbox/#Intent;scheme=android-app;end" },
+            { name: "Knox Lock",     svg: "knox",           url: "intent://com.android.settings.password.ScreenLockSuggestionActivity/#Intent;scheme=android-app;end" },
+            { name: "Assistant",     svg: "assistant",      url: "intent://com.google.android.apps.googleassistant/#Intent;scheme=android-app;end" },
+            { name: "Samsung Files", svg: "samsung_files",  url: "intent://com.sec.android.app.myfiles/#Intent;scheme=android-app;end" },
+            { name: "Browser",       svg: "chrome",         url: "intent://com.sec.android.app.sbrowser/#Intent;scheme=android-app;end" },
+            { name: "Radio Dial",    svg: "phone",          url: "tel:*#*#4636#*#*" },
+            { name: "Dev Mode",      svg: "devmode",        url: "intent://com.android.settings.Settings$DevelopmentSettingsActivity/#Intent;scheme=android-app;end" }
         ],
         apks: [
-            { name: "FRP Bypass Pro",     size: "1.2 MB", tag: "BYPASS", icon: "fa-unlock-keyhole", url: "https://frpbypass.romstage.com/FRP_Bypass.apk" },
-            { name: "Alliance Shield X",  size: "15 MB",  tag: "SHIELD", icon: "fa-shield-virus",   url: "https://frpbypass.romstage.com/Alliance_Shield.apk" },
-            { name: "QuickShortcutMaker", size: "2 MB",   tag: "UTIL",   icon: "fa-bolt",           url: "https://frpbypass.romstage.com/QuickShortcutMaker.apk" },
-            { name: "vnROM Bypass",       size: "28 MB",  tag: "ROM",    icon: "fa-microchip",      url: "https://frpbypass.romstage.com/vnROM_Bypass.apk" },
-            { name: "Technocare Tr.",      size: "11 MB",  tag: "PATCH",  icon: "fa-screwdriver-wrench", url: "https://frpbypass.romstage.com/Technocare.apk" }
+            { name: "FRP Bypass Pro",     size: "1.2 MB", tag: "BYPASS", svg: "unlock",       url: "https://frpbypass.romstage.com/FRP_Bypass.apk" },
+            { name: "Alliance Shield X",  size: "15 MB",  tag: "SHIELD", svg: "shield_virus",  url: "https://frpbypass.romstage.com/Alliance_Shield.apk" },
+            { name: "QuickShortcutMaker", size: "2 MB",   tag: "UTIL",   svg: "bolt",          url: "https://frpbypass.romstage.com/QuickShortcutMaker.apk" },
+            { name: "vnROM Bypass",       size: "28 MB",  tag: "ROM",    svg: "chip",          url: "https://frpbypass.romstage.com/vnROM_Bypass.apk" },
+            { name: "Technocare Tr.",      size: "11 MB",  tag: "PATCH",  svg: "wrench",        url: "https://frpbypass.romstage.com/Technocare.apk" }
         ],
         gam: [
             { name: "Identity Manager 10", ver: "10.0" },
@@ -483,7 +518,7 @@
         document.getElementById('shortcutsGrid').innerHTML =
             tools.shortcuts.filter(i => i.name.toLowerCase().includes(f)).map(item => `
                 <a href="${item.url}" class="shortcut-card fade-up p-3.5 flex flex-col items-center gap-2.5">
-                    <i class="fas ${item.icon} ${item.color} text-sm"></i>
+                    <div class="icon-wrap">${ICONS[item.svg] || ''}</div>
                     <span class="text-[8px] font-bold uppercase tracking-widest text-slate-400 truncate w-full text-center leading-tight">${item.name}</span>
                 </a>
             `).join('');
@@ -493,7 +528,7 @@
             tools.apks.filter(i => i.name.toLowerCase().includes(f)).map(item => `
                 <div class="apk-row fade-up flex items-center gap-3 p-3 sm:p-4">
                     <div class="apk-icon-wrap flex-shrink-0">
-                        <i class="fas ${item.icon} text-cyan-500 text-xs"></i>
+                        ${ICONS[item.svg] || ''}
                     </div>
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-2 mb-0.5">
@@ -512,7 +547,7 @@
                 <a href="https://frpbypass.romstage.com/GAM_${item.ver}.apk" class="gam-card fade-up p-3.5 flex flex-col gap-1.5">
                     <div class="flex items-start justify-between gap-1">
                         <span class="text-[10px] font-bold text-white tracking-wide uppercase leading-tight">${item.name}</span>
-                        <i class="fas fa-key text-purple-700 text-[9px] flex-shrink-0 mt-0.5"></i>
+                        <div class="flex-shrink-0 mt-0.5">${ICONS.key}</div>
                     </div>
                     <span class="text-[8px] text-purple-500 font-mono tracking-widest">SIG: v${item.ver}</span>
                     <div class="flex items-center gap-1.5 mt-1">
