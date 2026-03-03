@@ -126,6 +126,64 @@
         }
         .lang-select option { background: var(--deep-matte); color: white; }
 
+        /* Mode selector */
+        .mode-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .mode-label {
+            color: var(--neon-amber);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+        .mode-buttons {
+            display: flex;
+            gap: 5px;
+            background: var(--deep-matte);
+            padding: 4px;
+            border-radius: 30px;
+            border: 1px solid var(--border-dim);
+        }
+        .mode-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .mode-btn.active {
+            background: var(--electric-orange);
+            color: #000;
+        }
+        .interval-control {
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+        .interval-control span {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        .interval-select {
+            background: var(--deep-matte);
+            color: white;
+            border: 1px solid var(--electric-orange);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            cursor: pointer;
+            outline: none;
+        }
+
         .interpret-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -303,17 +361,6 @@
             cursor: not-allowed;
         }
 
-        .live-mode-btn {
-            background: transparent;
-            border: 2px solid var(--electric-orange);
-            color: var(--electric-orange);
-            margin-left: 10px;
-        }
-        .live-mode-btn.active {
-            background: var(--electric-orange);
-            color: #000;
-        }
-
         @media (max-width: 1000px) {
             .interpret-grid, .arsenal-main { grid-template-columns: 1fr; }
             .aztec-bg { width: 400px; height: 400px; }
@@ -330,9 +377,6 @@
         <div class="logo-sub">TLATOLLI</div>
     </div>
     <div style="display: flex; gap: 10px;">
-        <button class="btn-glow outline live-mode-btn" id="liveCallBtn" onclick="toggleLiveMode()">
-            <i class="ph ph-headset"></i> LIVE CALL
-        </button>
         <button class="btn-glow" id="translateBtn" onclick="translateNow()">
             <span class="btn-text"><i class="ph ph-lightning"></i> TRANSLATE</span>
             <span class="spinner" style="display: none;">⏳</span>
@@ -391,6 +435,25 @@
         </select>
     </div>
 
+    <!-- Mode Selector Row -->
+    <div class="mode-row">
+        <span class="mode-label">Mode:</span>
+        <div class="mode-buttons">
+            <button class="mode-btn" data-mode="manual" onclick="setMode('manual')">Manual</button>
+            <button class="mode-btn" data-mode="live" onclick="setMode('live')">Live</button>
+            <button class="mode-btn" data-mode="auto" onclick="setMode('auto')">Auto</button>
+        </div>
+        <div id="autoIntervalControl" class="interval-control">
+            <span>Interval:</span>
+            <select id="autoInterval" class="interval-select">
+                <option value="1">1 sec</option>
+                <option value="2" selected>2 sec</option>
+                <option value="3">3 sec</option>
+                <option value="5">5 sec</option>
+            </select>
+        </div>
+    </div>
+
     <div class="interpret-grid">
         <div class="input-panel">
             <div class="panel-header">
@@ -408,7 +471,7 @@
         </div>
     </div>
 
-    <!-- THE ARSENAL TOOL (unchanged) -->
+    <!-- THE ARSENAL TOOL -->
     <div class="arsenal-tool">
         <div class="arsenal-header">
             <h2>TLATOLLI ARSENAL</h2>
@@ -467,14 +530,16 @@
 
 <script>
     // ================= CONFIGURATION =================
-    const WORKER_URL = 'https://deeplx-live.a2k-interpreter.workers.dev';  // 🔁 REPLACE WITH YOUR ACTUAL WORKER URL
+    const WORKER_URL = 'https://deeplx-live.a2k-interpreter.workers.dev';  // ✅ Your live worker
 
     // ================= STATE =================
     let charUsed = parseInt(localStorage.getItem('a2k_usage')) || 0;
     let sessionCount = 0;
-    let liveMode = false;  // Live call mode toggle
+    let currentMode = 'manual'; // 'manual', 'live', 'auto'
+    let autoTimer = null;
+    let lastAutoText = ''; // to avoid duplicate auto translations
 
-    // ================= PHRASE BANK (unchanged) =================
+    // ================= PHRASE BANK =================
     const DATA_ENGINE = {
         "Medical": {
             "Overview": [
@@ -597,13 +662,38 @@
         });
     }
 
-    // ================= TRANSLATION =================
+    // ================= TRANSLATION CORE =================
+    async function callTranslation(text) {
+        const sourceLang = document.getElementById('sourceLang').value;
+        const targetLang = document.getElementById('targetLang').value;
+
+        const response = await fetch(WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                text: text,
+                source_lang: sourceLang === 'auto' ? undefined : sourceLang,
+                target_lang: targetLang
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        if (data.translations && data.translations[0]) {
+            return data.translations[0].text;
+        } else {
+            throw new Error('Unexpected response format');
+        }
+    }
+
+    // Manual / Live translation (triggered by button or Ctrl+Enter)
     async function translateNow() {
         const text = document.getElementById('sourceText').value.trim();
         if (!text) return;
-
-        const sourceLang = document.getElementById('sourceLang').value;
-        const targetLang = document.getElementById('targetLang').value;
 
         // UI loading state
         const statusEl = document.getElementById('statusText');
@@ -618,43 +708,25 @@
         spinner.style.display = 'inline';
 
         try {
-            const response = await fetch(WORKER_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    text: text,
-                    source_lang: sourceLang === 'auto' ? undefined : sourceLang,
-                    target_lang: targetLang
-                })
-            });
+            const translation = await callTranslation(text);
+            document.getElementById('targetText').value = translation;
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || `HTTP ${response.status}`);
-            }
+            // Update stats
+            charUsed += text.length;
+            localStorage.setItem('a2k_usage', charUsed);
+            sessionCount++;
+            updateStats();
 
-            const data = await response.json();
+            statusEl.innerText = "STABLE";
+            statusEl.style.color = "var(--electric-orange)";
 
-            if (data.translations && data.translations[0]) {
-                const translation = data.translations[0].text;
-                document.getElementById('targetText').value = translation;
-
-                // Update stats
-                charUsed += text.length;
-                localStorage.setItem('a2k_usage', charUsed);
-                sessionCount++;
-                updateStats();
-
-                statusEl.innerText = "STABLE";
-                statusEl.style.color = "var(--electric-orange)";
-
-                // Live mode: auto-clear source and keep focus
-                if (liveMode) {
-                    document.getElementById('sourceText').value = '';
-                    document.getElementById('sourceText').focus();
-                }
-            } else {
-                throw new Error('Unexpected response format');
+            // Live mode: auto-clear source and keep focus
+            if (currentMode === 'live') {
+                document.getElementById('sourceText').value = '';
+                document.getElementById('sourceText').focus();
+            } else if (currentMode === 'auto') {
+                // In auto mode, remember this text to avoid re-translating immediately
+                lastAutoText = text;
             }
         } catch (error) {
             console.error('Translation error:', error);
@@ -669,27 +741,67 @@
         }
     }
 
-    function toggleLiveMode() {
-        liveMode = !liveMode;
-        const btn = document.getElementById('liveCallBtn');
-        if (liveMode) {
-            btn.classList.add('active');
-            btn.innerHTML = '<i class="ph ph-headset"></i> LIVE ON';
-            // Clear both areas and focus source
-            document.getElementById('sourceText').value = '';
-            document.getElementById('targetText').value = '';
-            document.getElementById('sourceText').focus();
-        } else {
-            btn.classList.remove('active');
-            btn.innerHTML = '<i class="ph ph-headset"></i> LIVE CALL';
+    // Auto mode: silent translation at intervals
+    async function autoTranslate() {
+        const text = document.getElementById('sourceText').value.trim();
+        // Only translate if text is non-empty and has changed since last auto translation
+        if (!text || text === lastAutoText) return;
+
+        try {
+            const translation = await callTranslation(text);
+            document.getElementById('targetText').value = translation;
+            lastAutoText = text;
+
+            // Silently update stats
+            charUsed += text.length;
+            localStorage.setItem('a2k_usage', charUsed);
+            sessionCount++;
+            updateStats();
+        } catch (error) {
+            console.warn('Auto translation failed:', error);
         }
     }
 
+    // Mode switching
+    function setMode(mode) {
+        currentMode = mode;
+        // Update button active states
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.mode === mode) btn.classList.add('active');
+        });
+
+        // Show/hide interval control for auto mode
+        const intervalControl = document.getElementById('autoIntervalControl');
+        if (mode === 'auto') {
+            intervalControl.style.display = 'flex';
+            startAutoMode();
+        } else {
+            intervalControl.style.display = 'none';
+            stopAutoMode();
+        }
+    }
+
+    function startAutoMode() {
+        stopAutoMode(); // clear any existing timer
+        const interval = parseInt(document.getElementById('autoInterval').value) * 1000;
+        autoTimer = setInterval(autoTranslate, interval);
+    }
+
+    function stopAutoMode() {
+        if (autoTimer) {
+            clearInterval(autoTimer);
+            autoTimer = null;
+        }
+    }
+
+    // Update stats display
     function updateStats() {
         document.getElementById('charCount').innerText = `${(charUsed/1000).toFixed(1)}k`;
         document.getElementById('sessionCount').innerText = sessionCount;
     }
 
+    // Copy translation
     function copyResult() {
         const text = document.getElementById('targetText').value;
         navigator.clipboard.writeText(text).then(() => {
@@ -719,13 +831,18 @@
         }
     });
 
+    // When interval changes while in auto mode, restart the timer
+    document.getElementById('autoInterval').addEventListener('change', () => {
+        if (currentMode === 'auto') {
+            startAutoMode();
+        }
+    });
+
     window.onload = () => {
         loadCategory('Medical');
         updateStats();
-        // Check if worker URL is set (basic check)
-        if (WORKER_URL === 'https://YOUR_WORKER_URL.workers.dev') {
-            alert('⚠️ Please set your Cloudflare Worker URL in the script!');
-        }
+        setMode('manual'); // default to manual
+        // Worker URL is already set – no need to alert
     };
 </script>
 
