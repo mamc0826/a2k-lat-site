@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════
-   TOKENS
+    TOKENS
 ═══════════════════════════════════════ */
 :root {
   --gold: #C8962A;
@@ -23,6 +23,7 @@
   --purple: #BF00FF;
   --red: #E03030;
   --green: #00FF7F;
+  --electric-orange: #ff6600;
 
   /* spacing scale */
   --sp-xs: clamp(6px, 1.5vw, 10px);
@@ -38,7 +39,7 @@
 }
 
 /* ═══════════════════════════════════════
-   RESET + BASE
+    RESET + BASE
 ═══════════════════════════════════════ */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; font-size: 16px; }
@@ -54,7 +55,7 @@ img { display: block; max-width: 100%; }
 a { text-decoration: none; color: inherit; }
 
 /* ═══════════════════════════════════════
-   BACKGROUND LAYER
+    BACKGROUND LAYER
 ═══════════════════════════════════════ */
 #bg-canvas {
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
@@ -77,7 +78,7 @@ a { text-decoration: none; color: inherit; }
 @keyframes scan { 0% { top: -5px; } 100% { top: 100dvh; } }
 
 /* ═══════════════════════════════════════
-   NAVIGATION
+    NAVIGATION
 ═══════════════════════════════════════ */
 nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 200;
@@ -116,11 +117,10 @@ nav {
 .lang-btn:hover, .lang-btn:active { background: var(--gold); color: var(--obsidian); }
 .flag { width: 18px; height: 12px; object-fit: cover; border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0; }
 
-/* hide nav links on small phones, show on wider screens */
 @media (max-width: 540px) { .nav-links { display: none; } }
 
 /* ═══════════════════════════════════════
-   HERO
+    HERO
 ═══════════════════════════════════════ */
 .hero {
   position: relative; z-index: 10;
@@ -132,7 +132,6 @@ nav {
   overflow: hidden;
 }
 
-/* rings — scale with vw so they don't overflow on mobile */
 .sun-ring {
   position: absolute; border-radius: 50%;
   border: 1px solid rgba(200,150,42,0.15);
@@ -178,7 +177,6 @@ nav {
   padding: 0 var(--sp-xs);
 }
 
-/* STATUS BANNER */
 .status-banner {
   position: relative; z-index: 2;
   display: inline-flex; align-items: center;
@@ -207,7 +205,6 @@ nav {
   100% { box-shadow: 0 0 60px rgba(224,48,48,0.35), inset 0 0 30px rgba(224,48,48,0.1); }
 }
 
-/* WORDMARK */
 .hero-wordmark {
   font-family: 'Cinzel'; font-weight: 900;
   font-size: clamp(3.8rem, 16vw, 9rem);
@@ -227,7 +224,6 @@ nav {
   font-weight: 400;
 }
 
-/* DIVIDER */
 .divider-aztec {
   display: flex; align-items: center; gap: 16px;
   margin: var(--sp-sm) auto;
@@ -241,7 +237,6 @@ nav {
 .divider-aztec::after { background: linear-gradient(to left, transparent, var(--gold)); }
 .divider-glyph { font-family: 'Share Tech Mono'; font-size: 1.2rem; color: var(--gold); }
 
-/* HERO DESC */
 .hero-desc {
   font-size: clamp(0.9rem, 2.5vw, 1.2rem);
   color: var(--text-dim); max-width: 640px;
@@ -251,7 +246,6 @@ nav {
   padding: 0 var(--sp-xs);
 }
 
-/* SCROLL HINT */
 .scroll-hint {
   position: absolute; bottom: clamp(20px, 5vh, 40px);
   left: 50%; transform: translateX(-50%);
@@ -275,7 +269,7 @@ nav {
 }
 
 /* ═══════════════════════════════════════
-   SECTIONS
+    SECTIONS
 ═══════════════════════════════════════ */
 .section {
   position: relative; z-index: 10;
@@ -300,7 +294,7 @@ nav {
 }
 
 /* ═══════════════════════════════════════
-   ARSENAL CARDS
+    ARSENAL CARDS
 ═══════════════════════════════════════ */
 .arsenal-grid {
   display: grid;
@@ -313,7 +307,6 @@ nav {
   padding: clamp(24px, 5vw, 40px);
   position: relative; overflow: hidden;
   transition: border-color 0.4s, transform 0.35s;
-  /* no cursor pointer on cards that aren't links */
 }
 .arsenal-card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
@@ -325,7 +318,6 @@ nav {
   .arsenal-card:hover::before { transform: scaleX(1); }
 }
 
-/* Purple variant */
 .card-pulse::before { background: var(--purple); }
 .card-pulse { border-color: rgba(191,0,255,0.2); }
 .card-pulse:hover { border-color: rgba(191,0,255,0.5); }
@@ -335,7 +327,6 @@ nav {
 .card-pulse .coming-overlay-text { color: var(--purple); text-shadow: 0 0 22px rgba(191,0,255,0.7); }
 .card-pulse .coming-overlay-glyph { color: var(--purple); }
 
-/* Red variant */
 .card-guard::before { background: var(--red); }
 .card-guard { border-color: rgba(224,48,48,0.2); }
 .card-guard:hover { border-color: rgba(224,48,48,0.5); }
@@ -374,7 +365,6 @@ nav {
   user-select: none;
 }
 
-/* coming soon overlay — desktop hover only */
 .card-coming-overlay {
   position: absolute; inset: 0;
   background: rgba(5,6,8,0);
@@ -400,7 +390,6 @@ nav {
 }
 .arsenal-card:hover .coming-overlay-glyph { transform: translateY(0); }
 
-/* mobile: show "coming soon" inline instead of overlay */
 @media (hover: none) {
   .card-coming-overlay { display: none; }
   .arsenal-card::after {
@@ -415,7 +404,7 @@ nav {
 }
 
 /* ═══════════════════════════════════════
-   TOOLS LIST
+    TOOLS LIST
 ═══════════════════════════════════════ */
 .tools-list { display: flex; flex-direction: column; gap: 2px; }
 
@@ -444,9 +433,15 @@ nav {
 .tool-card.tool-reforge .tool-name { color: var(--green); }
 .tool-card.tool-reforge::after { background: var(--green); }
 .tool-card.tool-reforge:hover { border-color: rgba(0,255,127,0.3); }
+
 .tool-card.tool-frp .tool-name { color: var(--cyan); }
 .tool-card.tool-frp::after { background: var(--cyan); }
 .tool-card.tool-frp:hover { border-color: rgba(0,212,255,0.3); }
+
+/* TLATOLLI SPECIFIC STYLE */
+.tool-card.tool-tlatolli .tool-name { color: var(--electric-orange); }
+.tool-card.tool-tlatolli::after { background: var(--electric-orange); }
+.tool-card.tool-tlatolli:hover { border-color: rgba(255,102,0,0.4); }
 
 .tool-info { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 0; }
 .tool-name {
@@ -473,8 +468,11 @@ nav {
 .tool-badge.live { color: var(--green); border-color: var(--green); text-shadow: 0 0 8px var(--green); }
 .tool-badge.soon { color: var(--gold-dim); border-color: var(--gold-dim); }
 
+/* SPECIAL TLATOLLI LIVE BADGE */
+.tool-card.tool-tlatolli .tool-badge.live { color: var(--electric-orange); border-color: var(--electric-orange); text-shadow: 0 0 8px var(--electric-orange); }
+
 /* ═══════════════════════════════════════
-   BOTTOM BANNER
+    BOTTOM BANNER
 ═══════════════════════════════════════ */
 .bottom-banner-wrap {
   position: relative; z-index: 10;
@@ -485,7 +483,7 @@ nav {
 }
 
 /* ═══════════════════════════════════════
-   FOOTER
+    FOOTER
 ═══════════════════════════════════════ */
 .aztec-footer {
   position: relative; z-index: 10;
@@ -506,7 +504,7 @@ nav {
 }
 
 /* ═══════════════════════════════════════
-   ANIMATIONS
+    ANIMATIONS
 ═══════════════════════════════════════ */
 @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -515,7 +513,7 @@ nav {
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
 /* ═══════════════════════════════════════
-   UTILITY
+    UTILITY
 ═══════════════════════════════════════ */
 ::-webkit-scrollbar { width: 0; }
 </style>
@@ -616,12 +614,21 @@ nav {
   </div>
   <div class="tools-list">
 
+    <!-- NEW TLATOLLI BUTTON -->
+    <a href="tlatolli/index.html" class="tool-card clickable tool-tlatolli">
+      <div class="tool-info">
+        <div class="tool-name">A2K TLATOLLI</div>
+        <div class="tool-sub" data-i18n="tlatolli_sub">Electric Orange Interpreter Dashboard</div>
+      </div>
+      <span class="tool-badge live" data-i18n="badge_live">● LIVE</span>
+    </a>
+
     <a href="reforge/index.html" class="tool-card clickable tool-reforge">
       <div class="tool-info">
         <div class="tool-name" data-i18n="reforge_name">AZTEK REFORGE™</div>
         <div class="tool-sub" data-i18n="reforge_sub">Windows Configuration &amp; Deployment Toolkit</div>
       </div>
-      <span class="tool-badge live" data-i18n="badge_live">● LIVE</span>
+      <span class="tool-badge live" data-i18n="badge_live2">● LIVE</span>
     </a>
 
     <a href="/frp" class="tool-card clickable tool-frp">
@@ -629,7 +636,7 @@ nav {
         <div class="tool-name" data-i18n="frp_name">A2K FRP</div>
         <div class="tool-sub" data-i18n="frp_sub">Advanced Device Management System</div>
       </div>
-      <span class="tool-badge live" data-i18n="badge_live2">● LIVE</span>
+      <span class="tool-badge live" data-i18n="badge_live3">● LIVE</span>
     </a>
 
     <div class="tool-card">
@@ -721,10 +728,11 @@ const T = {
     tag_real:'REAL ENGAGEMENT', tag_verify:'VERIFIED',
     coming_soon:'COMING SOON',
     section_tools:'▸ TOOLS & RESOURCES',
+    tlatolli_sub:'Electric Orange Interpreter Dashboard',
     reforge_name:'AZTEK REFORGE™', reforge_sub:'Windows Configuration & Deployment Toolkit',
     frp_name:'A2K FRP', frp_sub:'Advanced Device Management System',
     bible_name:'AZTEK KNOWLEDGE BIBLE', bible_sub:'Advanced Knowledge Repository',
-    badge_live:'● LIVE', badge_live2:'● LIVE', badge_soon:'COMING SOON',
+    badge_live:'● LIVE', badge_live2:'● LIVE', badge_live3:'● LIVE', badge_soon:'COMING SOON',
     footer_tag:'Fusing Ancient Knowledge with Future Hardware',
     langLabel:'ESPAÑOL', langFlag:'https://flagcdn.com/w40/mx.png'
   },
@@ -744,10 +752,11 @@ const T = {
     tag_real:'COMPROMISO REAL', tag_verify:'VERIFICADO',
     coming_soon:'PRÓXIMAMENTE',
     section_tools:'▸ HERRAMIENTAS Y RECURSOS',
+    tlatolli_sub:'Panel de Intérprete Edición Naranja Eléctrico',
     reforge_name:'AZTEK REFORGE™', reforge_sub:'Configuración y Despliegue para Windows',
     frp_name:'A2K FRP', frp_sub:'Sistema Avanzado de Gestión de Dispositivos',
     bible_name:'BIBLIA DE CONOCIMIENTO AZTEK', bible_sub:'Repositorio de Conocimiento Avanzado',
-    badge_live:'● EN VIVO', badge_live2:'● EN VIVO', badge_soon:'PRÓXIMAMENTE',
+    badge_live:'● EN VIVO', badge_live2:'● EN VIVO', badge_live3:'● EN VIVO', badge_soon:'PRÓXIMAMENTE',
     footer_tag:'Fusionando Sabiduría Ancestral con Hardware del Futuro',
     langLabel:'ENGLISH', langFlag:'https://flagcdn.com/w40/us.png'
   }
