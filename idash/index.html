@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>A2K Tlatolli | Electric Orange Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        :root {
+            --obsidian: #050506;
+            --deep-matte: #0a0a0c;
+            --electric-orange: #ff6600;
+            --orange-glow: rgba(255, 102, 0, 0.6);
+            --neon-amber: #ffaa00;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --border-dim: #1a1a1c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--obsidian);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-attachment: fixed;
+        }
+
+        /* Glowing Aztec Background Pattern */
+        .aztec-bg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 700px;
+            height: 700px;
+            opacity: 0.06;
+            pointer-events: none;
+            z-index: -1;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Aztec_Sun_Stone.svg/1024px-Aztec_Sun_Stone.svg.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            filter: drop-shadow(0 0 30px var(--electric-orange));
+            animation: pulse-glow 8s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulse-glow {
+            from { opacity: 0.04; transform: translate(-50%, -50%) scale(1); }
+            to { opacity: 0.08; transform: translate(-50%, -50%) scale(1.05); }
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: rgba(5, 5, 6, 0.95);
+            border-bottom: 2px solid var(--electric-orange);
+            box-shadow: 0 0 25px rgba(255, 102, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+        }
+
+        .brand-container { display: flex; align-items: baseline; gap: 15px; }
+        .logo-main {
+            font-family: 'Orbitron';
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+        .logo-sub {
+            font-family: 'Orbitron';
+            font-size: 1.8rem;
+            color: var(--electric-orange);
+            font-weight: 900;
+            letter-spacing: 4px;
+            text-shadow: 0 0 10px var(--orange-glow);
+        }
+
+        /* API Key Configuration Overlay */
+        .config-drawer {
+            position: fixed;
+            top: 80px;
+            right: 5%;
+            background: var(--deep-matte);
+            border: 2px solid var(--electric-orange);
+            padding: 20px;
+            border-radius: 12px;
+            z-index: 200;
+            display: none;
+            width: 350px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.8);
+        }
+
+        /* --- MAIN DASHBOARD AREA --- */
+        .dashboard-container {
+            padding: 20px 5%;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--deep-matte);
+            padding: 15px;
+            border: 1px solid var(--border-dim);
+            border-radius: 8px;
+        }
+        .stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .stat-value { font-family: 'Orbitron'; font-size: 1.4rem; color: var(--electric-orange); margin-top: 5px; }
+
+        /* --- INTERPRETATION CORE --- */
+        .interpret-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .input-panel {
+            background: var(--deep-matte);
+            border: 1px solid var(--border-dim);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #111;
+            padding-bottom: 10px;
+        }
+
+        .panel-title { font-size: 0.8rem; font-weight: 700; color: var(--neon-amber); text-transform: uppercase; }
+
+        textarea {
+            width: 100%;
+            height: 250px;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-family: 'Inter';
+            font-size: 1.15rem;
+            resize: none;
+            outline: none;
+            line-height: 1.6;
+        }
+
+        /* --- BOTTOM TOOL: THE ARSENAL --- */
+        .arsenal-tool {
+            background: #08080a;
+            border: 2px solid var(--electric-orange);
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 550px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.5);
+        }
+
+        .arsenal-header {
+            background: var(--electric-orange);
+            color: #000;
+            padding: 12px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .arsenal-header h2 { font-family: 'Orbitron'; font-size: 1rem; font-weight: 900; }
+
+        .arsenal-main {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            flex-grow: 1;
+        }
+
+        .arsenal-nav {
+            background: #0c0c0e;
+            border-right: 1px solid var(--border-dim);
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .nav-section-title { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; margin: 15px 0 10px; padding-left: 10px; }
+
+        .nav-item {
+            padding: 12px 15px;
+            margin-bottom: 4px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: 0.2s;
+            color: #ccc;
+        }
+
+        .nav-item i { font-size: 1.2rem; }
+        .nav-item:hover { background: rgba(255, 102, 0, 0.1); color: var(--electric-orange); }
+        .nav-item.active { background: var(--electric-orange); color: #000; font-weight: 600; }
+
+        .arsenal-content {
+            padding: 25px;
+            overflow-y: auto;
+            background: #050507;
+        }
+
+        .content-breadcrumbs { font-size: 0.75rem; color: var(--electric-orange); margin-bottom: 20px; font-weight: 600; text-transform: uppercase; }
+
+        .sub-field-selector {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .pill {
+            padding: 6px 15px;
+            border-radius: 20px;
+            background: #111;
+            border: 1px solid #222;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .pill:hover, .pill.active {
+            background: var(--neon-amber);
+            color: #000;
+            border-color: var(--neon-amber);
+        }
+
+        .phrase-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 12px;
+        }
+
+        .phrase-card {
+            background: #0d0d10;
+            border: 1px solid var(--border-dim);
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .phrase-card:hover {
+            border-color: var(--electric-orange);
+            transform: translateY(-2px);
+            background: #121216;
+        }
+
+        .phrase-en { font-weight: 600; color: #fff; font-size: 1rem; margin-bottom: 5px; }
+        .phrase-es { color: var(--electric-orange); font-size: 0.9rem; font-family: 'JetBrains Mono'; }
+
+        /* Utilities */
+        .btn-glow {
+            background: var(--electric-orange);
+            border: none;
+            color: #000;
+            padding: 10px 20px;
+            font-family: 'Orbitron';
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .btn-glow.outline {
+            background: transparent;
+            border: 1px solid var(--electric-orange);
+            color: var(--electric-orange);
+        }
+
+        .btn-glow:hover {
+            box-shadow: 0 0 20px var(--orange-glow);
+            transform: scale(1.02);
+        }
+
+        @media (max-width: 1000px) {
+            .interpret-grid, .arsenal-main { grid-template-columns: 1fr; }
+            .aztec-bg { width: 400px; height: 400px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="aztec-bg"></div>
+
+<nav>
+    <div class="brand-container">
+        <div class="logo-main">A2K Interpreter Dashboard</div>
+        <div class="logo-sub">TLATOLLI</div>
+    </div>
+    <div style="display: flex; gap: 10px;">
+        <button class="btn-glow outline" id="toggleConfig"><i class="ph ph-key"></i> SYNC KEY</button>
+        <button class="btn-glow" onclick="translateNow()"><i class="ph ph-lightning"></i> TRANSLATE</button>
+    </div>
+</nav>
+
+<!-- API KEY CONFIG PANEL -->
+<div class="config-drawer" id="configDrawer">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <span class="panel-title">DeepL API Settings</span>
+        <i class="ph ph-x" style="cursor:pointer" id="closeConfig"></i>
+    </div>
+    <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px;">Paste your DeepL Authentication Key here to enable live translation.</p>
+    <input type="password" id="apiKeyInput" style="width:100%; background:#000; border:1px solid #333; color:#fff; padding:10px; border-radius:4px; margin-bottom:15px; outline:none;" placeholder="Enter Auth Key...">
+    <button class="btn-glow" style="width:100%" onclick="saveApiKey()">Save & Sync</button>
+</div>
+
+<div class="dashboard-container">
+    
+    <div class="analytics-grid">
+        <div class="stat-card">
+            <span class="stat-label">Session Strings</span>
+            <div class="stat-value" id="sessionCount">0</div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Character Load</span>
+            <div class="stat-value" id="charCount">0k</div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">System Uplink</span>
+            <div class="stat-value" id="statusText">ACTIVE</div>
+        </div>
+    </div>
+
+    <div class="interpret-grid">
+        <div class="input-panel">
+            <div class="panel-header">
+                <span class="panel-title"><i class="ph ph-waveform"></i> Listen / Capture</span>
+                <span style="font-size: 0.6rem; color: #444;">CTRL + ENTER TO PUSH</span>
+            </div>
+            <textarea id="sourceText" placeholder="Audio stream data or manual input..."></textarea>
+        </div>
+        <div class="input-panel" style="border-color: var(--electric-orange);">
+            <div class="panel-header">
+                <span class="panel-title"><i class="ph ph-brackets-curly"></i> Tlatolli Interpretation</span>
+                <i class="ph ph-copy" style="cursor:pointer" onclick="copyResult()"></i>
+            </div>
+            <textarea id="targetText" placeholder="Processed interpretation will appear here..." readonly></textarea>
+        </div>
+    </div>
+
+    <!-- THE ARSENAL TOOL -->
+    <div class="arsenal-tool">
+        <div class="arsenal-header">
+            <h2>TLATOLLI ARSENAL</h2>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" placeholder="Search keywords..." style="background: rgba(0,0,0,0.2); border: none; padding: 5px 10px; border-radius: 4px; color: #000; font-size: 0.8rem; outline: none;">
+            </div>
+        </div>
+
+        <div class="arsenal-main">
+            <div class="arsenal-nav">
+                <div class="nav-section-title">Pinned Field</div>
+                <div class="nav-item active" onclick="loadCategory('Medical', this)">
+                    <i class="ph ph-heart-beat"></i>
+                    <span>Medical</span>
+                </div>
+                
+                <div class="nav-section-title">All Categories</div>
+                <div class="nav-item" onclick="loadCategory('Legal', this)">
+                    <i class="ph ph-gavel"></i>
+                    <span>Legal / Judicial</span>
+                </div>
+                <div class="nav-item" onclick="loadCategory('Insurance', this)">
+                    <i class="ph ph-shield-checkered"></i>
+                    <span>Insurance</span>
+                </div>
+                <div class="nav-item" onclick="loadCategory('Social', this)">
+                    <i class="ph ph-users-three"></i>
+                    <span>Social Services</span>
+                </div>
+                <div class="nav-item" onclick="loadCategory('Education', this)">
+                    <i class="ph ph-book-open"></i>
+                    <span>Education / IEP</span>
+                </div>
+                <div class="nav-item" onclick="loadCategory('Synonyms', this)">
+                    <i class="ph ph-arrows-left-right"></i>
+                    <span>Quick Swaps</span>
+                </div>
+            </div>
+
+            <div class="arsenal-content">
+                <div class="content-breadcrumbs" id="breadCrumbs">Medical > Overview</div>
+                
+                <div class="sub-field-selector" id="subFields">
+                    <!-- Dynamic Pills -->
+                </div>
+
+                <div class="phrase-grid" id="phraseBank">
+                    <!-- Dynamic Phrases -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let charUsed = parseInt(localStorage.getItem('a2k_usage')) || 0;
+    let sessionCount = 0;
+
+    const DATA_ENGINE = {
+        "Medical": {
+            "Overview": [
+                { en: "Where exactly is the pain?", es: "¿Dónde le duele exactamente?" },
+                { en: "On a scale of 1 to 10", es: "En una escala del 1 al 10" },
+                { en: "Are you taking any supplements?", es: "¿Toma algún suplemento?" }
+            ],
+            "OBGYN": [
+                { en: "Expected Due Date (EDD)", es: "Fecha probable de parto" },
+                { en: "Pre-eclampsia", es: "Preclamsia" },
+                { en: "C-Section (Cesarean)", es: "Cesárea" },
+                { en: "Dilation and effacement", es: "Dilatación y borramiento" },
+                { en: "Are the contractions regular?", es: "¿Son las contracciones regulares?" }
+            ],
+            "ER/Urgent": [
+                { en: "Triage", es: "Triaje / Clasificación de urgencias" },
+                { en: "Loss of consciousness", es: "Pérdida del conocimiento" },
+                { en: "Laceration", es: "Laceración / Corte profundo" },
+                { en: "Vital signs", es: "Signos vitales" }
+            ],
+            "Dentistry": [
+                { en: "Root canal", es: "Tratamiento de conducto / Endodoncia" },
+                { en: "Cavity / Decay", es: "Caries" },
+                { en: "Wisdom teeth", es: "Muelas del juicio" },
+                { en: "Numbness", es: "Entumecimiento / Adormecimiento" }
+            ],
+            "Optometry": [
+                { en: "Blurry vision", es: "Visión borrosa" },
+                { en: "Floaters", es: "Manchas flotantes / moscas volantes" },
+                { en: "Glaucoma test", es: "Prueba de glaucoma" }
+            ]
+        },
+        "Legal": {
+            "Overview": [
+                { en: "Do you solemnly swear?", es: "¿Jura solemnemente?" },
+                { en: "Bail bond", es: "Fianza" }
+            ],
+            "Criminal": [
+                { en: "Felony", es: "Delito grave" },
+                { en: "Misdemeanor", es: "Delito menor" },
+                { en: "Arraignment", es: "Lectura de cargos" }
+            ],
+            "Civil": [
+                { en: "Plaintiff", es: "Demandante" },
+                { en: "Deposition", es: "Declaración jurada" },
+                { en: "Lawsuit", es: "Demanda" }
+            ]
+        },
+        "Insurance": {
+            "Claims": [
+                { en: "Deductible", es: "Deducible" },
+                { en: "Liability", es: "Responsabilidad civil" },
+                { en: "Out-of-pocket maximum", es: "Gasto máximo de su bolsillo" }
+            ]
+        },
+        "Synonyms": {
+            "Professionalism": [
+                { en: "Wait a moment", es: "Permítame un instante para procesar" },
+                { en: "I don't understand", es: "Solicito una aclaración" }
+            ],
+            "Transitions": [
+                { en: "However", es: "No obstante" },
+                { en: "In summary", es: "En resumidas cuentas" }
+            ]
+        }
+    };
+
+    let currentCat = "Medical";
+    let currentSub = "Overview";
+
+    // UI Logic
+    const configDrawer = document.getElementById('configDrawer');
+    document.getElementById('toggleConfig').onclick = () => configDrawer.style.display = 'block';
+    document.getElementById('closeConfig').onclick = () => configDrawer.style.display = 'none';
+
+    function saveApiKey() {
+        const key = document.getElementById('apiKeyInput').value.trim();
+        if (key) {
+            localStorage.setItem('deepl_api_key', key);
+            configDrawer.style.display = 'none';
+            document.getElementById('toggleConfig').style.color = "var(--neon-amber)";
+            document.getElementById('toggleConfig').innerText = "KEY SYNCED";
+        }
+    }
+
+    function loadCategory(cat, el) {
+        currentCat = cat;
+        currentSub = Object.keys(DATA_ENGINE[cat])[0];
+        
+        if(el) {
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        renderSubFields();
+        renderPhrases();
+    }
+
+    function renderSubFields() {
+        const container = document.getElementById('subFields');
+        container.innerHTML = '';
+        const subs = Object.keys(DATA_ENGINE[currentCat]);
+        
+        subs.forEach(s => {
+            const pill = document.createElement('div');
+            pill.className = `pill ${s === currentSub ? 'active' : ''}`;
+            pill.innerText = s;
+            pill.onclick = () => {
+                currentSub = s;
+                renderSubFields();
+                renderPhrases();
+            };
+            container.appendChild(pill);
+        });
+    }
+
+    function renderPhrases() {
+        document.getElementById('breadCrumbs').innerText = `${currentCat} > ${currentSub}`;
+        const bank = document.getElementById('phraseBank');
+        bank.innerHTML = '';
+        
+        DATA_ENGINE[currentCat][currentSub].forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'phrase-card';
+            card.innerHTML = `
+                <div class="phrase-en">${item.en}</div>
+                <div class="phrase-es">${item.es}</div>
+            `;
+            card.onclick = () => {
+                const src = document.getElementById('sourceText');
+                src.value += (src.value ? ' ' : '') + item.en;
+            };
+            bank.appendChild(card);
+        });
+    }
+
+    async function translateNow() {
+        const text = document.getElementById('sourceText').value.trim();
+        const key = localStorage.getItem('deepl_api_key');
+        if (!key) {
+            configDrawer.style.display = 'block';
+            return;
+        }
+        if (!text) return;
+
+        document.getElementById('statusText').innerText = "PUSHING...";
+        document.getElementById('statusText').style.color = "#fff";
+
+        try {
+            const targetLang = /[áéíóúñ]/i.test(text) ? 'EN-US' : 'ES';
+            const response = await fetch(`https://api-free.deepl.com/v2/translate`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `auth_key=${key}&text=${encodeURIComponent(text)}&target_lang=${targetLang}`
+            });
+
+            const data = await response.json();
+            if (data.translations) {
+                document.getElementById('targetText').value = data.translations[0].text;
+                charUsed += text.length;
+                localStorage.setItem('a2k_usage', charUsed);
+                sessionCount++;
+                updateStats();
+                document.getElementById('statusText').innerText = "STABLE";
+                document.getElementById('statusText').style.color = "var(--electric-orange)";
+            }
+        } catch (e) {
+            document.getElementById('statusText').innerText = "OFFLINE";
+        }
+    }
+
+    function updateStats() {
+        document.getElementById('charCount').innerText = `${(charUsed/1000).toFixed(1)}k`;
+        document.getElementById('sessionCount').innerText = sessionCount;
+    }
+
+    function copyResult() {
+        const text = document.getElementById('targetText').value;
+        const dummy = document.createElement("textarea");
+        document.body.appendChild(dummy);
+        dummy.value = text;
+        dummy.select();
+        document.execCommand("copy");
+        document.body.removeChild(dummy);
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.key === 'Enter') translateNow();
+    });
+
+    window.onload = () => {
+        loadCategory('Medical');
+        updateStats();
+        if(localStorage.getItem('deepl_api_key')) {
+            document.getElementById('toggleConfig').style.color = "var(--neon-amber)";
+            document.getElementById('toggleConfig').innerText = "KEY SYNCED";
+        }
+    };
+</script>
+
+</body>
+</html>
