@@ -197,6 +197,8 @@
             border-radius: 12px;
             padding: 20px;
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
         .panel-header {
@@ -221,6 +223,13 @@
             resize: none;
             outline: none;
             line-height: 1.6;
+        }
+
+        /* Translate button placement */
+        .translate-btn-container {
+            margin-top: 15px;
+            display: flex;
+            justify-content: flex-end;
         }
 
         .arsenal-tool {
@@ -376,12 +385,7 @@
         <div class="logo-main">A2K Interpreter Dashboard</div>
         <div class="logo-sub">TLATOLLI</div>
     </div>
-    <div style="display: flex; gap: 10px;">
-        <button class="btn-glow" id="translateBtn" onclick="translateNow()">
-            <span class="btn-text"><i class="ph ph-lightning"></i> TRANSLATE</span>
-            <span class="spinner" style="display: none;">⏳</span>
-        </button>
-    </div>
+    <!-- Translate button moved to input panel, so nav only has brand -->
 </nav>
 
 <div class="dashboard-container">
@@ -458,9 +462,16 @@
         <div class="input-panel">
             <div class="panel-header">
                 <span class="panel-title"><i class="ph ph-waveform"></i> Listen / Capture</span>
-                <span style="font-size: 0.6rem; color: #444;">CTRL + ENTER TO PUSH</span>
+                <span style="font-size: 0.6rem; color: #444;">CTRL + ENTER TO PUSH (Manual mode)</span>
             </div>
             <textarea id="sourceText" placeholder="Audio stream data or manual input..."></textarea>
+            <!-- Translate button now inside the input panel -->
+            <div class="translate-btn-container">
+                <button class="btn-glow" id="translateBtn" onclick="translateNow()">
+                    <span class="btn-text"><i class="ph ph-lightning"></i> TRANSLATE</span>
+                    <span class="spinner" style="display: none;">⏳</span>
+                </button>
+            </div>
         </div>
         <div class="input-panel" style="border-color: var(--electric-orange);">
             <div class="panel-header">
@@ -537,7 +548,8 @@
     let sessionCount = 0;
     let currentMode = 'manual'; // 'manual', 'live', 'auto'
     let autoTimer = null;
-    let lastAutoText = ''; // to avoid duplicate auto translations
+    let liveDebounceTimer = null;
+    let lastTranslatedText = ''; // for auto mode to avoid repeats
 
     // ================= PHRASE BANK =================
     const DATA_ENGINE = {
@@ -657,76 +669,57 @@
             card.onclick = () => {
                 const src = document.getElementById('sourceText');
                 src.value += (src.value ? ' ' : '') + item.en;
+                // If in live mode, trigger translation automatically after adding phrase
+                if (currentMode === 'live') {
+                    triggerLiveTranslation();
+                }
             };
             bank.appendChild(card);
         });
     }
 
     // ================= TRANSLATION CORE =================
-    async function callTranslation(text) {
-        const sourceLang = document.getElementById('sourceLang').value;
-        const targetLang = document.getElementById('targetLang').value;
-
-        const response = await fetch(WORKER_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                text: text,
-                source_lang: sourceLang === 'auto' ? undefined : sourceLang,
-                target_lang: targetLang
-            })
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || `HTTP ${response.status}`);
-        }
-
-        const data = await response.json();
-        if (data.translations && data.translations[0]) {
-            return data.translations[0].text;
-        } else {
-            throw new Error('Unexpected response format');
-        }
-    }
-
-    // Manual / Live translation (triggered by button or Ctrl+Enter)
-    async function translateNow() {
-        const text = document.getElementById('sourceText').value.trim();
+    async function performTranslation(text) {
         if (!text) return;
 
-        // UI loading state
+        const sourceLang = document.getElementById('sourceLang').value;
+        const targetLang = document.getElementById('targetLang').value;
         const statusEl = document.getElementById('statusText');
-        const translateBtn = document.getElementById('translateBtn');
-        const btnText = translateBtn.querySelector('.btn-text');
-        const spinner = translateBtn.querySelector('.spinner');
 
         statusEl.innerText = "TRANSLATING...";
         statusEl.style.color = "#fff";
-        translateBtn.disabled = true;
-        btnText.style.display = 'none';
-        spinner.style.display = 'inline';
 
         try {
-            const translation = await callTranslation(text);
-            document.getElementById('targetText').value = translation;
+            const response = await fetch(WORKER_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    text: text,
+                    source_lang: sourceLang === 'auto' ? undefined : sourceLang,
+                    target_lang: targetLang
+                })
+            });
 
-            // Update stats
-            charUsed += text.length;
-            localStorage.setItem('a2k_usage', charUsed);
-            sessionCount++;
-            updateStats();
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || `HTTP ${response.status}`);
+            }
 
-            statusEl.innerText = "STABLE";
-            statusEl.style.color = "var(--electric-orange)";
+            const data = await response.json();
+            if (data.translations && data.translations[0]) {
+                const translation = data.translations[0].text;
+                document.getElementById('targetText').value = translation;
 
-            // Live mode: auto-clear source and keep focus
-            if (currentMode === 'live') {
-                document.getElementById('sourceText').value = '';
-                document.getElementById('sourceText').focus();
-            } else if (currentMode === 'auto') {
-                // In auto mode, remember this text to avoid re-translating immediately
-                lastAutoText = text;
+                // Update stats
+                charUsed += text.length;
+                localStorage.setItem('a2k_usage', charUsed);
+                sessionCount++;
+                updateStats();
+
+                statusEl.innerText = "STABLE";
+                statusEl.style.color = "var(--electric-orange)";
+            } else {
+                throw new Error('Unexpected response format');
             }
         } catch (error) {
             console.error('Translation error:', error);
@@ -734,37 +727,54 @@
             statusEl.style.color = "#ff4444";
             document.getElementById('targetText').value = 
                 `⚠️ Translation failed: ${error.message}`;
-        } finally {
-            translateBtn.disabled = false;
-            btnText.style.display = 'inline';
-            spinner.style.display = 'none';
         }
     }
 
-    // Auto mode: silent translation at intervals
+    // Manual translation (triggered by button or Ctrl+Enter)
+    async function translateNow() {
+        const text = document.getElementById('sourceText').value.trim();
+        if (!text) return;
+
+        // Show loading on button
+        const translateBtn = document.getElementById('translateBtn');
+        const btnText = translateBtn.querySelector('.btn-text');
+        const spinner = translateBtn.querySelector('.spinner');
+        translateBtn.disabled = true;
+        btnText.style.display = 'none';
+        spinner.style.display = 'inline';
+
+        await performTranslation(text);
+
+        translateBtn.disabled = false;
+        btnText.style.display = 'inline';
+        spinner.style.display = 'none';
+    }
+
+    // Live translation trigger (debounced)
+    function triggerLiveTranslation() {
+        if (liveDebounceTimer) clearTimeout(liveDebounceTimer);
+        liveDebounceTimer = setTimeout(async () => {
+            const text = document.getElementById('sourceText').value.trim();
+            if (text) {
+                await performTranslation(text);
+            }
+        }, 300); // 300ms debounce
+    }
+
+    // Auto translation (called by timer)
     async function autoTranslate() {
         const text = document.getElementById('sourceText').value.trim();
         // Only translate if text is non-empty and has changed since last auto translation
-        if (!text || text === lastAutoText) return;
+        if (!text || text === lastTranslatedText) return;
 
-        try {
-            const translation = await callTranslation(text);
-            document.getElementById('targetText').value = translation;
-            lastAutoText = text;
-
-            // Silently update stats
-            charUsed += text.length;
-            localStorage.setItem('a2k_usage', charUsed);
-            sessionCount++;
-            updateStats();
-        } catch (error) {
-            console.warn('Auto translation failed:', error);
-        }
+        lastTranslatedText = text;
+        await performTranslation(text);
     }
 
     // Mode switching
     function setMode(mode) {
         currentMode = mode;
+
         // Update button active states
         document.querySelectorAll('.mode-btn').forEach(btn => {
             btn.classList.remove('active');
@@ -780,6 +790,19 @@
             intervalControl.style.display = 'none';
             stopAutoMode();
         }
+
+        // Attach/detach live input listener
+        const sourceText = document.getElementById('sourceText');
+        if (mode === 'live') {
+            sourceText.addEventListener('input', triggerLiveTranslation);
+        } else {
+            sourceText.removeEventListener('input', triggerLiveTranslation);
+            // Clear any pending debounce
+            if (liveDebounceTimer) {
+                clearTimeout(liveDebounceTimer);
+                liveDebounceTimer = null;
+            }
+        }
     }
 
     function startAutoMode() {
@@ -793,6 +816,7 @@
             clearInterval(autoTimer);
             autoTimer = null;
         }
+        lastTranslatedText = ''; // reset for next auto session
     }
 
     // Update stats display
@@ -827,6 +851,7 @@
     document.addEventListener('keydown', (e) => {
         if (e.ctrlKey && e.key === 'Enter') {
             e.preventDefault();
+            // Only trigger in manual mode? Or always? Let's keep as manual trigger always available.
             translateNow();
         }
     });
@@ -842,7 +867,6 @@
         loadCategory('Medical');
         updateStats();
         setMode('manual'); // default to manual
-        // Worker URL is already set – no need to alert
     };
 </script>
 
