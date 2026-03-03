@@ -1,408 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AZTEK REFORGE™ | A2K TECHNOLOGY</title>
-    <link rel="icon" type="image/x-icon" href="../assets/icons/favicon.ico">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AZTEK REFORGE™ | A2K TECHNOLOGY</title>
+<meta name="description" content="Aztek Reforge — Windows configuration and deployment toolkit by A2K Technology.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#C8962A;--gold-bright:#F0C040;--gold-dim:#6B4F14;
+  --obsidian:#07080A;--white:#F2EDE4;
+  --cyan:#00D4FF;--green:#00FF7F;--text-dim:rgba(242,237,228,0.55);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Rajdhani',sans-serif;background:var(--obsidian);color:var(--white);overflow-x:hidden;min-height:100vh;}
+#bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+.aztec-grid{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;background-image:linear-gradient(rgba(0,212,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.03) 1px,transparent 1px);background-size:60px 60px;}
+.scanline{position:fixed;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,rgba(0,212,255,0.5),transparent);z-index:2;animation:scan 10s linear infinite;pointer-events:none;}
+@keyframes scan{0%{top:0;}100%{top:100vh;}}
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&family=Roboto+Mono:wght@400;500&display=swap');
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:18px 40px;background:linear-gradient(to bottom,rgba(7,8,10,0.97),transparent);border-bottom:1px solid rgba(0,212,255,0.12);}
+.nav-logo{font-family:'Cinzel';font-weight:900;font-size:1.2rem;color:var(--gold-bright);letter-spacing:6px;text-decoration:none;}
+.nav-right{display:flex;align-items:center;gap:20px;}
+.back-link{font-family:'Share Tech Mono';font-size:0.7rem;letter-spacing:3px;color:var(--text-dim);text-decoration:none;transition:color 0.3s;}
+.back-link:hover{color:var(--gold);}
+.lang-btn{font-family:'Share Tech Mono';font-size:0.75rem;letter-spacing:2px;background:transparent;border:1px solid var(--gold);color:var(--gold);padding:8px 16px;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;gap:8px;}
+.lang-btn:hover{background:var(--gold);color:var(--obsidian);}
+.flag{width:20px;height:14px;object-fit:cover;border:1px solid rgba(255,255,255,0.2);}
 
-        :root {
-            --gold: #D4AF37;
-            --dark-gold: #8B6B05;
-            --black: #050505;
-            --white: #ffffff;
-            --reforge-green: #00ff66;
-            --reforge-blue: #00d9ff;
-            --code-bg: #0a0a0a;
-            --code-border: #00d9ff;
-        }
+.page-header{position:relative;z-index:10;padding:130px 20px 60px;text-align:center;border-bottom:1px solid rgba(0,212,255,0.1);overflow:hidden;}
+.header-rings{position:absolute;top:50%;left:50%;pointer-events:none;z-index:0;}
+.h-ring{position:absolute;border-radius:50%;border:1px solid rgba(0,212,255,0.07);transform:translate(-50%,-50%);}
+.h-ring:nth-child(1){width:200px;height:200px;}
+.h-ring:nth-child(2){width:380px;height:380px;animation:rotR 25s linear infinite;}
+.h-ring:nth-child(3){width:560px;height:560px;animation:rotR 40s linear infinite reverse;}
+@keyframes rotR{to{transform:translate(-50%,-50%) rotate(360deg);}}
+.product-tag{font-family:'Share Tech Mono';font-size:0.65rem;letter-spacing:6px;color:var(--cyan);margin-bottom:16px;position:relative;z-index:2;}
+.page-title{font-family:'Cinzel';font-weight:900;font-size:clamp(2.5rem,8vw,5.5rem);color:var(--green);text-shadow:0 0 30px rgba(0,255,127,0.4),0 0 60px rgba(0,255,127,0.15);letter-spacing:4px;line-height:1;position:relative;z-index:2;}
+.page-title span{display:block;font-size:0.3em;letter-spacing:12px;color:var(--text-dim);margin-top:12px;font-weight:400;}
+.page-tagline{font-size:1.1rem;letter-spacing:4px;color:var(--text-dim);margin-top:20px;font-weight:300;position:relative;z-index:2;}
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+.container{position:relative;z-index:10;max-width:900px;margin:0 auto;padding:60px 20px 100px;}
+.intro-block{background:rgba(0,212,255,0.03);border:1px solid rgba(0,212,255,0.12);border-left:3px solid var(--cyan);padding:32px 40px;margin-bottom:40px;font-size:1.1rem;line-height:1.8;color:var(--text-dim);}
 
-        body {
-            font-family: 'Rajdhani', sans-serif;
-            background: var(--black);
-            color: var(--white);
-            overflow-x: hidden;
-            min-height: 100vh;
-        }
+.install-panel{background:rgba(14,16,22,0.9);border:1px solid rgba(0,255,127,0.25);box-shadow:0 0 60px rgba(0,255,127,0.05);}
+.panel-header{background:rgba(0,255,127,0.04);border-bottom:1px solid rgba(0,255,127,0.15);padding:22px 40px;display:flex;align-items:center;gap:10px;}
+.panel-dot{width:10px;height:10px;border-radius:50%;}
+.panel-dot:nth-child(1){background:#ff5f57;}
+.panel-dot:nth-child(2){background:#ffbd2e;}
+.panel-dot:nth-child(3){background:var(--green);}
+.panel-title{font-family:'Share Tech Mono';letter-spacing:4px;font-size:0.8rem;color:var(--text-dim);margin-left:14px;}
+.panel-body{padding:50px 40px;}
 
-        .bg-wrapper {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -2;
-            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.95)), 
-                        url('../assets/images/COMINGSOON.JPG') no-repeat center center/cover;
-        }
+.step-list{list-style:none;margin-bottom:50px;}
+.step-item{display:flex;align-items:flex-start;gap:20px;padding:20px 0;border-bottom:1px solid rgba(200,150,42,0.1);}
+.step-item:last-child{border-bottom:none;}
+.step-num{font-family:'Share Tech Mono';font-size:0.65rem;letter-spacing:2px;color:var(--green);min-width:44px;padding-top:3px;}
+.step-text{font-size:1.05rem;line-height:1.7;color:var(--white);}
+.step-text strong{color:var(--green);}
 
-        .circuit-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            background-image: radial-gradient(circle at 2px 2px, rgba(0, 255, 102, 0.05) 1px, transparent 0);
-            background-size: 30px 30px;
-        }
+.cmd-label{font-family:'Share Tech Mono';font-size:0.7rem;letter-spacing:4px;color:var(--cyan);margin-bottom:14px;}
+.cmd-block{background:#030507;border:1px solid rgba(0,212,255,0.3);border-radius:4px;padding:28px 30px;display:flex;align-items:center;justify-content:space-between;gap:20px;box-shadow:inset 0 0 30px rgba(0,212,255,0.05),0 0 30px rgba(0,212,255,0.06);flex-wrap:wrap;}
+.cmd-text{font-family:'Share Tech Mono';font-size:1.2rem;color:var(--cyan);text-shadow:0 0 10px rgba(0,212,255,0.4);user-select:all;flex:1;word-break:break-all;}
+.copy-btn{font-family:'Cinzel';font-weight:700;font-size:0.75rem;letter-spacing:3px;background:var(--cyan);color:var(--obsidian);border:none;padding:14px 28px;cursor:pointer;transition:all 0.3s;white-space:nowrap;flex-shrink:0;}
+.copy-btn:hover{background:var(--white);box-shadow:0 0 30px rgba(0,212,255,0.4);}
+.copy-btn.copied{background:var(--green);}
 
-        .header {
-            padding: 40px 20px 20px;
-            text-align: center;
-            border-bottom: 1px solid rgba(0, 255, 102, 0.2);
-        }
+.warn-block{background:rgba(200,80,0,0.04);border-left:3px solid #c84000;padding:24px 30px;margin-top:40px;}
+.warn-title{font-family:'Cinzel';font-size:0.9rem;letter-spacing:3px;color:#e06030;margin-bottom:10px;}
+.warn-text{color:var(--text-dim);line-height:1.7;font-size:0.95rem;}
 
-        .logo-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 10px;
-        }
+.back-btn{display:inline-block;margin-top:60px;padding:16px 40px;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'Cinzel';font-weight:700;font-size:0.85rem;letter-spacing:4px;text-decoration:none;transition:all 0.4s;}
+.back-btn:hover{background:var(--gold);color:var(--obsidian);box-shadow:0 0 30px rgba(200,150,42,0.3);}
 
-        .reforge-logo {
-            width: 450px;
-            height: auto;
-            max-width: 90vw;
-            object-fit: contain;
-            filter: drop-shadow(0 0 30px rgba(0, 255, 102, 0.3));
-            transition: transform 0.5s ease;
-        }
-        
-        .reforge-logo:hover {
-            transform: scale(1.02);
-            filter: drop-shadow(0 0 45px rgba(0, 255, 102, 0.5));
-        }
-
-        .header .tagline {
-            font-family: 'Rajdhani';
-            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
-            color: rgba(255, 255, 255, 0.8);
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            font-weight: 500;
-            margin-top: -10px;
-        }
-
-        .container {
-            max-width: 950px;
-            margin: 0 auto;
-            padding: 40px 20px 80px;
-        }
-
-        .intro-text {
-            text-align: center;
-            font-size: 1.25rem;
-            line-height: 1.8;
-            margin-bottom: 50px;
-            color: rgba(255, 255, 255, 0.7);
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .install-section {
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(0, 255, 102, 0.4);
-            border-radius: 12px;
-            padding: 50px;
-            box-shadow: 0 0 50px rgba(0, 255, 102, 0.1);
-        }
-
-        .install-title {
-            font-family: 'Orbitron';
-            font-size: 2rem;
-            color: var(--reforge-green);
-            text-align: center;
-            margin-bottom: 40px;
-            letter-spacing: 4px;
-        }
-
-        .install-instructions {
-            font-size: 1.2rem;
-            line-height: 2;
-            margin-bottom: 40px;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .install-instructions ol {
-            padding-left: 25px;
-        }
-
-        .install-instructions li {
-            margin-bottom: 15px;
-        }
-        
-        .install-instructions strong {
-            color: var(--reforge-green);
-        }
-
-        .code-container {
-            position: relative;
-            margin-top: 40px;
-        }
-
-        .code-label {
-            font-family: 'Orbitron';
-            font-size: 1rem;
-            color: var(--reforge-blue); 
-            margin-bottom: 12px;
-            letter-spacing: 2px;
-            font-weight: 700;
-        }
-
-        .code-block {
-            background: var(--code-bg);
-            border: 2px solid var(--reforge-blue);
-            border-radius: 8px;
-            padding: 30px;
-            position: relative;
-            overflow-x: auto;
-            box-shadow: inset 0 0 20px rgba(0, 217, 255, 0.1);
-        }
-
-        .code-text {
-            font-family: 'Roboto Mono', monospace;
-            font-size: 1.3rem;
-            color: var(--reforge-blue);
-            word-break: break-all;
-            user-select: all;
-            padding-right: 120px;
-        }
-
-        .copy-btn {
-            position: absolute;
-            top: 50%;
-            right: 20px;
-            transform: translateY(-50%);
-            background: var(--reforge-blue);
-            border: none;
-            padding: 12px 25px;
-            font-family: 'Orbitron';
-            font-size: 0.9rem;
-            font-weight: 900;
-            color: var(--black);
-            cursor: pointer;
-            border-radius: 4px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            letter-spacing: 1px;
-        }
-
-        .copy-btn:hover {
-            background: #ffffff;
-            box-shadow: 0 0 30px rgba(0, 217, 255, 0.8);
-            transform: translateY(-50%) scale(1.05);
-        }
-
-        .copy-btn.copied {
-            background: var(--reforge-green);
-            color: var(--black);
-        }
-
-        .warning-box {
-            background: rgba(255, 69, 0, 0.05);
-            border-left: 4px solid #ff4500;
-            border-radius: 4px;
-            padding: 25px;
-            margin-top: 40px;
-        }
-
-        .warning-box h3 {
-            font-family: 'Orbitron';
-            color: #ff4500;
-            margin-bottom: 10px;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .warning-box p {
-            color: rgba(255, 255, 255, 0.7);
-            line-height: 1.7;
-            font-size: 1rem;
-        }
-
-        .back-btn {
-            display: inline-block;
-            margin-top: 60px;
-            padding: 18px 45px;
-            background: transparent;
-            border: 2px solid var(--gold);
-            color: var(--gold);
-            font-family: 'Orbitron';
-            font-size: 1rem;
-            font-weight: 700;
-            text-decoration: none;
-            letter-spacing: 3px;
-            transition: all 0.4s ease;
-            border-radius: 4px;
-        }
-
-        .back-btn:hover {
-            background: var(--gold);
-            color: var(--black);
-            box-shadow: 0 0 35px rgba(212, 175, 55, 0.4);
-            transform: translateY(-3px);
-        }
-
-        .button-container {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .header { padding: 40px 15px; }
-            .reforge-logo { width: 300px; }
-            .install-section { padding: 30px 20px; }
-            .code-text { font-size: 1rem; padding-right: 0; margin-bottom: 20px; display: block; }
-            .copy-btn { position: relative; top: 0; right: 0; transform: none; width: 100%; }
-        }
-    </style>
+@media(max-width:768px){
+  nav{padding:14px 20px;}
+  .page-header{padding:110px 16px 50px;}
+  .panel-body{padding:30px 20px;}
+  .intro-block{padding:24px 20px;}
+  .cmd-block{flex-direction:column;align-items:stretch;}
+  .copy-btn{width:100%;text-align:center;}
+}
+</style>
 </head>
 <body>
-    <div class="bg-wrapper"></div>
-    <div class="circuit-overlay"></div>
+<canvas id="bg-canvas"></canvas>
+<div class="aztec-grid"></div>
+<div class="scanline"></div>
 
-    <header class="header">
-        <div class="logo-container">
-            <img src="../assets/images/REFORGELOGO.PNG" alt="Aztek Reforge" class="reforge-logo">
-        </div>
-        <p class="tagline" data-i18n="tagline">System Recast for Peak Performance</p>
-    </header>
+<nav>
+  <a href="../index.html" class="nav-logo">A2K</a>
+  <div class="nav-right">
+    <a href="../index.html" class="back-link" data-i18n="back_nav">← CORE</a>
+    <button class="lang-btn" onclick="toggleLang()" id="langBtn">
+      <img src="https://flagcdn.com/w40/mx.png" id="langFlag" class="flag" alt="language">
+      <span id="langLabel">ESPAÑOL</span>
+    </button>
+  </div>
+</nav>
 
-    <div class="container">
-        <p class="intro-text" data-i18n="intro">
-            Windows configuration and deployment toolkit designed to streamline setup and performance standards.
-            Execute the command below in PowerShell to begin the reforge process.
-        </p>
+<header class="page-header">
+  <div class="header-rings">
+    <div class="h-ring"></div>
+    <div class="h-ring"></div>
+    <div class="h-ring"></div>
+  </div>
+  <div class="product-tag" data-i18n="product_tag">▸ A2K SYSTEMS · TOOL 001</div>
+  <div class="page-title">REFORGE<span>AZTEK</span></div>
+  <p class="page-tagline" data-i18n="tagline">System Recast for Peak Performance</p>
+</header>
 
-        <div class="install-section">
-            <h2 class="install-title" data-i18n="install_title">INSTALLATION</h2>
-            <div class="install-instructions">
-                <ol>
-                    <li data-i18n="step1">Open <strong>Windows PowerShell</strong> as Administrator</li>
-                    <li data-i18n="step2">Copy the command below by clicking the <strong>COPY</strong> button</li>
-                    <li data-i18n="step3">Paste and execute the command in the PowerShell terminal</li>
-                    <li data-i18n="step4">Follow the automated on-screen instructions</li>
-                </ol>
-            </div>
+<div class="container">
+  <div class="intro-block" data-i18n="intro">Windows configuration and deployment toolkit designed to streamline setup and optimize performance standards. Execute the command below in PowerShell to begin the reforge process.</div>
 
-            <div class="code-container">
-                <div class="code-label" data-i18n="cmd_label">POWERSHELL COMMAND:</div>
-                <div class="code-block">
-                    <code class="code-text" id="commandCode">irm http://a2k.lat/r | iex</code>
-                    <button class="copy-btn" id="copyBtn" onclick="copyCommand()" data-i18n="copy">COPY</button>
-                </div>
-            </div>
-
-            <div class="warning-box">
-                <h3 data-i18n="warn_title">⚠️ IMPORTANT</h3>
-                <p data-i18n="warn_text">
-                    Always run PowerShell as Administrator. This command downloads and executes a script 
-                    from a2k.lat. Ensure you have a stable internet connection before proceeding.
-                </p>
-            </div>
-        </div>
-
-        <div class="button-container">
-            <a href="/" class="back-btn" data-i18n="back_btn">← RETURN TO CORE</a>
-        </div>
+  <div class="install-panel">
+    <div class="panel-header">
+      <div class="panel-dot"></div>
+      <div class="panel-dot"></div>
+      <div class="panel-dot"></div>
+      <span class="panel-title" data-i18n="panel_title">INSTALLATION PROTOCOL</span>
     </div>
+    <div class="panel-body">
+      <ol class="step-list">
+        <li class="step-item"><span class="step-num">01 //</span><span class="step-text" data-i18n="step1">Open <strong>Windows PowerShell</strong> as Administrator</span></li>
+        <li class="step-item"><span class="step-num">02 //</span><span class="step-text" data-i18n="step2">Copy the command below by clicking <strong>COPY</strong></span></li>
+        <li class="step-item"><span class="step-num">03 //</span><span class="step-text" data-i18n="step3">Paste and execute the command in the PowerShell terminal</span></li>
+        <li class="step-item"><span class="step-num">04 //</span><span class="step-text" data-i18n="step4">Follow the automated on-screen instructions</span></li>
+      </ol>
+      <div class="cmd-label" data-i18n="cmd_label">▸ POWERSHELL COMMAND</div>
+      <div class="cmd-block">
+        <code class="cmd-text" id="cmdCode">irm http://a2k.lat/r | iex</code>
+        <button class="copy-btn" id="copyBtn" onclick="copyCmd()" data-i18n="copy_btn">COPY</button>
+      </div>
+      <div class="warn-block">
+        <div class="warn-title" data-i18n="warn_title">⚠ IMPORTANT</div>
+        <p class="warn-text" data-i18n="warn_text">Always run PowerShell as Administrator. This command downloads and executes a script from a2k.lat. Ensure you have a stable internet connection before proceeding.</p>
+      </div>
+    </div>
+  </div>
 
-    <script>
-        // Translation Data
-        const translations = {
-            en: {
-                tagline: "System Recast for Peak Performance",
-                intro: "Windows configuration and deployment toolkit designed to streamline setup and performance standards. Execute the command below in PowerShell to begin the reforge process.",
-                install_title: "INSTALLATION",
-                step1: "Open Windows PowerShell as Administrator",
-                step2: "Copy the command below by clicking the COPY button",
-                step3: "Paste and execute the command in the PowerShell terminal",
-                step4: "Follow the automated on-screen instructions",
-                cmd_label: "POWERSHELL COMMAND:",
-                copy: "COPY",
-                copied: "COPIED!",
-                warn_title: "⚠️ IMPORTANT",
-                warn_text: "Always run PowerShell as Administrator. This command downloads and executes a script from a2k.lat. Ensure you have a stable internet connection before proceeding.",
-                back_btn: "← RETURN TO CORE"
-            },
-            es: {
-                tagline: "Refundición del Sistema para el Rendimiento Máximo",
-                intro: "Conjunto de herramientas de configuración y despliegue de Windows diseñado para optimizar la configuración y los estándares de rendimiento. Ejecute el comando siguiente en PowerShell para comenzar el proceso.",
-                install_title: "INSTALACIÓN",
-                step1: "Abra Windows PowerShell como Administrador",
-                step2: "Copie el comando siguiente haciendo clic en el botón COPIAR",
-                step3: "Pegue y ejecute el comando en la terminal de PowerShell",
-                step4: "Siga las instrucciones automatizadas en pantalla",
-                cmd_label: "COMANDO POWERSHELL:",
-                copy: "COPIAR",
-                copied: "¡COPIADO!",
-                warn_title: "⚠️ IMPORTANTE",
-                warn_text: "Ejecute siempre PowerShell como Administrador. Este comando descarga y ejecuta un script de a2k.lat. Asegúrese de tener una conexión a internet estable antes de proceder.",
-                back_btn: "← VOLVER AL NÚCLEO"
-            }
-        };
+  <a href="../index.html" class="back-btn" data-i18n="back_btn">← RETURN TO CORE</a>
+</div>
 
-        function applyLanguage() {
-            // Check for 'userLang' or standard 'lang' keys in localStorage
-            const lang = localStorage.getItem('userLang') || localStorage.getItem('lang') || 'en';
-            const dict = translations[lang] || translations.en;
+<script>
+const canvas=document.getElementById('bg-canvas'),ctx=canvas.getContext('2d');
+let W,H,particles=[];
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+const GLYPHS=['◈','◆','▸','◉','▣','01','10','00'];
+function rand(a,b){return Math.random()*(b-a)+a;}
+function mkP(){return{x:rand(0,W),y:rand(H,H+20),vy:rand(-0.5,-0.15),vx:rand(-0.1,0.1),alpha:rand(0.03,0.09),size:rand(9,15),glyph:GLYPHS[Math.floor(Math.random()*GLYPHS.length)],life:0,maxLife:rand(200,600)};}
+for(let i=0;i<40;i++)particles.push(mkP());
+function frame(){
+  ctx.clearRect(0,0,W,H);
+  particles.forEach((p,i)=>{p.life++;if(p.life>p.maxLife||p.y<-20){particles[i]=mkP();return;}p.x+=p.vx;p.y+=p.vy;ctx.globalAlpha=p.alpha*(1-p.life/p.maxLife);ctx.fillStyle='rgba(0,212,255,1)';ctx.font=`${p.size}px 'Share Tech Mono'`;ctx.fillText(p.glyph,p.x,p.y);});
+  ctx.globalAlpha=1;requestAnimationFrame(frame);
+}
+frame();
 
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (dict[key]) {
-                    if (key.startsWith('step')) {
-                        // Special handling for steps to keep the bold tags
-                        let text = dict[key];
-                        // Replace English terms with bold versions if found in string, or use hardcoded logic
-                        text = text.replace('Windows PowerShell', '<strong>Windows PowerShell</strong>')
-                                   .replace('COPY', `<strong>${dict.copy}</strong>`)
-                                   .replace('COPIAR', `<strong>${dict.copy}</strong>`);
-                        el.innerHTML = text;
-                    } else {
-                        el.innerText = dict[key];
-                    }
-                }
-            });
-            
-            // Update button text specifically if it was already "Copied"
-            const copyBtn = document.getElementById('copyBtn');
-            if (copyBtn && !copyBtn.classList.contains('copied')) {
-                copyBtn.innerText = dict.copy;
-            }
-        }
+const T={
+  en:{back_nav:'← CORE',product_tag:'▸ A2K SYSTEMS · TOOL 001',tagline:'System Recast for Peak Performance',intro:'Windows configuration and deployment toolkit designed to streamline setup and optimize performance standards. Execute the command below in PowerShell to begin the reforge process.',panel_title:'INSTALLATION PROTOCOL',step1:'Open Windows PowerShell as Administrator',step2:'Copy the command below by clicking COPY',step3:'Paste and execute the command in the PowerShell terminal',step4:'Follow the automated on-screen instructions',cmd_label:'▸ POWERSHELL COMMAND',copy_btn:'COPY',copied:'COPIED!',warn_title:'⚠ IMPORTANT',warn_text:'Always run PowerShell as Administrator. This command downloads and executes a script from a2k.lat. Ensure you have a stable internet connection before proceeding.',back_btn:'← RETURN TO CORE',langLabel:'ESPAÑOL',langFlag:'https://flagcdn.com/w40/mx.png'},
+  es:{back_nav:'← INICIO',product_tag:'▸ A2K SISTEMAS · HERRAMIENTA 001',tagline:'Refundición del Sistema para el Rendimiento Máximo',intro:'Conjunto de herramientas de configuración y despliegue de Windows diseñado para optimizar la configuración y los estándares de rendimiento. Ejecute el comando siguiente en PowerShell para comenzar el proceso.',panel_title:'PROTOCOLO DE INSTALACIÓN',step1:'Abra Windows PowerShell como Administrador',step2:'Copie el comando haciendo clic en COPIAR',step3:'Pegue y ejecute el comando en la terminal de PowerShell',step4:'Siga las instrucciones automatizadas en pantalla',cmd_label:'▸ COMANDO POWERSHELL',copy_btn:'COPIAR',copied:'¡COPIADO!',warn_title:'⚠ IMPORTANTE',warn_text:'Ejecute siempre PowerShell como Administrador. Este comando descarga y ejecuta un script de a2k.lat. Asegúrese de tener una conexión a internet estable antes de proceder.',back_btn:'← VOLVER AL INICIO',langLabel:'ENGLISH',langFlag:'https://flagcdn.com/w40/us.png'}
+};
 
-        function copyCommand() {
-            const codeText = document.getElementById('commandCode').textContent;
-            const copyBtn = document.getElementById('copyBtn');
-            const lang = localStorage.getItem('userLang') || localStorage.getItem('lang') || 'en';
-            
-            const textArea = document.createElement("textarea");
-            textArea.value = codeText;
-            document.body.appendChild(textArea);
-            textArea.select();
-            try {
-                document.execCommand('copy');
-                copyBtn.textContent = translations[lang]?.copied || translations.en.copied;
-                copyBtn.classList.add('copied');
-                setTimeout(() => {
-                    copyBtn.textContent = translations[lang]?.copy || translations.en.copy;
-                    copyBtn.classList.remove('copied');
-                }, 2000);
-            } catch (err) {
-                console.error('Unable to copy', err);
-            }
-            document.body.removeChild(textArea);
-        }
+let lang=localStorage.getItem('a2k_lang')||'en';
+function applyLang(l){
+  const d=T[l];
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k=el.getAttribute('data-i18n');
+    if(d[k]===undefined)return;
+    if(k.startsWith('step')){
+      let t=d[k].replace('Windows PowerShell','<strong>Windows PowerShell</strong>').replace(/(COPY|COPIAR)/g,'<strong>$1</strong>');
+      el.innerHTML=t;
+    }else{el.textContent=d[k];}
+  });
+  document.getElementById('langLabel').textContent=d.langLabel;
+  document.getElementById('langFlag').src=d.langFlag;
+}
+function toggleLang(){lang=lang==='en'?'es':'en';localStorage.setItem('a2k_lang',lang);applyLang(lang);}
+applyLang(lang);
 
-        // Initialize translation on load and listen for storage changes
-        window.addEventListener('DOMContentLoaded', applyLanguage);
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'userLang' || e.key === 'lang') applyLanguage();
-        });
-    </script>
+function copyCmd(){
+  const txt=document.getElementById('cmdCode').textContent,btn=document.getElementById('copyBtn'),d=T[lang];
+  navigator.clipboard.writeText(txt).then(()=>{btn.textContent=d.copied;btn.classList.add('copied');setTimeout(()=>{btn.textContent=d.copy_btn;btn.classList.remove('copied');},2000);}).catch(()=>{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);btn.textContent=d.copied;btn.classList.add('copied');setTimeout(()=>{btn.textContent=d.copy_btn;btn.classList.remove('copied');},2000);});
+}
+</script>
 </body>
 </html>
-
