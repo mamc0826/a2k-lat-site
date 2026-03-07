@@ -12,7 +12,6 @@ function Play-Startup {
         Start-Sleep -Seconds 1
         Write-Host "`r" -NoNewline
     }
-    # Startup "Handshake"
     [console]::beep(880, 100); [console]::beep(1108, 100); [console]::beep(1318, 300)
 }
 
@@ -28,18 +27,18 @@ function Play-Shutdown {
 
 function Show-Header {
     Clear-Host
+    # Clean, High-Readability Block Font
     Write-Host @"
     
-     █████╗ ██████╗ ██╗  ██╗    ██████╗ ███████╗███████╗ ██████╗ ██████╗  ██████╗ ███████╗
-    ██╔══██╗╚════██╗██║ ██╔╝    ██╔══██╗██╔════╝██╔════╝██╔═══██╗██╔══██╗██╔════╝ ██╔════╝
-    ███████║ █████╔╝█████╔╝     ██████╔╝█████╗  █████╗  ██║   ██║██████╔╝██║  ███╗█████╗  
-    ██╔══██║██╔═══╝ ██╔═██╗     ██╔══██╗██╔══╝  ██╔══╝  ██║   ██║██╔══██╗██║   ██║██╔══╝  
-    ██║  ██║███████╗██║  ██╗    ██║  ██║███████╗██║     ╚██████╔╝██║  ██║╚██████╔╝███████╗
-    ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝    ╚═╝  ╚═╝╚══════╝╚═╝      ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚══════╝
-    
+    ___   ___  _  __  ____  _____  _____  ____  ____  _____ 
+   / _ \ |__ \| |/ / |  _ \| ____||  ___|/ __ \|  _ \| ____|
+  / /_\ \  ) |' /    | |_) |  _|  | |_  | |  | | |_) |  _|  
+ / _   _ \/ / . \    |  _ <| |___ |  _| | |__| |  _ <| |___ 
+/_/   \_\____|_|\_\   |_| \_\_____||_|    \____/|_| \_\_____|
+                                                            
 "@ -ForegroundColor Cyan
     Write-Host " ========================== TOTAL SYSTEM RECAST v2026.1 ==========================" -ForegroundColor White -BackgroundColor Blue
-    Write-Host " CPU: $((Get-CimInstance Win32_Processor).Name) | ORIGIN: MATEHUALA, SLP" -ForegroundColor Gray
+    Write-Host " [ A2K TECH | MATEHUALA, SLP ] - STATUS: OPTIMIZATION MODULES ARMED" -ForegroundColor Gray
     Write-Host "----------------------------------------------------------------------------------" -ForegroundColor Cyan
 }
 
@@ -82,7 +81,7 @@ while($true) {
             # SHELL & UI INTEGRATION
             Apply-Tweak "Classic Context Menu" { Set-ItemProperty -Path "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" -Name "(Default)" -Value "" }
             Apply-Tweak "Taskbar End Task" { Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\TaskbarDeveloperSettings" -Name "TaskbarEndTask" -Value 1 }
-            Apply-Tweak "Kill AI Recall & Copilot" {
+            Apply-Tweak "Disable AI Recall & Copilot" {
                 $aiPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsAI"
                 if (!(Test-Path $aiPath)) { New-Item -Path $aiPath -Force | Out-Null }
                 Set-ItemProperty -Path $aiPath -Name "AllowRecallEnablement" -Value 0
