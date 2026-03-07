@@ -1,132 +1,136 @@
 #Requires -RunAsAdministrator
 
-# --- A2K REFORGE™ : INTERACTIVE ENGINE ---
-$Host.UI.RawUI.WindowTitle = "A2K REFORGE™ | SYSTEM RECAST"
-
-# --- CONFIGURATION ---
-$WallpaperUrl = "https://raw.githubusercontent.com/mamc0826/a2k-site/master/assets/images/wall1.jpg"
-$WallpaperPath = "$env:USERPROFILE\Pictures\reforge_wallpaper.jpg"
+# --- A2K REFORGE™ : THE OMNI-PROTOCOL ---
+$Host.UI.RawUI.WindowTitle = "A2K REFORGE™ | INITIALIZING..."
 $WebUrl = "https://a2k.lat"
+
+function Play-Startup {
+    Write-Host "`n INITIALIZING SECURE LINK..." -ForegroundColor Gray
+    for ($i = 5; $i -gt 0; $i--) {
+        Write-Host " [REFORGE] Booting in $i... " -NoNewline -ForegroundColor Cyan
+        [console]::beep(300 + ($i * 100), 100)
+        Start-Sleep -Seconds 1
+        Write-Host "`r" -NoNewline
+    }
+    # Startup "Handshake"
+    [console]::beep(880, 100); [console]::beep(1108, 100); [console]::beep(1318, 300)
+}
+
+function Play-Success {
+    [console]::beep(880, 150); [console]::beep(1108, 150); [console]::beep(1318, 400)
+}
+
+function Play-Shutdown {
+    Write-Host "`n TERMINATING SECURE LINK..." -ForegroundColor Red
+    [console]::beep(1318, 150); [console]::beep(1108, 150); [console]::beep(880, 400)
+    Start-Sleep -Seconds 1
+}
 
 function Show-Header {
     Clear-Host
-    Write-Host "=====================================================" -ForegroundColor Cyan
-    Write-Host "                A2K REFORGE™ : SYSTEM RECAST         " -ForegroundColor White -BackgroundColor Blue
-    Write-Host "=====================================================" -ForegroundColor Cyan
-    $OS = Get-CimInstance Win32_OperatingSystem
-    Write-Host " CPU: $((Get-CimInstance Win32_Processor).Name)" -ForegroundColor Gray
-    Write-Host " RAM: $([Math]::Round($OS.FreePhysicalMemory / 1MB, 1)) GB Free / $([Math]::Round($OS.TotalVisibleMemorySize / 1MB, 0)) GB Total" -ForegroundColor Gray
-    Write-Host " Status: A2K GUARD Active (Contest Integrity Mode)" -ForegroundColor Green
-    Write-Host "-----------------------------------------------------" -ForegroundColor Cyan
+    Write-Host @"
+    
+     █████╗ ██████╗ ██╗  ██╗    ██████╗ ███████╗███████╗ ██████╗ ██████╗  ██████╗ ███████╗
+    ██╔══██╗╚════██╗██║ ██╔╝    ██╔══██╗██╔════╝██╔════╝██╔═══██╗██╔══██╗██╔════╝ ██╔════╝
+    ███████║ █████╔╝█████╔╝     ██████╔╝█████╗  █████╗  ██║   ██║██████╔╝██║  ███╗█████╗  
+    ██╔══██║██╔═══╝ ██╔═██╗     ██╔══██╗██╔══╝  ██╔══╝  ██║   ██║██╔══██╗██║   ██║██╔══╝  
+    ██║  ██║███████╗██║  ██╗    ██║  ██║███████╗██║     ╚██████╔╝██║  ██║╚██████╔╝███████╗
+    ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝    ╚═╝  ╚═╝╚══════╝╚═╝      ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚══════╝
+    
+"@ -ForegroundColor Cyan
+    Write-Host " ========================== TOTAL SYSTEM RECAST v2026.1 ==========================" -ForegroundColor White -BackgroundColor Blue
+    Write-Host " CPU: $((Get-CimInstance Win32_Processor).Name) | ORIGIN: MATEHUALA, SLP" -ForegroundColor Gray
+    Write-Host "----------------------------------------------------------------------------------" -ForegroundColor Cyan
+}
+
+function Apply-Tweak ($Name, $ScriptBlock) {
+    Write-Host " [REFORGING] -> $Name..." -NoNewline -ForegroundColor White
+    try { & $ScriptBlock; Write-Host " [DONE]" -ForegroundColor Green } 
+    catch { Write-Host " [FAILED]" -ForegroundColor Red }
+}
+
+# --- STARTUP SEQUENCE ---
+Play-Startup
+$Host.UI.RawUI.WindowTitle = "A2K REFORGE™ | SYSTEM OPTIMIZATION"
+
+while($true) {
+    Show-Header
+    Write-Host "[0] Create Restore Point (Manual)" -ForegroundColor Green
+    Write-Host "[1] Full System Recast (The Works + Win11Debloat)" -ForegroundColor Yellow
+    Write-Host "[2] Deep Maintenance (Shop Clean, Winget, CHKDSK)" -ForegroundColor Yellow
+    Write-Host "[3] System Activation Help (MAS)" -ForegroundColor Yellow
+    Write-Host "[W] Visit A2K Portal (Web)" -ForegroundColor Cyan
+    Write-Host "[ER] Emergency Recovery (Rollback)" -ForegroundColor White -BackgroundColor Red
+    Write-Host "[Q] Exit" -ForegroundColor Red
     Write-Host ""
-}
+    
+    $choice = Read-Host "A2K_SYSTEM_COMMAND"
 
-Show-Header
-Write-Host "[0] Create Restore Point (Manual)" -ForegroundColor Green
-Write-Host "[1] Full System Recast (The Works)" -ForegroundColor Yellow
-Write-Host "[2] Deep Maintenance (Winget, CHKDSK, Updates)" -ForegroundColor Yellow
-Write-Host "[3] System Activation Help (MAS)" -ForegroundColor Yellow
-Write-Host "[W] Visit A2K Portal (Web)" -ForegroundColor Cyan
-Write-Host "[ER] Emergency Recovery (Rollback)" -ForegroundColor White -BackgroundColor Red
-Write-Host "[Q] Exit" -ForegroundColor Red
-Write-Host ""
-
-$choice = Read-Host "Input System Command"
-
-switch ($choice) {
-    "W" {
-        # --- THANK YOU MESSAGE POPUP ---
-        $msg = "Thank you for using A2K Reforge!`n`nConnecting you to the A2K Portal for more tools and updates."
-        $wshell = New-Object -ComObject Wscript.Shell
-        $wshell.Popup($msg, 0, "A2K REFORGE", 64) | Out-Null
-        
-        Write-Host "Launching A2K Portal..." -ForegroundColor Cyan
-        Start-Process $WebUrl
-    }
-    "0" {
-        Show-Header
-        Write-Host "Creating Safety Net..." -ForegroundColor Yellow
-        Enable-ComputerRestore -Drive "C:\" -ErrorAction SilentlyContinue
-        Checkpoint-Computer -Description "A2KReforge_Manual" -RestorePointType "MODIFY_SETTINGS"
-        Write-Host "Restore Point Created." -ForegroundColor Green
-    }
-    "1" {
-        Show-Header
-        Write-Host "[!] INITIATING FULL RECAST..." -ForegroundColor Red
-        
-        # --- START MENU (More Pins) ---
-        $StartPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
-        Set-ItemProperty -Path $StartPath -Name "Start_Layout" -Value 1 
-        Set-ItemProperty -Path $StartPath -Name "Start_TrackProgs" -Value 1
-        Set-ItemProperty -Path $StartPath -Name "Start_TrackDocs" -Value 0
-        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338388Enabled" -Value 0
-
-        # --- CLASSIC CONTEXT MENU ---
-        $RegPath = "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32"
-        if (!(Test-Path $RegPath)) { New-Item -Path $RegPath -Force | Out-Null; Set-ItemProperty -Path $RegPath -Name "(Default)" -Value "" }
-
-        # --- POWER & LOCK SCREEN ---
-        powercfg /change monitor-timeout-ac 60
-        powercfg /change sleep-timeout-ac 0
-        powercfg /hibernate off
-        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Lock Screen" -Name "StatusAppAppUserModelId" -Value ""
-        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338387Enabled" -Value 0
-
-        # --- DNS & MOUSE ---
-        Set-DnsClientServerAddress -InterfaceAlias (Get-NetAdapter | Where-Object {$Status -eq "Up"}).InterfaceAlias -ServerAddresses ("1.1.1.1","1.0.0.1") -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSpeed" -Value "0"
-
-        # --- VISUALS ---
-        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "SystemUsesLightTheme" -Value 0
-        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Value 0
-        Invoke-WebRequest -Uri $WallpaperUrl -OutFile $WallpaperPath -ErrorAction SilentlyContinue
-        $code = @'
-using System.Runtime.InteropServices;
-public class Wallpaper {
-    [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    public static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
-}
-'@
-        Add-Type -TypeDefinition $code -ErrorAction SilentlyContinue
-        [Wallpaper]::SystemParametersInfo(20, 0, $WallpaperPath, 3)
-
-        # --- A2K ARSENAL ---
-        Write-Host "-> Deploying A2K Arsenal..." -ForegroundColor Cyan
-        $Arsenal = @(
-            @{ID="Google.Chrome"; Desc="Standard web browser for platform access"},
-            @{ID="Brave.Brave"; Desc="Privacy browser to eliminate tracking interference"},
-            @{ID="Malwarebytes.Malwarebytes"; Desc="A2K Guard partner for anti-cheat environment stability"},
-            @{ID="7zip.7zip"; Desc="Archive management for contest file submissions"},
-            @{ID="Notepad++.Notepad++"; Desc="Advanced editor for checking contest scripts/logs"},
-            @{ID="VideoLAN.VLC"; Desc="Verify video-based contest entries and proof"},
-            @{ID="RevoUninstaller.RevoUninstaller"; Desc="Deep cleaner for removing stubborn apps"},
-            @{ID="AntibodySoftware.WizTree"; Desc="Fastest disk space analyzer"},
-            @{ID="MiniTool.PartitionWizard"; Desc="Hard drive & partition manager"},
-            @{ID="Python.Python.3"; Desc="Required for A2K Guard verification algorithms"},
-            @{ID="SumatraPDF.SumatraPDF"; Desc="Lightweight viewer for contest rules and terms"}
-        )
-
-        foreach ($App in $Arsenal) { 
-            Write-Host "   Installing $($App.ID): $($App.Desc)..." -ForegroundColor Gray
-            winget install --id $App.ID --silent --accept-package-agreements --accept-source-agreements | Out-Null 
+    switch ($choice) {
+        "0" {
+            Show-Header
+            Write-Host ">> INITIATING SAFETY NET..." -ForegroundColor Yellow
+            Enable-ComputerRestore -Drive "C:\" -ErrorAction SilentlyContinue
+            Checkpoint-Computer -Description "A2KReforge_Manual" -RestorePointType "MODIFY_SETTINGS"
+            Play-Success
         }
         
-        Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
-        Write-Host "A2K System Reforged and Fair-Play Optimized." -ForegroundColor Green
-    }
-    "2" {
-        Show-Header
-        Write-Host "-> Running System Maintenance..." -ForegroundColor Cyan
-        winget upgrade --all --silent --accept-package-agreements --accept-source-agreements
-        echo y | chkdsk C: /f /r
-        Write-Host "Maintenance Scheduled. Restart required for Disk Repair." -ForegroundColor Yellow
-    }
-    "ER" {
-        $RP = Get-ComputerRestorePoint | Where-Object {$_.Description -match "A2KReforge"} | Select-Object -Last 1
-        if ($RP) { Restore-Computer -RestorePoint $RP.SequenceNumber } else { rstrui.exe }
-    }
-    "Q" { exit }
-}
+        "1" {
+            Show-Header
+            Write-Host ">> DEB-LOATING & RE-TOOLING SYSTEM..." -ForegroundColor Cyan
+            
+            # SHELL & UI INTEGRATION
+            Apply-Tweak "Classic Context Menu" { Set-ItemProperty -Path "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" -Name "(Default)" -Value "" }
+            Apply-Tweak "Taskbar End Task" { Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\TaskbarDeveloperSettings" -Name "TaskbarEndTask" -Value 1 }
+            Apply-Tweak "Kill AI Recall & Copilot" {
+                $aiPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsAI"
+                if (!(Test-Path $aiPath)) { New-Item -Path $aiPath -Force | Out-Null }
+                Set-ItemProperty -Path $aiPath -Name "AllowRecallEnablement" -Value 0
+                Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Name "TurnOffWindowsCopilot" -Value 1
+            }
 
-Write-Host "`nPress any key to exit..."
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+            # ARSENAL DEPLOYMENT
+            Write-Host "`n>> DEPLOYING A2K ARSENAL..." -ForegroundColor Yellow
+            $apps = @("Google.Chrome", "Brave.Brave", "7zip.7zip", "Malwarebytes.Malwarebytes", "RevoUninstaller.RevoUninstaller", "WizTree.WizTree", "VideoLAN.VLC", "Notepad++.Notepad++", "Python.Python.3")
+            foreach ($app in $apps) {
+                Write-Host "   Installing $app..." -NoNewline
+                winget install --id $app --silent --accept-package-agreements --accept-source-agreements | Out-Null
+                Write-Host " [OK]" -ForegroundColor Green
+            }
+
+            Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
+            Play-Success
+        }
+
+        "2" {
+            Show-Header
+            Write-Host ">> RUNNING SHOP CLEANUP..." -ForegroundColor Cyan
+            Apply-Tweak "Clearing Temp & Junk" { 
+                Remove-Item -Path "$env:TEMP\*" -Recurse -Force -ErrorAction SilentlyContinue
+                Clear-RecycleBin -Confirm:$false -ErrorAction SilentlyContinue
+            }
+            winget upgrade --all --silent --accept-package-agreements --accept-source-agreements
+            Play-Success
+        }
+
+        "3" {
+            Show-Header
+            Write-Host ">> LAUNCHING MAS..." -ForegroundColor Magenta
+            irm https://get.activated.win | iex
+        }
+
+        "W" { Start-Process $WebUrl }
+
+        "ER" {
+            $RP = Get-ComputerRestorePoint | Where-Object {$_.Description -match "A2KReforge"} | Select-Object -Last 1
+            if ($RP) { Restore-Computer -RestorePoint $RP.SequenceNumber } else { rstrui.exe }
+        }
+
+        "Q" { 
+            Play-Shutdown
+            exit 
+        }
+    }
+    Write-Host "`nTask Complete. Press any key..."
+    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+}
