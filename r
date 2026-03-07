@@ -1,132 +1,120 @@
-#Requires -RunAsAdministrator
+# --- A2K REFORGE™ : SIMULATION ENGINE ---
+$Host.UI.RawUI.WindowTitle = "A2K REFORGE™ | SIMULATION MODE"
 
-# --- A2K REFORGE™ : INTERACTIVE ENGINE ---
-$Host.UI.RawUI.WindowTitle = "A2K REFORGE™ | SYSTEM RECAST"
+# Audio Engine - Digital Chime (Frequency in Hz, Duration in ms)
+function Play-A2KChime {
+    [Console]::Beep(880, 150) # A5
+    [Console]::Beep(1108, 150) # C#6
+    [Console]::Beep(1318, 300) # E6
+}
 
-# --- CONFIGURATION ---
-$WallpaperUrl = "https://raw.githubusercontent.com/mamc0826/a2k-site/master/assets/images/wall1.jpg"
-$WallpaperPath = "$env:USERPROFILE\Pictures\reforge_wallpaper.jpg"
-$WebUrl = "https://a2k.lat"
+# Voice Engine Initialization
+$Voice = New-Object -ComObject SAPI.SpVoice
+function Speak-A2K ($text) { 
+    Write-Host "▸ VOICE: $text" -ForegroundColor DarkGray
+    $Voice.Speak($text) 
+}
 
 function Show-Header {
     Clear-Host
     Write-Host "=====================================================" -ForegroundColor Cyan
-    Write-Host "                A2K REFORGE™ : SYSTEM RECAST         " -ForegroundColor White -BackgroundColor Blue
+    Write-Host "                A2K REFORGE™ : SIMULATION            " -ForegroundColor White -BackgroundColor Blue
     Write-Host "=====================================================" -ForegroundColor Cyan
-    $OS = Get-CimInstance Win32_OperatingSystem
-    Write-Host " CPU: $((Get-CimInstance Win32_Processor).Name)" -ForegroundColor Gray
-    Write-Host " RAM: $([Math]::Round($OS.FreePhysicalMemory / 1MB, 1)) GB Free / $([Math]::Round($OS.TotalVisibleMemorySize / 1MB, 0)) GB Total" -ForegroundColor Gray
-    Write-Host " Status: A2K GUARD Active (Contest Integrity Mode)" -ForegroundColor Green
+    Write-Host " CPU: [SIMULATED] A2K Quantum Core" -ForegroundColor Gray
+    Write-Host " RAM: 32.0 GB Total (Simulated Environment)" -ForegroundColor Gray
+    Write-Host " Status: DEMO MODE | No System Changes Will Be Made" -ForegroundColor Magenta
     Write-Host "-----------------------------------------------------" -ForegroundColor Cyan
-    Write-Host ""
 }
 
+function Update-Progress ($Activity, $Status, $Percent) {
+    Write-Progress -Activity $Activity -Status $Status -PercentComplete $Percent
+}
+
+# --- MAIN EXECUTION ---
 Show-Header
-Write-Host "[0] Create Restore Point (Manual)" -ForegroundColor Green
-Write-Host "[1] Full System Recast (The Works)" -ForegroundColor Yellow
-Write-Host "[2] Deep Maintenance (Winget, CHKDSK, Updates)" -ForegroundColor Yellow
-Write-Host "[3] System Activation Help (MAS)" -ForegroundColor Yellow
-Write-Host "[W] Visit A2K Portal (Web)" -ForegroundColor Cyan
-Write-Host "[ER] Emergency Recovery (Rollback)" -ForegroundColor White -BackgroundColor Red
-Write-Host "[Q] Exit" -ForegroundColor Red
+Play-A2KChime 
+
+Write-Host "[1] RUN SIMULATED REFORGE (Experience Visuals)" -ForegroundColor Yellow
+Write-Host "[C] SIMULATE CLEANUP" -ForegroundColor Gray
+Write-Host "[W] VISIT PORTAL" -ForegroundColor Cyan
+Write-Host "[Q] EXIT" -ForegroundColor Red
 Write-Host ""
 
 $choice = Read-Host "Input System Command"
 
 switch ($choice) {
-    "W" {
-        # --- THANK YOU MESSAGE POPUP ---
-        $msg = "Thank you for using A2K Reforge!`n`nConnecting you to the A2K Portal for more tools and updates."
-        $wshell = New-Object -ComObject Wscript.Shell
-        $wshell.Popup($msg, 0, "A2K REFORGE", 64) | Out-Null
-        
-        Write-Host "Launching A2K Portal..." -ForegroundColor Cyan
-        Start-Process $WebUrl
-    }
-    "0" {
-        Show-Header
-        Write-Host "Creating Safety Net..." -ForegroundColor Yellow
-        Enable-ComputerRestore -Drive "C:\" -ErrorAction SilentlyContinue
-        Checkpoint-Computer -Description "A2KReforge_Manual" -RestorePointType "MODIFY_SETTINGS"
-        Write-Host "Restore Point Created." -ForegroundColor Green
-    }
     "1" {
         Show-Header
-        Write-Host "[!] INITIATING FULL RECAST..." -ForegroundColor Red
-        
-        # --- START MENU (More Pins) ---
-        $StartPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
-        Set-ItemProperty -Path $StartPath -Name "Start_Layout" -Value 1 
-        Set-ItemProperty -Path $StartPath -Name "Start_TrackProgs" -Value 1
-        Set-ItemProperty -Path $StartPath -Name "Start_TrackDocs" -Value 0
-        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338388Enabled" -Value 0
+        $steps = 6
+        $current = 0
 
-        # --- CLASSIC CONTEXT MENU ---
-        $RegPath = "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32"
-        if (!(Test-Path $RegPath)) { New-Item -Path $RegPath -Force | Out-Null; Set-ItemProperty -Path $RegPath -Name "(Default)" -Value "" }
+        # STEP 1: Remote Support Simulation
+        $current++; Update-Progress "Simulating Reforge" "SIMULATING: Deployment of Remote Support Bridge..." (($current/$steps)*100)
+        [Console]::Beep(440, 100) 
+        Start-Sleep -Seconds 2
+        Write-Host "[DEMO] Logic Check: Google Chrome check passed." -ForegroundColor Green
 
-        # --- POWER & LOCK SCREEN ---
-        powercfg /change monitor-timeout-ac 60
-        powercfg /change sleep-timeout-ac 0
-        powercfg /hibernate off
-        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Lock Screen" -Name "StatusAppAppUserModelId" -Value ""
-        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338387Enabled" -Value 0
+        # STEP 2: Performance Tweaks Simulation
+        $current++; Update-Progress "Simulating Reforge" "SIMULATING: Game DVR Optimization..." (($current/$steps)*100)
+        Start-Sleep -Seconds 2
+        Write-Host "[DEMO] Registry: Set GameDVR_Enabled to 0 (Simulated)" -ForegroundColor Cyan
 
-        # --- DNS & MOUSE ---
-        Set-DnsClientServerAddress -InterfaceAlias (Get-NetAdapter | Where-Object {$Status -eq "Up"}).InterfaceAlias -ServerAddresses ("1.1.1.1","1.0.0.1") -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSpeed" -Value "0"
+        # STEP 3: Aesthetics Simulation
+        $current++; Update-Progress "Simulating Reforge" "SIMULATING: Visual Theme Application..." (($current/$steps)*100)
+        Start-Sleep -Seconds 2
+        Write-Host "[DEMO] UI: Dark Mode requested (Simulated)" -ForegroundColor Cyan
 
-        # --- VISUALS ---
-        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "SystemUsesLightTheme" -Value 0
-        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "AppsUseLightTheme" -Value 0
-        Invoke-WebRequest -Uri $WallpaperUrl -OutFile $WallpaperPath -ErrorAction SilentlyContinue
-        $code = @'
-using System.Runtime.InteropServices;
-public class Wallpaper {
-    [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    public static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
-}
-'@
-        Add-Type -TypeDefinition $code -ErrorAction SilentlyContinue
-        [Wallpaper]::SystemParametersInfo(20, 0, $WallpaperPath, 3)
-
-        # --- A2K ARSENAL ---
-        Write-Host "-> Deploying A2K Arsenal..." -ForegroundColor Cyan
-        $Arsenal = @(
-            @{ID="Google.Chrome"; Desc="Standard web browser for platform access"},
-            @{ID="Brave.Brave"; Desc="Privacy browser to eliminate tracking interference"},
-            @{ID="Malwarebytes.Malwarebytes"; Desc="A2K Guard partner for anti-cheat environment stability"},
-            @{ID="7zip.7zip"; Desc="Archive management for contest file submissions"},
-            @{ID="Notepad++.Notepad++"; Desc="Advanced editor for checking contest scripts/logs"},
-            @{ID="VideoLAN.VLC"; Desc="Verify video-based contest entries and proof"},
-            @{ID="RevoUninstaller.RevoUninstaller"; Desc="Deep cleaner for removing stubborn apps"},
-            @{ID="AntibodySoftware.WizTree"; Desc="Fastest disk space analyzer"},
-            @{ID="MiniTool.PartitionWizard"; Desc="Hard drive & partition manager"},
-            @{ID="Python.Python.3"; Desc="Required for A2K Guard verification algorithms"},
-            @{ID="SumatraPDF.SumatraPDF"; Desc="Lightweight viewer for contest rules and terms"}
-        )
-
-        foreach ($App in $Arsenal) { 
-            Write-Host "   Installing $($App.ID): $($App.Desc)..." -ForegroundColor Gray
-            winget install --id $App.ID --silent --accept-package-agreements --accept-source-agreements | Out-Null 
+        # STEP 4: Debloat Simulation
+        $current++; Update-Progress "Simulating Reforge" "SIMULATING: Purging System Bloatware..." (($current/$steps)*100)
+        $BloatDemos = @("TikTok", "Instagram", "Disney+", "Spotify")
+        foreach ($App in $BloatDemos) { 
+            Write-Host "   -> Simulated Removal of $App..." -ForegroundColor Gray
+            [Console]::Beep(600, 50)
+            Start-Sleep -Milliseconds 500
         }
+
+        # STEP 5: Software Arsenal Simulation
+        $current++; Update-Progress "Simulating Reforge" "SIMULATING: Software Arsenal Deployment..." (($current/$steps)*100)
+        $Apps = @("7zip", "Brave", "Malwarebytes")
+        foreach ($App in $Apps) { 
+            Write-Host "   -> winget install --id $App (SIMULATED)" -ForegroundColor Gray
+            Start-Sleep -Seconds 1
+        }
+
+        # STEP 6: Finalizing & Countdown
+        $current++; Update-Progress "Simulating Reforge" "Finalizing Simulation..." (($current/$steps)*100)
+        Start-Sleep -Seconds 1
+        Write-Progress -Activity "Simulating Reforge" -Completed
         
-        Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
-        Write-Host "A2K System Reforged and Fair-Play Optimized." -ForegroundColor Green
-    }
-    "2" {
         Show-Header
-        Write-Host "-> Running System Maintenance..." -ForegroundColor Cyan
-        winget upgrade --all --silent --accept-package-agreements --accept-source-agreements
-        echo y | chkdsk C: /f /r
-        Write-Host "Maintenance Scheduled. Restart required for Disk Repair." -ForegroundColor Yellow
+        Write-Host "`nSIMULATION COMPLETE. SYSTEM REFRESH (DEMO) IN:" -ForegroundColor Cyan
+        Speak-A2K "Simulation successful. Demonstrating system UI refresh in five seconds."
+        
+        for ($i = 5; $i -gt 0; $i--) {
+            Write-Host " [$i]..." -ForegroundColor Yellow
+            [Console]::Beep(1000, 100) 
+            Start-Sleep -Seconds 1
+        }
+
+        Write-Host "`n[DEMO] Explorer.exe would restart now." -ForegroundColor Magenta -BackgroundColor White
+        [Console]::Beep(200, 500) 
+        Start-Sleep -Seconds 2
+        
+        Show-Header
+        Write-Host "[SUCCESS] A2K REFORGE SIMULATION FINISHED." -ForegroundColor Green
+        Speak-A2K "Visual demonstration complete. No system files were harmed."
     }
-    "ER" {
-        $RP = Get-ComputerRestorePoint | Where-Object {$_.Description -match "A2KReforge"} | Select-Object -Last 1
-        if ($RP) { Restore-Computer -RestorePoint $RP.SequenceNumber } else { rstrui.exe }
+
+    "C" {
+        Show-Header
+        Write-Host "-> Executing Simulated Cleanup..." -ForegroundColor Yellow
+        Start-Sleep -Seconds 1
+        Write-Host "[OK] Simulated temp files deleted." -ForegroundColor Green
+        Speak-A2K "Cleanup simulation finished."
     }
+    
     "Q" { exit }
 }
 
-Write-Host "`nPress any key to exit..."
+Write-Host "`nPress any key to return to menu..."
 $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
