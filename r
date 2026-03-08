@@ -1,23 +1,21 @@
 #Requires -RunAsAdministrator
 
 # --- A2K REFORGE™ : CONFIGURATION ---
-$Version = "2026.7"
+$Version = "2026.8"
 $RepoUser = "mamc0826"
 $RepoName = "a2k-lat-site"
 $RepoBranch = "main" 
 $RemoteScriptUrl = "https://raw.githubusercontent.com/$RepoUser/$RepoName/$RepoBranch/reforge.ps1"
 $RawBaseUrl = "https://raw.githubusercontent.com/$RepoUser/$RepoName/$RepoBranch/assets/wallpapers"
 $LocalWallDir = "$env:USERPROFILE\Desktop\A2K_Wallpapers"
+$PortalUrl = "https://a2k.lat"
 
 # --- AUDIO PROTOCOLS ---
 function Play-Startup {
     for ($i = 3; $i -gt 0; $i--) { [console]::beep(400 + ($i * 100), 100); Start-Sleep -Seconds 1 }
     [console]::beep(880, 100); [console]::beep(1108, 100); [console]::beep(1318, 300)
 }
-
-function Play-Success {
-    [console]::beep(880, 150); [console]::beep(1108, 150); [console]::beep(1318, 400)
-}
+function Play-Success { [console]::beep(880, 150); [console]::beep(1108, 150); [console]::beep(1318, 400) }
 
 # --- REGISTRY ENGINE ---
 function Set-A2KRegistry {
@@ -40,34 +38,14 @@ function Check-ForUpdates {
     try {
         $RemoteContent = Invoke-WebRequest -Uri $RemoteScriptUrl -UseBasicParsing -ErrorAction SilentlyContinue
         if ($RemoteContent.Content -match '\$Version\s*=\s*"([^"]+)"') {
-            $RemoteVersion = $matches[1]
-            if ($RemoteVersion -gt $Version) {
+            if ($matches[1] -gt $Version) {
                 [console]::beep(1000, 200); [console]::beep(1200, 200)
-                $upMsg = if($isSp){ " [!] NUEVA VERSION: v$RemoteVersion. Actualizar? (Y/N)" } else { " [!] NEW VERSION: v$RemoteVersion. Update now? (Y/N)" }
-                $UpdateChoice = Read-Host $upMsg
-                if ($UpdateChoice -eq "Y") {
-                    $Path = $MyInvocation.MyCommand.Definition
-                    $RemoteContent.Content | Out-File -FilePath $Path -Force
+                if ((Read-Host "Update? (Y/N)") -eq "Y") {
+                    $RemoteContent.Content | Out-File -FilePath $MyInvocation.MyCommand.Definition -Force
                     exit
                 }
             }
         }
-    } catch { }
-}
-
-# --- CLOUD ASSET SYNC ---
-function Set-A2KCloudWallpaper {
-    $msg = if($isSp){ ">> Sincronizando Fondo de Pantalla..." } else { ">> Syncing Cloud Wallpaper..." }
-    Write-Host $msg -ForegroundColor Cyan
-    $wallpapers = @("wall1.jpg", "wall2.jpg", "wall3.jpg")
-    $selected = $wallpapers | Get-Random
-    $localPath = "$LocalWallDir\$selected"
-    if (!(Test-Path $LocalWallDir)) { New-Item -Path $LocalWallDir -ItemType Directory -Force | Out-Null }
-    try {
-        Invoke-WebRequest -Uri "$RawBaseUrl/$selected" -OutFile $localPath -ErrorAction Stop
-        $code = 'using System.Runtime.InteropServices; public class Wallpaper { [DllImport("user32.dll", CharSet = CharSet.Auto)] public static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni); }'
-        Add-Type -TypeDefinition $code -ErrorAction SilentlyContinue
-        [Wallpaper]::SystemParametersInfo(20, 0, $localPath, 3)
     } catch { }
 }
 
@@ -91,24 +69,26 @@ Play-Startup
 while($true) {
     Show-Header
     if($isSp) {
-        Write-Host "[1] REFORGE COMPLETO (Todo)" -ForegroundColor Yellow
-        Write-Host "[2] VISUALES (Tema Oscuro, Fondo Cloud, Menu Clasico)" -ForegroundColor Cyan
-        Write-Host "[3] RENDIMIENTO (Sin Animaciones, Settings Avanzados)" -ForegroundColor Green
-        Write-Host "[4] MODO GAMING (GPU, Latencia, GameDVR)" -ForegroundColor Blue
-        Write-Host "[5] LIMPIEZA BLOATWARE (OneDrive, Xbox, Apps Junk)" -ForegroundColor Red
-        Write-Host "[6] PRIVACIDAD (Sin AI Recall, Copilot, Telemetria)" -ForegroundColor Magenta
-        Write-Host "[7] ARSENAL A2K (Seleccion de Herramientas)" -ForegroundColor Green
-        Write-Host "[33] ACTIVAR WINDOWS (MAS)" -ForegroundColor White
+        Write-Host "[1] REFORGE COMPLETO" -ForegroundColor Yellow
+        Write-Host "[2] VISUALES" -ForegroundColor Cyan
+        Write-Host "[3] RENDIMIENTO" -ForegroundColor Green
+        Write-Host "[4] MODO GAMING" -ForegroundColor Blue
+        Write-Host "[5] LIMPIEZA BLOATWARE (Deep Purge)" -ForegroundColor Red
+        Write-Host "[6] PRIVACIDAD" -ForegroundColor Magenta
+        Write-Host "[7] ARSENAL A2K" -ForegroundColor Green
+        Write-Host "[33] ACTIVAR WINDOWS" -ForegroundColor White
+        Write-Host "[W] Visitar A2K.LAT" -ForegroundColor Cyan
         Write-Host "[Q] Salir" -ForegroundColor Red
     } else {
-        Write-Host "[1] FULL REFORGE (All-in-One)" -ForegroundColor Yellow
-        Write-Host "[2] VISUALS (Dark Mode, Cloud Wall, Classic Menu)" -ForegroundColor Cyan
-        Write-Host "[3] PERFORMANCE (No Animations, Advanced System Settings)" -ForegroundColor Green
-        Write-Host "[4] GAMING MODE (GPU, Latency, GameDVR)" -ForegroundColor Blue
-        Write-Host "[5] BLOAT PURGE (OneDrive, Xbox, Junk Apps)" -ForegroundColor Red
-        Write-Host "[6] PRIVACY (No AI Recall, Copilot, Telemetry)" -ForegroundColor Magenta
-        Write-Host "[7] A2K ARSENAL (Custom Tool Selection)" -ForegroundColor Green
-        Write-Host "[33] ACTIVATE WINDOWS (MAS)" -ForegroundColor White
+        Write-Host "[1] FULL REFORGE" -ForegroundColor Yellow
+        Write-Host "[2] VISUALS" -ForegroundColor Cyan
+        Write-Host "[3] PERFORMANCE" -ForegroundColor Green
+        Write-Host "[4] GAMING MODE" -ForegroundColor Blue
+        Write-Host "[5] BLOAT PURGE (Deep Purge)" -ForegroundColor Red
+        Write-Host "[6] PRIVACY" -ForegroundColor Magenta
+        Write-Host "[7] A2K ARSENAL" -ForegroundColor Green
+        Write-Host "[33] ACTIVATE WINDOWS" -ForegroundColor White
+        Write-Host "[W] Visit A2K.LAT" -ForegroundColor Cyan
         Write-Host "[Q] Exit" -ForegroundColor Red
     }
     
@@ -121,75 +101,76 @@ while($true) {
         Set-A2KRegistry "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" "SearchboxTaskbarMode" 0
         Set-A2KRegistry "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" "ShowTaskViewButton" 0
         Set-A2KRegistry "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" "TaskbarDa" 0
-        Set-A2KCloudWallpaper
+        # Syncing Cloud Wallpaper
+        $wallpapers = @("wall1.jpg", "wall2.jpg", "wall3.jpg")
+        $selected = $wallpapers | Get-Random
+        if (!(Test-Path $LocalWallDir)) { New-Item -Path $LocalWallDir -ItemType Directory -Force | Out-Null }
+        try {
+            Invoke-WebRequest -Uri "$RawBaseUrl/$selected" -OutFile "$LocalWallDir\$selected" -ErrorAction SilentlyContinue
+            $code = 'using System.Runtime.InteropServices; public class Wallpaper { [DllImport("user32.dll", CharSet = CharSet.Auto)] public static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni); }'
+            Add-Type -TypeDefinition $code -ErrorAction SilentlyContinue
+            [Wallpaper]::SystemParametersInfo(20, 0, "$LocalWallDir\$selected", 3)
+        } catch { }
     }
-    if ($choice -match "1|3") {
-        Set-A2KRegistry "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" "VisualFXSetting" 2
-        Set-A2KRegistry "HKCU:\Control Panel\Desktop" "UserPreferencesMask" ([byte[]](0x90,0x12,0x03,0x80,0x10,0x00,0x00,0x00)) "Binary"
-        Set-A2KRegistry "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" "EnableTransparency" 0
-        Set-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSpeed" -Value 0
-        powercfg /hibernate off
-    }
-    if ($choice -match "1|4") {
-        Set-A2KRegistry "HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR" "AppCaptureEnabled" 0
-        Set-A2KRegistry "HKLM:\SYSTEM\CurrentControlSet\Control\GraphicsDrivers" "HwSchMode" 2
-        Set-A2KRegistry "HKLM:\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling" "PowerThrottlingOff" 1
-    }
+
     if ($choice -match "1|5") {
-        $bloat = @("*Solitaire*", "*LinkedIn*", "*MicrosoftTodo*", "*Skype*", "*Xbox*", "*Groove*", "*Clipchamp*", "*OneNote*", "*Teams*", "*Cortana*", "*Office.OneNote*", "*MicrosoftOfficeHub*", "*TikTok*", "*Disney*", "*Weather*")
-        foreach ($app in $bloat) { Get-AppxPackage -AllUsers -Name $app | Remove-AppxPackage -ErrorAction SilentlyContinue }
-        taskkill /f /im OneDrive.exe -ErrorAction SilentlyContinue
-        Set-A2KRegistry "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" "DisableFileSyncNGSC" 1
-    }
-    if ($choice -match "1|6") {
-        Set-A2KRegistry "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsAI" "AllowRecallEnablement" 0
-        Set-A2KRegistry "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" "TurnOffWindowsCopilot" 1
-    }
-    if ($choice -match "1|7") {
-        $appMap = @{
-            "1" = "Google.Chrome"
-            "2" = "Google.ChromeRemoteDesktop"
-            "3" = "Brave.Brave"
-            "4" = "7zip.7zip"
-            "5" = "Malwarebytes.Malwarebytes"
-            "6" = "RevoUninstaller.RevoUninstaller"
-            "7" = "AntibodySoftware.WizTree"
-        }
+        $purgeList = @(
+            "Microsoft.OneDrive", "LinkedIn", "YourPhone", "Clipchamp", 
+            "Outlook", "Xbox", "Solitaire", "Skype", "Groove", 
+            "OneNote", "Teams", "Cortana", "TikTok", "Disney"
+        )
+        $results = @()
         
-        Show-Header
-        Write-Host (if($isSp){"--- ARSENAL A2K: SELECCION ---"}else{"--- A2K ARSENAL: SELECTION ---"}) -ForegroundColor Green
-        Write-Host " [1] Google Chrome"
-        Write-Host " [2] Chrome Remote Desktop"
-        Write-Host " [3] Brave Browser"
-        Write-Host " [4] 7-Zip"
-        Write-Host " [5] Malwarebytes"
-        Write-Host " [6] Revo Uninstaller"
-        Write-Host " [7] WizTree"
-        Write-Host ""
-        $instMsg = if($isSp){"Ingrese numeros (ej: 1 4 6) o 'ALL' para todo:"}else{"Enter numbers (e.g. 1 4 6) or 'ALL' for everything:"}
-        $userApps = Read-Host $instMsg
-        
-        $toInstall = if ($userApps -eq "ALL") { $appMap.Values } else { $userApps.Split(" ") | ForEach-Object { if($appMap[$_]){$appMap[$_]} } }
-        
-        $total = $toInstall.Count
-        $current = 0
-        foreach ($app in $toInstall) { 
-            if ($app) {
-                $current++
-                $percent = [math]::Round(($current / $total) * 100)
-                $statusMsg = if($isSp){ "Instalando: $app ($current/$total)" } else { "Installing: $app ($current/$total)" }
-                Write-Progress -Activity "A2K Arsenal Deployment" -Status $statusMsg -PercentComplete $percent
-                winget install --id $app --silent --accept-package-agreements --accept-source-agreements | Out-Null 
+        Write-Host ">> Deep Purging Bloatware..." -ForegroundColor Red
+        foreach ($app in $purgeList) {
+            $status = if($isSp){ "Eliminando" } else { "Removing" }
+            Write-Progress -Activity "A2K Purge" -Status "$status: $app"
+            try {
+                # Remove from current user AND all users
+                Get-AppxPackage -Name "*$app*" -AllUsers | Remove-AppxPackage -ErrorAction Stop
+                $results += "[PASS] $app"
+            } catch {
+                $results += "[FAIL] $app (Not Found/In Use)"
             }
         }
-        Write-Progress -Activity "A2K Arsenal Deployment" -Completed
+        
+        # Deep OneDrive Removal Logic
+        taskkill /f /im OneDrive.exe -ErrorAction SilentlyContinue
+        $oneDrivePath = "$env:SystemRoot\SysWOW64\OneDriveSetup.exe"
+        if (!(Test-Path $oneDrivePath)) { $oneDrivePath = "$env:SystemRoot\System32\OneDriveSetup.exe" }
+        if (Test-Path $oneDrivePath) { Start-Process $oneDrivePath "/uninstall" -NoNewWindow -Wait }
+        Set-A2KRegistry "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" "DisableFileSyncNGSC" 1
+
+        # Summary Report
+        Show-Header
+        Write-Host "--- PURGE SUMMARY ---" -ForegroundColor Yellow
+        $results | ForEach-Object { 
+            if($_ -match "PASS"){ Write-Host $_ -ForegroundColor Green } else { Write-Host $_ -ForegroundColor Gray }
+        }
+        pause
     }
+
+    if ($choice -match "1|7") {
+        $appMap = @{"1"="Google.Chrome"; "2"="Google.ChromeRemoteDesktop"; "3"="Brave.Brave"; "4"="7zip.7zip"; "5"="Malwarebytes.Malwarebytes"; "6"="RevoUninstaller.RevoUninstaller"; "7"="AntibodySoftware.WizTree"}
+        Show-Header
+        Write-Host " [1-7] Select apps (e.g., 1 4) or 'ALL':" -ForegroundColor Green
+        $userApps = Read-Host "A2K"
+        $toInstall = if ($userApps -eq "ALL") { $appMap.Values } else { $userApps.Split(" ") | ForEach-Object { if($appMap[$_]){$appMap[$_]} } }
+        
+        # Stability Fix: Install one by one with a small delay
+        foreach ($app in $toInstall) {
+            if ($app) {
+                Write-Host ">> Deploying $app..." -ForegroundColor Cyan
+                winget install --id $app --silent --accept-package-agreements --accept-source-agreements
+                Start-Sleep -Seconds 2 # Prevents Winget database locking
+            }
+        }
+    }
+
+    if ($choice -eq "W" -or $choice -eq "w") { Start-Process $PortalUrl }
     if ($choice -eq "33") { irm https://get.activated.win | iex }
     if ($choice -eq "Q" -or $choice -eq "q") { exit }
-    
     if ($choice -match "1|2|3|4|5") { Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue }
     Play-Success
-    $doneMsg = if($isSp){ "Refuerzo Completado." } else { "Reforge Complete." }
-    Write-Host "`n$doneMsg"
     pause
 }
