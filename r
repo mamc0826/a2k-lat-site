@@ -1,7 +1,7 @@
 #Requires -RunAsAdministrator
 
 # --- A2K REFORGE™ : CONFIGURATION ---
-$Version = "2026.5"
+$Version = "2026.7"
 $RepoUser = "mamc0826"
 $RepoName = "a2k-lat-site"
 $RepoBranch = "main" 
@@ -97,7 +97,7 @@ while($true) {
         Write-Host "[4] MODO GAMING (GPU, Latencia, GameDVR)" -ForegroundColor Blue
         Write-Host "[5] LIMPIEZA BLOATWARE (OneDrive, Xbox, Apps Junk)" -ForegroundColor Red
         Write-Host "[6] PRIVACIDAD (Sin AI Recall, Copilot, Telemetria)" -ForegroundColor Magenta
-        Write-Host "[7] ARSENAL A2K (Herramientas de Reparacion)" -ForegroundColor Green
+        Write-Host "[7] ARSENAL A2K (Seleccion de Herramientas)" -ForegroundColor Green
         Write-Host "[33] ACTIVAR WINDOWS (MAS)" -ForegroundColor White
         Write-Host "[Q] Salir" -ForegroundColor Red
     } else {
@@ -107,7 +107,7 @@ while($true) {
         Write-Host "[4] GAMING MODE (GPU, Latency, GameDVR)" -ForegroundColor Blue
         Write-Host "[5] BLOAT PURGE (OneDrive, Xbox, Junk Apps)" -ForegroundColor Red
         Write-Host "[6] PRIVACY (No AI Recall, Copilot, Telemetry)" -ForegroundColor Magenta
-        Write-Host "[7] A2K ARSENAL (Repair Tools)" -ForegroundColor Green
+        Write-Host "[7] A2K ARSENAL (Custom Tool Selection)" -ForegroundColor Green
         Write-Host "[33] ACTIVATE WINDOWS (MAS)" -ForegroundColor White
         Write-Host "[Q] Exit" -ForegroundColor Red
     }
@@ -124,7 +124,6 @@ while($true) {
         Set-A2KCloudWallpaper
     }
     if ($choice -match "1|3") {
-        # Advanced System Settings: Adjust for Best Performance
         Set-A2KRegistry "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" "VisualFXSetting" 2
         Set-A2KRegistry "HKCU:\Control Panel\Desktop" "UserPreferencesMask" ([byte[]](0x90,0x12,0x03,0x80,0x10,0x00,0x00,0x00)) "Binary"
         Set-A2KRegistry "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" "EnableTransparency" 0
@@ -137,7 +136,7 @@ while($true) {
         Set-A2KRegistry "HKLM:\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling" "PowerThrottlingOff" 1
     }
     if ($choice -match "1|5") {
-        $bloat = @("*Solitaire*", "*LinkedIn*", "*MicrosoftTodo*", "*Skype*", "*Xbox*", "*Groove*", "*Clipchamp*", "*OneNote*", "*Teams*", "*Cortana*", "*TikTok*", "*Disney*", "*Weather*")
+        $bloat = @("*Solitaire*", "*LinkedIn*", "*MicrosoftTodo*", "*Skype*", "*Xbox*", "*Groove*", "*Clipchamp*", "*OneNote*", "*Teams*", "*Cortana*", "*Office.OneNote*", "*MicrosoftOfficeHub*", "*TikTok*", "*Disney*", "*Weather*")
         foreach ($app in $bloat) { Get-AppxPackage -AllUsers -Name $app | Remove-AppxPackage -ErrorAction SilentlyContinue }
         taskkill /f /im OneDrive.exe -ErrorAction SilentlyContinue
         Set-A2KRegistry "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" "DisableFileSyncNGSC" 1
@@ -147,8 +146,43 @@ while($true) {
         Set-A2KRegistry "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" "TurnOffWindowsCopilot" 1
     }
     if ($choice -match "1|7") {
-        $apps = @("Google.Chrome", "Google.ChromeRemoteDesktop", "Brave.Brave", "7zip.7zip", "Malwarebytes.Malwarebytes", "RevoUninstaller.RevoUninstaller", "AntibodySoftware.WizTree")
-        foreach ($app in $apps) { winget install --id $app --silent --accept-package-agreements --accept-source-agreements | Out-Null }
+        $appMap = @{
+            "1" = "Google.Chrome"
+            "2" = "Google.ChromeRemoteDesktop"
+            "3" = "Brave.Brave"
+            "4" = "7zip.7zip"
+            "5" = "Malwarebytes.Malwarebytes"
+            "6" = "RevoUninstaller.RevoUninstaller"
+            "7" = "AntibodySoftware.WizTree"
+        }
+        
+        Show-Header
+        Write-Host (if($isSp){"--- ARSENAL A2K: SELECCION ---"}else{"--- A2K ARSENAL: SELECTION ---"}) -ForegroundColor Green
+        Write-Host " [1] Google Chrome"
+        Write-Host " [2] Chrome Remote Desktop"
+        Write-Host " [3] Brave Browser"
+        Write-Host " [4] 7-Zip"
+        Write-Host " [5] Malwarebytes"
+        Write-Host " [6] Revo Uninstaller"
+        Write-Host " [7] WizTree"
+        Write-Host ""
+        $instMsg = if($isSp){"Ingrese numeros (ej: 1 4 6) o 'ALL' para todo:"}else{"Enter numbers (e.g. 1 4 6) or 'ALL' for everything:"}
+        $userApps = Read-Host $instMsg
+        
+        $toInstall = if ($userApps -eq "ALL") { $appMap.Values } else { $userApps.Split(" ") | ForEach-Object { if($appMap[$_]){$appMap[$_]} } }
+        
+        $total = $toInstall.Count
+        $current = 0
+        foreach ($app in $toInstall) { 
+            if ($app) {
+                $current++
+                $percent = [math]::Round(($current / $total) * 100)
+                $statusMsg = if($isSp){ "Instalando: $app ($current/$total)" } else { "Installing: $app ($current/$total)" }
+                Write-Progress -Activity "A2K Arsenal Deployment" -Status $statusMsg -PercentComplete $percent
+                winget install --id $app --silent --accept-package-agreements --accept-source-agreements | Out-Null 
+            }
+        }
+        Write-Progress -Activity "A2K Arsenal Deployment" -Completed
     }
     if ($choice -eq "33") { irm https://get.activated.win | iex }
     if ($choice -eq "Q" -or $choice -eq "q") { exit }
